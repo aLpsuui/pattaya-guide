@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import Navbar from './components/Navbar'
+
 interface Venue {
   id: string
   name: string
@@ -36,7 +37,7 @@ async function getTopVenues() {
     .order('rating', { ascending: false })
     .order('review_count', { ascending: false })
     .limit(6)
-  return (data || []) as Venue[]
+  return (data || []) as unknown as Venue[]
 }
 
 async function getOpenVenues() {
@@ -47,7 +48,7 @@ async function getOpenVenues() {
     .not('rating', 'is', null)
     .order('rating', { ascending: false })
     .limit(6)
-  return (data || []) as Venue[]
+  return (data || []) as unknown as Venue[]
 }
 
 async function getOpenCount() {
