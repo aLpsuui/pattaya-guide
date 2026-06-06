@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Next.js
+.next/
+out/
+
+# Environment variables
+.env.local
+.env*.local
+
+# Images (stored in Supabase Storage)
+public/images/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python scripts (dev only)
+*.py
+*.sql
