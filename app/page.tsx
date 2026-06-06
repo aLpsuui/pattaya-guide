@@ -84,17 +84,17 @@ async function getOpenCount() {
 }
 
 const categoryMeta: Record<string, { photo: string; count: string; icon: string }> = {
-  tours: { photo: '/pattaya-fotograflar/imgi_5_30a4dff84cffd371f8aabdc0aefa5995ee9c9118cd0062581a0f727f523c19f5.png', count: '77 tours', icon: '🏝️' },
-  cafes: { photo: '/pattaya-fotograflar/imgi_124_40360161c5206c760df9b228482dfa480c658edaad32f4f1745231de3afe9358.jpg', count: '101 cafés', icon: '☕' },
-  restaurants: { photo: '/pattaya-fotograflar/imgi_129_iStock-1312283557-HEADER-DESKTOP.jpg', count: '73 restaurants', icon: '🍽️' },
-  nightclubs: { photo: '/pattaya-fotograflar/imgi_117_a8aecbcd2734c0097e1808212aeb96019326d828d01f08525486a0c4623d254a.jpg', count: '77 venues', icon: '🎵' },
-  spas: { photo: '/pattaya-fotograflar/imgi_135_c88b5db4b5413c41.jpg', count: '60 spas', icon: '💆' },
-  skydiving: { photo: '/pattaya-fotograflar/imgi_125_fff8cb1ff88f4005141bf5dc3190c52198b4efe2e8651b485066d49ff0a910d2.jpg', count: '21 spots', icon: '🪂' },
-  gyms: { photo: '/pattaya-fotograflar/imgi_22_8095e53d10eba6e77c7a6d5b4513c20322d7a512826fbf43739e03d5ad7658d7.jpg', count: '79 gyms', icon: '💪' },
-  'rent-a-bike': { photo: '/pattaya-fotograflar/imgi_127_ryutaro-uozumi-lsdURl-_ktc-unsplash-HEADER.jpg', count: '27 shops', icon: '🏍️' },
-  'muay-thai': { photo: '/pattaya-fotograflar/imgi_22_8095e53d10eba6e77c7a6d5b4513c20322d7a512826fbf43739e03d5ad7658d7.jpg', count: '46 camps', icon: '🥊' },
-  massage: { photo: '/pattaya-fotograflar/imgi_135_c88b5db4b5413c41.jpg', count: '23 spots', icon: '🤲' },
-  yoga: { photo: '/pattaya-fotograflar/imgi_5_30a4dff84cffd371f8aabdc0aefa5995ee9c9118cd0062581a0f727f523c19f5.png', count: '16 studios', icon: '🧘' },
+  tours: { photo: 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/imgi_5_30a4dff84cffd371f8aabdc0aefa5995ee9c9118cd0062581a0f727f523c19f5.png', count: '77 tours', icon: '🏝️' },
+  cafes: { photo: 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/imgi_124_40360161c5206c760df9b228482dfa480c658edaad32f4f1745231de3afe9358.jpg', count: '101 cafés', icon: '☕' },
+  restaurants: { photo: 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/imgi_129_iStock-1312283557-HEADER-DESKTOP.jpg', count: '73 restaurants', icon: '🍽️' },
+  nightclubs: { photo: 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/imgi_117_a8aecbcd2734c0097e1808212aeb96019326d828d01f08525486a0c4623d254a.jpg', count: '77 venues', icon: '🎵' },
+  spas: { photo: 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/imgi_135_c88b5db4b5413c41.jpg', count: '60 spas', icon: '💆' },
+  skydiving: { photo: 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/imgi_125_fff8cb1ff88f4005141bf5dc3190c52198b4efe2e8651b485066d49ff0a910d2.jpg', count: '21 spots', icon: '🪂' },
+  gyms: { photo: 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/imgi_22_8095e53d10eba6e77c7a6d5b4513c20322d7a512826fbf43739e03d5ad7658d7.jpg', count: '79 gyms', icon: '💪' },
+  'rent-a-bike': { photo: 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/imgi_127_ryutaro-uozumi-lsdURl-_ktc-unsplash-HEADER.jpg', count: '27 shops', icon: '🏍️' },
+  'muay-thai': { photo: 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/imgi_22_8095e53d10eba6e77c7a6d5b4513c20322d7a512826fbf43739e03d5ad7658d7.jpg', count: '46 camps', icon: '🥊' },
+  massage: { photo: 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/imgi_135_c88b5db4b5413c41.jpg', count: '23 spots', icon: '🤲' },
+  yoga: { photo: 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/imgi_5_30a4dff84cffd371f8aabdc0aefa5995ee9c9118cd0062581a0f727f523c19f5.png', count: '16 studios', icon: '🧘' },
 }
 
 const top6Slugs = ['tours', 'restaurants', 'nightclubs', 'spas', 'skydiving', 'gyms']
@@ -253,10 +253,10 @@ export default async function Home() {
           </div>
           <div className="plan-grid">
             {[
-              { img: '/pattaya-fotograflar/imgi_137_63e3c62ef0c5d.jpg', tag: 'When to go', title: 'Best time to visit Pattaya', sub: 'Month-by-month guide — weather, crowds and prices.' },
-              { img: '/pattaya-fotograflar/imgi_127_ryutaro-uozumi-lsdURl-_ktc-unsplash-HEADER.jpg', tag: 'Transport', title: 'Bangkok → Pattaya: every option', sub: 'Bus, taxi, minivan and private transfer — prices and tips.' },
-              { img: '/pattaya-fotograflar/imgi_129_iStock-1312283557-HEADER-DESKTOP.jpg', tag: 'Stay', title: 'Where to stay in Pattaya', sub: 'Five districts compared — what each one is actually like.' },
-              { img: '/pattaya-fotograflar/hero-bg.jpg', tag: 'First visit', title: 'First-time visitor guide', sub: 'The four things every first-timer gets wrong — and how to avoid them.' },
+              { img: 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/imgi_137_63e3c62ef0c5d.jpg', tag: 'When to go', title: 'Best time to visit Pattaya', sub: 'Month-by-month guide — weather, crowds and prices.' },
+              { img: 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/imgi_127_ryutaro-uozumi-lsdURl-_ktc-unsplash-HEADER.jpg', tag: 'Transport', title: 'Bangkok → Pattaya: every option', sub: 'Bus, taxi, minivan and private transfer — prices and tips.' },
+              { img: 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/imgi_129_iStock-1312283557-HEADER-DESKTOP.jpg', tag: 'Stay', title: 'Where to stay in Pattaya', sub: 'Five districts compared — what each one is actually like.' },
+              { img: 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/hero-bg.jpg', tag: 'First visit', title: 'First-time visitor guide', sub: 'The four things every first-timer gets wrong — and how to avoid them.' },
             ].map((card, i) => (
               <a key={i} href="#" className="plan-card">
                 <div className="bg" style={{backgroundImage:`url(${card.img})`,backgroundSize:'cover',backgroundPosition:'center'}}></div>
@@ -329,11 +329,11 @@ export default async function Home() {
           </div>
           <div className="dist-grid">
             {[
-              { img: '/pattaya-fotograflar/hero-bg.jpg', label: 'Most visited', name: 'Central Pattaya', count: '320 places', desc: 'Beach Road, Walking Street, Soi Buakhao' },
-              { img: '/pattaya-fotograflar/imgi_137_63e3c62ef0c5d.jpg', label: 'Family-friendly', name: 'Jomtien', count: '180 places', desc: 'Quieter beach, great seafood' },
-              { img: '/pattaya-fotograflar/imgi_129_iStock-1312283557-HEADER-DESKTOP.jpg', label: 'Sunset views', name: 'Pratumnak Hill', count: '90 places', desc: 'Between Pattaya and Jomtien' },
-              { img: '/pattaya-fotograflar/imgi_5_30a4dff84cffd371f8aabdc0aefa5995ee9c9118cd0062581a0f727f523c19f5.png', label: 'Quiet escape', name: 'Naklua', count: '110 places', desc: 'Local vibe, old Pattaya feel' },
-              { img: '/pattaya-fotograflar/imgi_125_fff8cb1ff88f4005141bf5dc3190c52198b4efe2e8651b485066d49ff0a910d2.jpg', label: 'Day trip', name: 'Koh Larn Island', count: '45 places', desc: '45 min ferry from Bali Hai' },
+              { img: 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/hero-bg.jpg', label: 'Most visited', name: 'Central Pattaya', count: '320 places', desc: 'Beach Road, Walking Street, Soi Buakhao' },
+              { img: 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/imgi_137_63e3c62ef0c5d.jpg', label: 'Family-friendly', name: 'Jomtien', count: '180 places', desc: 'Quieter beach, great seafood' },
+              { img: 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/imgi_129_iStock-1312283557-HEADER-DESKTOP.jpg', label: 'Sunset views', name: 'Pratumnak Hill', count: '90 places', desc: 'Between Pattaya and Jomtien' },
+              { img: 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/imgi_5_30a4dff84cffd371f8aabdc0aefa5995ee9c9118cd0062581a0f727f523c19f5.png', label: 'Quiet escape', name: 'Naklua', count: '110 places', desc: 'Local vibe, old Pattaya feel' },
+              { img: 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/imgi_125_fff8cb1ff88f4005141bf5dc3190c52198b4efe2e8651b485066d49ff0a910d2.jpg', label: 'Day trip', name: 'Koh Larn Island', count: '45 places', desc: '45 min ferry from Bali Hai' },
             ].map((d, i) => (
               <a key={i} href="#" className={`dist dist-${i+1}`}>
                 <div className="dist-bg" style={{backgroundImage:`url(${d.img})`,backgroundSize:'cover',backgroundPosition:'center'}}></div>
