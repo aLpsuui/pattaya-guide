@@ -9,16 +9,10 @@ const LogoSVG = () => (
     <circle cx="110" cy="98" r="74" fill="#EAF6FB"/>
     <circle cx="110" cy="80" r="20" fill="#2FBDDC"/>
     <path fill="#0178B4" d="M44 120c14-10 24-10 38 0s24 10 38 0 24-10 38 0 24 10 38 0v22c-14 10-24 10-38 0s-24-10-38 0-24-10-38 0-24-10-38 0Z"/>
-    <g fill="#034487">
-      <path d="M112 96c14-8 28-7 40 2-13-2-25 0-37 8Z"/>
-      <path d="M112 96c12-12 26-16 40-12-13 3-23 9-33 19Z"/>
-      <path d="M112 96c-14-8-28-7-40 2 13-2 25 0 37 8Z"/>
-      <path d="M112 96c-12-12-26-16-40-12 13 3 23 9 33 19Z"/>
-    </g>
   </svg>
 )
 
-export default function Navbar({ locale }: { locale: string }) {
+export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -67,7 +61,7 @@ export default function Navbar({ locale }: { locale: string }) {
 
       <header className={`nav${scrolled ? ' scrolled' : ''}`} id="nav">
         <div className="container nav-inner">
-          <Link href={`/${locale}`} className="brand" aria-label="Pattaya Guide home">
+          <Link href="/" className="brand" aria-label="Pattaya Guide home">
             <LogoSVG />
             <div className="wm"><i>Pattaya</i><u>Guide</u></div>
           </Link>
@@ -88,11 +82,10 @@ export default function Navbar({ locale }: { locale: string }) {
         </div>
       </header>
 
-      {/* Mobile Menu Drawer */}
-      <div className={`mm-overlay${menuOpen ? ' open' : ''}`} id="mmOverlay" onClick={() => setMenuOpen(false)} aria-hidden="true"></div>
-      <aside className={`mm-panel${menuOpen ? ' open' : ''}`} id="mmPanel" aria-hidden={!menuOpen} aria-label="Mobile menu">
+      <div className={`mm-overlay${menuOpen ? ' open' : ''}`} onClick={() => setMenuOpen(false)} aria-hidden="true"></div>
+      <aside className={`mm-panel${menuOpen ? ' open' : ''}`} aria-hidden={!menuOpen} aria-label="Mobile menu">
         <div className="mm-head">
-          <Link href={`/${locale}`} className="brand">
+          <Link href="/" className="brand">
             <LogoSVG />
             <div className="wm"><i>Pattaya</i><u>Guide</u></div>
           </Link>
@@ -110,13 +103,6 @@ export default function Navbar({ locale }: { locale: string }) {
         </nav>
         <div className="mm-foot">
           <a href="#blog" className="btn btn-primary" onClick={() => setMenuOpen(false)}>Read the guides</a>
-          <div className="lang-row">
-            <Link href="/en">🌐 EN</Link>
-            <span className="sep"></span>
-            <Link href="/ru">RU</Link>
-            <span className="sep"></span>
-            <Link href="/zh">中文</Link>
-          </div>
         </div>
       </aside>
     </>
