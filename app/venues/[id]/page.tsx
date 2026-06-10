@@ -2,46 +2,45 @@ import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 
-interface VenueImage {
-  image_url: string
+interface VenueImage { image_url: string; display_order: number }
+interface MenuItem {
+  id: string; section_name: string; item_name: string
+  duration: string | null; price_60: string | null; price_90: string | null
+  price_120: string | null; price_custom: string | null; description: string | null
   display_order: number
 }
-
 interface Venue {
-  id: string
-  name: string
-  slug: string
-  rating: number
-  review_count: number
-  venue_type: string
-  price_range: string
-  address: string
-  phone: string
-  status: string
-  working_hours: string
-  maps_link: string
-  image_url: string | null
+  id: string; name: string; slug: string; rating: number; review_count: number
+  venue_type: string; price_range: string; address: string; phone: string
+  status: string; working_hours: string; maps_link: string
+  description_en: string | null; image_url: string | null
+  category_id: string
   categories: { name_en: string; slug: string }
 }
 
 async function getVenue(id: string): Promise<Venue | null> {
   const { data, error } = await supabase
-    .from('venues')
-    .select('*, categories(name_en, slug)')
-    .eq('id', id)
-    .single()
+    .from('venues').select('*, categories(name_en, slug)').eq('id', id).single()
   if (error || !data) return null
   return data as unknown as Venue
 }
-
 async function getVenueImages(venueId: string): Promise<VenueImage[]> {
-  const { data } = await supabase
-    .from('venue_images')
-    .select('image_url, display_order')
-    .eq('venue_id', venueId)
-    .order('display_order')
-    .limit(5)
+  const { data } = await supabase.from('venue_images')
+    .select('image_url, display_order').eq('venue_id', venueId)
+    .order('display_order').limit(6)
   return (data || []) as VenueImage[]
+}
+async function getVenueMenu(venueId: string): Promise<MenuItem[]> {
+  const { data } = await supabase.from('venue_menus')
+    .select('*').eq('venue_id', venueId).order('display_order')
+  return (data || []) as MenuItem[]
+}
+async function getRelatedVenues(categoryId: string, currentId: string) {
+  const { data } = await supabase.from('venues')
+    .select('id, name, slug, rating, review_count, image_url, address, categories(name_en)')
+    .eq('category_id', categoryId).neq('id', currentId)
+    .not('rating', 'is', null).order('rating', { ascending: false }).limit(4)
+  return data || []
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
@@ -50,8 +49,231 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   if (!venue) return { title: 'Not Found' }
   return {
     title: `${venue.name} · ${venue.categories?.name_en} · Pattaya Guide`,
-    description: `${venue.name} in Pattaya. ${venue.venue_type || ''} ${venue.address || ''}`.trim(),
+    description: venue.description_en || `${venue.name} in Pattaya. ${venue.address || ''}`.trim(),
   }
+}
+
+export default async function VenuePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const [venue, images, menuItems] = await Promise.all([
+    getVenue(id), getVenueImages(id), getVenueMenu(id)
+  ])
+  if (!venue) notFound()
+
+  const relatedVenues = await getRelatedVenues(venue.category_id, venue.id)
+  const allImages = [
+    ...(venue.image_url ? [{ image_url: venue.image_url }] : []),
+    ...images
+  ].slice(0, 5)
+
+  const isOpen = venue.status === 'Açık'
+
+  const menuSections = menuItems.reduce((acc, item) => {
+    const s = item.section_name || 'Menu'
+    if (!acc[s]) acc[s] = []
+    acc[s].push(item)
+    return acc
+  }, {} as Record<string, MenuItem[]>)
+
+  const hasMenu = menuItems.length > 0
+
+  return (
+    <>
+      <style dangerouslySetInnerHTML={{__html: venueCSS}} />
+      <main className="det-yf">
+
+        {/* BREADCRUMB */}
+        <nav className="det-yf__wrap det-yf__crumb" aria-label="Breadcrumb">
+          <Link href="/">Home</Link>
+          <span className="sep">›</span>
+          <Link href={`/${venue.categories?.slug}`}>{venue.categories?.name_en}</Link>
+          <span className="sep">›</span>
+          <span aria-current="page">{venue.name}</span>
+        </nav>
+
+        {/* HERO */}
+        <section className="det-yf__hero">
+          <div className="det-yf__wrap det-yf__hero-inner">
+            <h1 className="det-yf__h1">{venue.name}</h1>
+            {venue.description_en && <p className="det-yf__tagline">{venue.description_en}</p>}
+            <div className="det-yf__meta">
+              {venue.rating && (
+                <span className="rate">★ {venue.rating.toFixed(1)}<span className="count"> · {venue.review_count?.toLocaleString()} reviews</span></span>
+              )}
+              {venue.address && <span className="det-yf__metaitem">📍 {venue.address.split(',')[0]}</span>}
+              <span className={`pill ${isOpen ? 'pill--success' : 'pill--danger'}`}>
+                {isOpen ? '🟢 Open now' : '🔴 Closed'}
+                {venue.working_hours && ` · ${venue.working_hours}`}
+              </span>
+              {venue.price_range && <span className="det-yf__metaitem">💰 {venue.price_range}</span>}
+            </div>
+          </div>
+        </section>
+
+        {/* GALLERY */}
+        {allImages.length > 0 && (
+          <div className="det-yf__wrap">
+            <div className="det-yf__gallery" id="det-gallery">
+              {allImages.map((img, i) => (
+                <div key={i} className={`det-yf__gitem${i === 0 ? ' det-yf__gitem--hero' : ''}${i === 4 ? ' det-yf__gitem--hidemobile' : ''}`}>
+                  <img src={img.image_url} alt={`${venue.name} photo ${i+1}`}
+                    width={i === 0 ? 800 : 400} height={i === 0 ? 600 : 300}
+                    loading={i === 0 ? 'eager' : 'lazy'}
+                    style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}} />
+                  {i === 4 && images.length > 4 && (
+                    <span className="det-yf__gmore">+{images.length - 4} photos</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 2-COL LAYOUT */}
+        <div className="det-yf__wrap det-yf__layout">
+          <div className="det-yf__content">
+
+            {/* MENU */}
+            {hasMenu && (
+              <section aria-labelledby="menu-h">
+                <div className="det-yf__sechead">
+                  <span className="kicker">Menu & Prices</span>
+                  <h2 id="menu-h">Treatment menu</h2>
+                  <p>From the official price list. Confirm the latest rates before you visit.</p>
+                </div>
+                <div className="det-yf__tt-wrap">
+                  <table className="det-yf__tt">
+                    <caption className="visually-hidden">{venue.name} menu and prices</caption>
+                    <thead>
+                      <tr>
+                        <th scope="col">Treatment</th>
+                        <th scope="col">60 min</th>
+                        <th scope="col">90 min</th>
+                        <th scope="col">120 min</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Object.entries(menuSections).map(([sectionName, items]) => (
+                        <>
+                          <tr key={`s-${sectionName}`} className="det-yf__cat"><td colSpan={4}>{sectionName}</td></tr>
+                          {items.map(item => (
+                            <tr key={item.id}>
+                              <td>
+                                <b>{item.item_name}</b>
+                                {item.duration && <span style={{display:'block',fontSize:12,color:'var(--ink-400)'}}>{item.duration}</span>}
+                                {item.description && <span style={{display:'block',fontSize:12,color:'var(--ink-400)'}}>{item.description}</span>}
+                              </td>
+                              <td className="price">{item.price_60 || '–'}</td>
+                              <td className="price">{item.price_90 || '–'}</td>
+                              <td className="price">{item.price_120 || item.price_custom || '–'}</td>
+                            </tr>
+                          ))}
+                        </>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            )}
+
+            {/* GETTING THERE */}
+            <section id="getting-there" aria-labelledby="get-h">
+              <div className="det-yf__sechead">
+                <span className="kicker">Location</span>
+                <h2 id="get-h">Getting there</h2>
+              </div>
+              <div className="det-yf__addr">
+                {venue.address && (
+                  <div className="det-yf__addr-row">
+                    <span>📍</span>
+                    <span><b>Address</b><br/>{venue.address}</span>
+                  </div>
+                )}
+                {venue.working_hours && (
+                  <div className="det-yf__addr-row">
+                    <span>🕐</span>
+                    <span><b>Hours</b> {venue.working_hours}</span>
+                  </div>
+                )}
+                {venue.phone && (
+                  <div className="det-yf__addr-row">
+                    <span>📞</span>
+                    <span><a href={`tel:${venue.phone}`}>{venue.phone}</a></span>
+                  </div>
+                )}
+                {venue.maps_link && venue.maps_link !== 'Haritada Aç' && (
+                  <div className="det-yf__addr-actions">
+                    <a className="btn btn--primary btn--sm" href={venue.maps_link} target="_blank" rel="noopener">
+                      Get directions
+                    </a>
+                  </div>
+                )}
+              </div>
+            </section>
+
+          </div>
+
+          {/* STICKY ASIDE */}
+          <aside className="det-yf__aside" aria-labelledby="card-h">
+            <div className="det-yf__card">
+              <div className="det-yf__card-head">
+                <h2 id="card-h">{venue.name}</h2>
+                <div className="det-yf__card-meta">
+                  {venue.rating && <span className="rate">★ {venue.rating.toFixed(1)} <span className="count">· {venue.review_count?.toLocaleString()}</span></span>}
+                  <span className={`pill ${isOpen ? 'pill--success' : 'pill--danger'}`}>{isOpen ? 'Open now' : 'Closed'}</span>
+                </div>
+              </div>
+              {venue.price_range && (
+                <div className="det-yf__card-price">
+                  <b>{venue.price_range}</b>
+                </div>
+              )}
+              <div className="det-yf__card-list">
+                {venue.address && <div className="row"><span>📍</span><span>{venue.address}</span></div>}
+                {venue.working_hours && <div className="row"><span>🕐</span><span className={isOpen ? 'open' : ''}>{venue.working_hours}</span></div>}
+                {venue.phone && <div className="row"><span>📞</span><span><a href={`tel:${venue.phone}`}>{venue.phone}</a></span></div>}
+              </div>
+              <div className="det-yf__card-actions">
+                {venue.maps_link && venue.maps_link !== 'Haritada Aç' && (
+                  <a className="btn btn--primary" href={venue.maps_link} target="_blank" rel="noopener">Get directions</a>
+                )}
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        {/* RELATED VENUES */}
+        {relatedVenues.length > 0 && (
+          <section className="det-yf__wrap det-yf__more" style={{paddingBottom:'var(--s8)'}}>
+            <div className="det-yf__sechead">
+              <span className="kicker">Keep exploring</span>
+              <h2>More {venue.categories?.name_en}</h2>
+            </div>
+            <div className="carousel-wrap">
+              <div className="carousel">
+                {(relatedVenues as any[]).map(rv => (
+                  <Link key={rv.id} className="det-yf__morecard" href={`/venues/${rv.id}`}>
+                    <div className="det-yf__morecard__media">
+                      {rv.image_url
+                        ? <img src={rv.image_url} alt={rv.name} loading="lazy" width={560} height={420} style={{width:'100%',height:'100%',objectFit:'cover'}} />
+                        : <div style={{width:'100%',height:'100%',background:'var(--grad-brand)'}} />
+                      }
+                      <span className="det-yf__morecard__tag">{rv.categories?.name_en}</span>
+                    </div>
+                    <div className="det-yf__morecard__body">
+                      <h3>{rv.name}</h3>
+                      {rv.rating && <span className="rate">★ {Number(rv.rating).toFixed(1)} <span className="count">({rv.review_count?.toLocaleString()})</span></span>}
+                      {rv.address && <span className="det-yf__morecard__loc">📍 {rv.address.slice(0,30)}</span>}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+      </main>
+    </>
+  )
 }
 
 const venueCSS = `:root{
@@ -575,539 +797,3 @@ body.mm-open{overflow:hidden;touch-action:none}
   .mobile-cta b{font-size:13px}
   .mobile-cta .btn{padding:10px 16px;font-size:13px}
 }`
-const staticBottom = `<!-- DETAIL GRID -->
-  <div class="detail-grid">
-    <!-- MAIN -->
-    <div>
-      <div class="tabs">
-        <a href="#overview" class="active">Overview</a>
-        <a href="#menu">Menu &amp; prices</a>
-        <a href="#reviews">Reviews · 1,420</a>
-        <a href="#location">Location</a>
-        <a href="#faq">FAQ</a>
-        <a href="#nearby">Nearby</a>
-      </div>
-
-      <!-- VERDICT -->
-      <div class="verdict">
-        <h4><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 17.3-6.2 3.7 1.6-7L2 9.3l7.1-.6L12 2l2.9 6.7 7.1.6-5.4 4.7 1.6 7Z"/></svg> Editor's verdict</h4>
-        <p style="margin:0">A rare three-mood venue: morning espresso with sea breeze, all-afternoon WiFi work, and a sunset cocktail you'll remember. The bean-bag deck is the move. Don't expect destination food — come for the coffee, the view, and the patience to let an evening unfold.</p>
-        <div class="pros-cons">
-          <div class="good">
-            <h5>What works</h5>
-            <ul>
-              <li>Unobstructed sea-to-Pattaya-bay view from cliff edge</li>
-              <li>Specialty coffee genuinely well-pulled (own roast)</li>
-              <li>200Mb WiFi tested by us — fast enough for video calls</li>
-              <li>Dog-friendly with water bowls and shaded deck</li>
-              <li>Sunset cocktails priced fairly (฿280–฿420)</li>
-            </ul>
-          </div>
-          <div class="bad">
-            <h5>Skip if</h5>
-            <ul>
-              <li>You need lunch — food menu is small, not their strength</li>
-              <li>Sunset crowd 17:30–19:00 is intense, plan around it</li>
-              <li>WiFi gets congested when sunset crowd arrives</li>
-              <li>No table service for laptop seating — order at bar</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- OVERVIEW -->
-      <div class="dblock" id="overview">
-        <h2>About this place</h2>
-        <p>The Glass House sits on the western cliff of Pratumnak Hill — 110 m above the bay, with an unblocked view across to Koh Larn. It's been around since 2019, ran by Beam (the barista who roasts in-house) and her partner Tom. Daytime is a quiet coffee/work crowd. Around 17:00 the vibe shifts: bean bags fill, cocktails come out, and by 19:00 it's a sunset-bar that books out an hour ahead.</p>
-        <p>The food menu exists but isn't the reason to come — we'd say solid brunch and decent toasties, nothing more. The coffee is the real specialty: single-origin Doi Tung beans, roasted on-site, ground per order. The cold brew is a different conversation entirely.</p>
-
-        <div class="highlights">
-          <div class="hl"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 8h1a4 4 0 0 1 0 8h-1M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/></svg></div><b>In-house roastery</b><span>Doi Tung beans, daily</span></div>
-          <div class="hl"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0"/></svg></div><b>WiFi 200Mb tested</b><span>Speedtested by us</span></div>
-          <div class="hl"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg></div><b>Sunset 18:30</b><span>Golden hour starts 17:00</span></div>
-          <div class="hl"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 7v5l3 2"/></svg></div><b>Stay 2-3 hours</b><span>Avg. dwell time</span></div>
-        </div>
-      </div>
-
-      <!-- GOOD FOR -->
-      <div class="dblock">
-        <h2>Good for…</h2>
-        <p>Different times of day, different vibes. Pick yours.</p>
-        <div class="goodfor">
-          <div class="gf"><span class="e">💻</span><div><b>Remote work</b><span>09–16 · best window</span></div></div>
-          <div class="gf"><span class="e">📷</span><div><b>Solo travel</b><span>Easy bar seating</span></div></div>
-          <div class="gf"><span class="e">🥐</span><div><b>Brunch</b><span>10–13 · weekends</span></div></div>
-          <div class="gf"><span class="e">💑</span><div><b>Date night</b><span>17–19 · sunset</span></div></div>
-          <div class="gf"><span class="e">🐕</span><div><b>With your dog</b><span>Deck area · water bowls</span></div></div>
-          <div class="gf"><span class="e">📱</span><div><b>Sunset photos</b><span>Cliff deck · best 18:00</span></div></div>
-        </div>
-      </div>
-
-      <!-- MENU -->
-      <div class="dblock" id="menu">
-        <h2>Menu &amp; prices</h2>
-        <p>Verified May 28, 2026. Prices include service charge (no tip expected on top).</p>
-
-        <div class="menu-block">
-          <div class="menu-section">
-            <h4>Specialty coffee</h4>
-            <div class="menu-row">
-              <div><b>Single-origin filter (Doi Tung)</b><span class="desc">V60 or AeroPress · choice of bean</span><span class="tag">Editor's must-try</span></div>
-              <span class="price-tag">฿140</span>
-            </div>
-            <div class="menu-row">
-              <div><b>Cold brew · house</b><span class="desc">24h slow extract · served over rocks</span></div>
-              <span class="price-tag">฿160</span>
-            </div>
-            <div class="menu-row">
-              <div><b>Flat white</b><span class="desc">Double shot · oat or whole milk</span></div>
-              <span class="price-tag">฿110</span>
-            </div>
-            <div class="menu-row">
-              <div><b>Espresso · double</b><span class="desc">From the bar — sit at the counter</span></div>
-              <span class="price-tag">฿85</span>
-            </div>
-          </div>
-
-          <div class="menu-section">
-            <h4>Brunch (until 14:00)</h4>
-            <div class="menu-row">
-              <div><b>Sourdough avocado toast</b><span class="desc">Smashed avo · poached egg · chili oil · feta</span><span class="tag">Vegan opt.</span></div>
-              <span class="price-tag">฿280</span>
-            </div>
-            <div class="menu-row">
-              <div><b>Big breakfast plate</b><span class="desc">Two eggs · bacon · sausage · mushroom · sourdough</span></div>
-              <span class="price-tag">฿320</span>
-            </div>
-            <div class="menu-row">
-              <div><b>Açaí bowl · house granola</b><span class="desc">Banana · berries · coconut · honey</span></div>
-              <span class="price-tag">฿240</span>
-            </div>
-          </div>
-
-          <div class="menu-section">
-            <h4>Sunset cocktails (from 17:00)</h4>
-            <div class="menu-row">
-              <div><b>Bay Spritz</b><span class="desc">House gin · pomelo · prosecco · grapefruit</span><span class="tag">Editor's pick</span></div>
-              <span class="price-tag">฿320</span>
-            </div>
-            <div class="menu-row">
-              <div><b>Lemongrass Old Fashioned</b><span class="desc">Bourbon · lemongrass · palm sugar · bitters</span></div>
-              <span class="price-tag">฿420</span>
-            </div>
-            <div class="menu-row">
-              <div><b>Watermelon margarita</b><span class="desc">Tequila · fresh watermelon · lime · chili rim</span></div>
-              <span class="price-tag">฿340</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- HOURS -->
-      <div class="dblock">
-        <h2>Opening hours</h2>
-        <div class="hours-block">
-          <div class="hours-head">
-            <b>This week</b>
-            <span class="open"><i></i>Open now · closes at 23:00</span>
-          </div>
-          <div class="hours-list">
-            <div class="row today"><span>Monday — today</span><span>08:00 – 23:00</span></div>
-            <div class="row"><span>Tuesday</span><span>08:00 – 23:00</span></div>
-            <div class="row"><span>Wednesday</span><span>08:00 – 23:00</span></div>
-            <div class="row"><span>Thursday</span><span>08:00 – 23:00</span></div>
-            <div class="row"><span>Friday</span><span>08:00 – 24:00</span></div>
-            <div class="row"><span>Saturday</span><span>08:00 – 24:00</span></div>
-            <div class="row"><span>Sunday</span><span>08:00 – 23:00</span></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- FEATURES -->
-      <div class="dblock">
-        <h2>Amenities</h2>
-        <div class="feat-grid">
-          <div class="row"><span class="ck"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg></span> Free WiFi (200Mb tested)</div>
-          <div class="row"><span class="ck"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg></span> Power outlets at every laptop seat</div>
-          <div class="row"><span class="ck"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg></span> Dog-friendly (water bowls)</div>
-          <div class="row"><span class="ck"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg></span> Card / QR / cash all accepted</div>
-          <div class="row"><span class="ck"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg></span> Free on-site parking</div>
-          <div class="row"><span class="ck"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg></span> Vegan options · oat milk standard</div>
-          <div class="row"><span class="ck"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 6"/></svg></span> Restrooms (gender-neutral, clean)</div>
-          <div class="row no"><span class="ck"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 18 18 6M6 6l12 12"/></svg></span> Children's menu (limited)</div>
-          <div class="row no"><span class="ck"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 18 18 6M6 6l12 12"/></svg></span> Reservations at sunset hours</div>
-          <div class="row no"><span class="ck"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 18 18 6M6 6l12 12"/></svg></span> Wheelchair access (steep stairs)</div>
-        </div>
-      </div>
-
-      <!-- REVIEWS -->
-      <div class="dblock" id="reviews">
-        <h2>Reviews · 1,420 verified</h2>
-
-        <div class="rev-summary">
-          <div class="rev-score-big">
-            <div class="n">4.8</div>
-            <div class="stars">★★★★★</div>
-            <span>Based on 1,420 reviews</span>
-          </div>
-          <div class="rev-breakdown">
-            <div class="rb-row"><span class="lbl">View</span><div class="track"><div class="fill" style="width:98%"></div></div><span class="val">4.9</span></div>
-            <div class="rb-row"><span class="lbl">Coffee</span><div class="track"><div class="fill" style="width:96%"></div></div><span class="val">4.8</span></div>
-            <div class="rb-row"><span class="lbl">Vibe</span><div class="track"><div class="fill" style="width:94%"></div></div><span class="val">4.8</span></div>
-            <div class="rb-row"><span class="lbl">Service</span><div class="track"><div class="fill" style="width:88%"></div></div><span class="val">4.5</span></div>
-            <div class="rb-row"><span class="lbl">Food</span><div class="track"><div class="fill" style="width:78%"></div></div><span class="val">4.0</span></div>
-            <div class="rb-row"><span class="lbl">Value</span><div class="track"><div class="fill" style="width:84%"></div></div><span class="val">4.3</span></div>
-          </div>
-        </div>
-
-        <div class="review">
-          <div class="review-head">
-            <div class="av">AS</div>
-            <div>
-              <b>Anya S.</b>
-              <span>Berlin · Visited May 20, 2026</span>
-            </div>
-            <div class="stars">★★★★★</div>
-          </div>
-          <span class="verified"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M9 12l2 2 4-4"/></svg> Verified visit</span>
-          <p>"Came for an hour of work, stayed for sunset. WiFi held up for a Zoom call (which I did not expect). Bean bag deck was the right call — paid ฿140 for the V60 and ฿320 for the Bay Spritz later. The transition from café to bar at 17:00 is so smooth you don't notice until they hand you a cocktail menu."</p>
-          <div class="tags-row"><i>Solo work</i><i>Sunset</i><i>Specialty coffee</i></div>
-        </div>
-
-        <div class="review">
-          <div class="review-head">
-            <div class="av">DC</div>
-            <div>
-              <b>David C.</b>
-              <span>Singapore · Visited May 14, 2026</span>
-            </div>
-            <div class="stars">★★★★☆</div>
-          </div>
-          <span class="verified"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M9 12l2 2 4-4"/></svg> Verified visit</span>
-          <p>"Honest review: coffee is great, view is great, food is fine. Tried the big breakfast — it's a hotel breakfast at café prices, not bad just not the move. Stick to coffee + a pastry, save the appetite for dinner elsewhere. Get here by 17:30 if you want a sunset seat without queuing."</p>
-          <div class="tags-row"><i>Sunset</i><i>Coffee</i><i>With partner</i></div>
-        </div>
-
-        <div class="review">
-          <div class="review-head">
-            <div class="av">MJ</div>
-            <div>
-              <b>Mei-Lin J.</b>
-              <span>Taipei · Visited May 8, 2026</span>
-            </div>
-            <div class="stars">★★★★★</div>
-          </div>
-          <span class="verified"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M9 12l2 2 4-4"/></svg> Verified visit</span>
-          <p>"Brought my golden retriever — they brought him a water bowl and an ice cube before I could ask. Beam (the owner) actually came over to introduce herself. The cold brew is the move on a hot day. Will come back next trip."</p>
-          <div class="tags-row"><i>Dog-friendly</i><i>Cold brew</i><i>Service</i></div>
-        </div>
-
-        <a href="#" class="btn btn-secondary" style="display:flex;justify-content:center;margin-top:var(--s5)">Show all 1,420 reviews →</a>
-      </div>
-
-      <!-- LOCATION -->
-      <div class="dblock" id="location">
-        <h2>Location &amp; how to get there</h2>
-        <p>The Glass House sits at the western edge of Pratumnak Hill, on the cliff above Cosy Beach. From Central Pattaya, expect ฿80–฿120 by Grab (10 min). Free parking on-site — 14 spots, fills up at sunset. By Bolt motorbike it's a 6-minute zip from Walking Street.</p>
-
-        <div class="mini-map">
-          <div class="here">
-            <span class="lbl">The Glass House</span>
-            <div class="pin"></div>
-          </div>
-          <div class="more-pin more-pin-1"></div>
-          <div class="more-pin more-pin-2"></div>
-          <div class="more-pin more-pin-3"></div>
-          <div class="more-pin more-pin-4"></div>
-          <div class="map-foot">
-            <div>
-              <b>418/8 Pratumnak Soi 5, Pattaya</b>
-              <span>10 min from Central Pattaya · 12 min from Jomtien</span>
-            </div>
-            <a href="#" class="btn btn-primary btn-sm">Open in map →</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- FAQ -->
-      <div class="dblock" id="faq">
-        <h2>Frequently asked</h2>
-
-        <div class="faq-item open">
-          <div class="faq-q">Do I need a reservation? <span class="ico">+</span></div>
-          <div class="faq-a"><div class="faq-a-inner">Daytime (08:00–16:00): no need. Sunset window (17:00–19:00) on Friday/Saturday/Sunday: yes, book a day ahead. Use the reservation widget on the right — it's free.</div></div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">Is the WiFi actually fast? <span class="ico">+</span></div>
-          <div class="faq-a"><div class="faq-a-inner">We speed-tested it three times across different times: ~200 Mbps down / 180 Mbps up at 11:00, ~120 Mbps at 17:30 (peak). Solid for video calls, Figma, Adobe sync. Bring an Ethernet adapter if you need rock-stable; one outlet near the bar has hardwired access on request.</div></div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">Best seat for sunset photos? <span class="ico">+</span></div>
-          <div class="faq-a"><div class="faq-a-inner">The cliff-edge bean bags facing west. Arrive by 17:00 to claim one. The bar counter has a slightly elevated view if all bean bags are taken — same sunset, less Instagram.</div></div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">Is it okay to stay for hours with one coffee? <span class="ico">+</span></div>
-          <div class="faq-a"><div class="faq-a-inner">During work hours (09–16) yes — they're explicit about being remote-work friendly. Sunset/evening hours: minimum one drink per hour as a courtesy; staff will mention if it's busy.</div></div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">Is it kid-friendly? <span class="ico">+</span></div>
-          <div class="faq-a"><div class="faq-a-inner">Daytime yes — they have an açaí bowl kids love and the deck is open. After 19:00 it's a bar atmosphere — adults preferred. No kids menu specifically.</div></div>
-        </div>
-      </div>
-
-      <!-- NEARBY -->
-      <div class="dblock" id="nearby">
-        <h2>Other places nearby</h2>
-        <p>If you have a half-day on Pratumnak, here's what to pair with The Glass House.</p>
-
-        <div class="nearby-grid">
-          <a href="#" class="near-card">
-            <div class="ph" style="background-image:url('/pattaya-fotograflar/imgi_124_40360161c5206c760df9b228482dfa480c658edaad32f4f1745231de3afe9358.jpg');background-position:left">
-              <span class="pill pill-white">Rooftop bar</span>
-              <span class="dist">900 m</span>
-            </div>
-            <div class="pb">
-              <h4>The Sky Gallery</h4>
-              <div class="meta"><span class="star">★</span> 4.7 · ฿฿฿</div>
-            </div>
-          </a>
-          <a href="#" class="near-card">
-            <div class="ph" style="background-image:url('/pattaya-fotograflar/imgi_127_ryutaro-uozumi-lsdURl-_ktc-unsplash-HEADER.jpg')">
-              <span class="pill pill-white">Beach</span>
-              <span class="dist">1.4 km</span>
-            </div>
-            <div class="pb">
-              <h4>Cosy Beach</h4>
-              <div class="meta"><span class="star">★</span> 4.6 · Free</div>
-            </div>
-          </a>
-          <a href="#" class="near-card">
-            <div class="ph" style="background-image:url('/pattaya-fotograflar/imgi_129_iStock-1312283557-HEADER-DESKTOP.jpg');background-position:right">
-              <span class="pill pill-white">Vegan</span>
-              <span class="dist">2.1 km</span>
-            </div>
-            <div class="pb">
-              <h4>Tamarind Vegan</h4>
-              <div class="meta"><span class="star">★</span> 4.8 · ฿฿</div>
-            </div>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- SIDEBAR -->
-    <aside>
-      <div class="sticky-side">
-        <div class="book-card">
-          <div class="book-head">
-            <div class="price-block">
-              <span class="from">Price range</span>
-              <span class="band">฿฿<span class="dim">฿฿</span></span>
-              <span>Avg. ฿180/coffee · ฿380/cocktail</span>
-            </div>
-            <div class="rt">
-              <span class="stars">★★★★★</span>
-              <b>4.8 · 1,420</b>
-              <span>verified reviews</span>
-            </div>
-          </div>
-
-          <div class="book-field">
-            <label>Date</label>
-            <div class="ctrl">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-              <input type="text" value="May 30, 2026">
-            </div>
-          </div>
-
-          <div class="book-field">
-            <label>Time</label>
-            <div class="ctrl">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 7v5l3 2"/></svg>
-              <select>
-                <option>17:00 — sunset (recommended)</option>
-                <option>17:30 — sunset</option>
-                <option>18:00 — sunset</option>
-                <option>19:00 — after sunset</option>
-                <option>20:00 — evening</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="book-field">
-            <label>Party size</label>
-            <div class="ctrl">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-              <select><option>2 guests</option><option>1 guest</option><option>3 guests</option><option>4 guests</option><option>5+ guests (deck section)</option></select>
-            </div>
-          </div>
-
-          <a href="#" class="btn btn-primary btn-block btn-lg" style="margin-top:var(--s4)">Reserve table — free <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-
-          <div class="action-row">
-            <a href="#" class="alt-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92Z"/></svg> Call · +66 38 234 567</a>
-            <a href="#" class="alt-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M14 5l7 7-7 7"/></svg> Get directions</a>
-          </div>
-
-          <div class="book-trust">
-            <div class="row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg> Free reservation · no card needed</div>
-            <div class="row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg> Hold table 15 min after time</div>
-            <div class="row"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg> Cancel anytime · no penalty</div>
-          </div>
-        </div>
-
-        <div class="contact-card">
-          <h4>Quick info</h4>
-          <div class="contact-row">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
-            <div><b>418/8 Pratumnak Soi 5, Pattaya</b><span>Pratumnak Hill, cliff side</span></div>
-          </div>
-          <div class="contact-row">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92Z"/></svg>
-            <div><b>+66 38 234 567</b><span>WhatsApp · Line: glasshouse_pty</span></div>
-          </div>
-          <div class="contact-row">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg>
-            <div><b>@glasshouse.pattaya</b><span>Instagram · 28K followers</span></div>
-          </div>
-          <div class="contact-row">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 7v5l3 2"/></svg>
-            <div><b>Open until 23:00 today</b><span style="color:var(--success);font-weight:600">Closes in 8h 28min</span></div>
-          </div>
-        </div>
-      </div>
-    </aside>
-  </div>
-</div>
-
-<!-- MOBILE STICKY CTA -->
-<div class="mobile-cta">
-  <div>
-    <b>The Glass House</b>
-    <span>★ 4.8 · Open till 23:00</span>
-  </div>
-  <a href="#" class="btn btn-primary">Reserve →</a>
-</div>`
-
-const StarIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{color:'var(--sun)'}}>
-    <path d="m12 17.3-6.2 3.7 1.6-7L2 9.3l7.1-.6L12 2l2.9 6.7 7.1.6-5.4 4.7 1.6 7Z"/>
-  </svg>
-)
-
-export default async function VenuePage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
-  const [venue, images] = await Promise.all([getVenue(id), getVenueImages(id)])
-  if (!venue) notFound()
-
-  const allImages = [
-    ...(venue.image_url ? [venue.image_url] : []),
-    ...images.map(i => i.image_url)
-  ].slice(0, 5)
-
-  const isOpen = venue.status === 'Açık'
-
-  return (
-    <>
-      <style dangerouslySetInnerHTML={{__html: venueCSS}} />
-
-      <div className="crumb">
-        <div className="container crumb-inner">
-          <Link href="/">Home</Link>
-          <span className="sep">/</span>
-          <Link href={`/${venue.categories?.slug}`}>{venue.categories?.name_en}</Link>
-          <span className="sep">/</span>
-          <span className="now">{venue.name}</span>
-        </div>
-      </div>
-
-      <div className="container">
-        <div className="gallery">
-          {allImages.length > 0 ? (
-            <>
-              <div className="gi gi-main" style={{backgroundImage:`url(${allImages[0]})`,backgroundSize:'cover',backgroundPosition:'center'}}></div>
-              {allImages.slice(1,4).map((img, i) => (
-                <div key={i} className="gi" style={{backgroundImage:`url(${img})`,backgroundSize:'cover',backgroundPosition:'center'}}></div>
-              ))}
-              {allImages[4] && (
-                <div className="gi" style={{backgroundImage:`url(${allImages[4]})`,backgroundSize:'cover',backgroundPosition:'center',position:'relative'}}>
-                  <span className="more">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-                    All photos
-                  </span>
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="gi gi-main" style={{background:'var(--grad-brand)'}}></div>
-          )}
-        </div>
-
-        <div className="vhead">
-          <div className="vhead-l" style={{flex:1,minWidth:280}}>
-            <div className="tags">
-              <span className="pill pill-blue">{venue.venue_type || venue.categories?.name_en}</span>
-              {isOpen ? (
-                <span className="pill pill-success">Open now</span>
-              ) : (
-                <span className="pill pill-danger">Closed</span>
-              )}
-              {venue.categories?.name_en && <><span>·</span><Link href={`/${venue.categories.slug}`}>{venue.categories.name_en}</Link></>}
-            </div>
-            <h1>{venue.name}</h1>
-            <div className="loc">
-              {venue.address && (
-                <span>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
-                  {' '}<b>{venue.address}</b>
-                </span>
-              )}
-              {venue.working_hours && (<><i></i><span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                {' '}{venue.working_hours}
-              </span></>)}
-              {venue.price_range && (<><i></i><span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                {' '}{venue.price_range}
-              </span></>)}
-            </div>
-          </div>
-          <div className="vhead-r">
-            <button className="icbtn" title="Save">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2Z"/></svg>
-            </button>
-            <button className="icbtn" title="Share">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-            </button>
-          </div>
-        </div>
-
-        <div className="rating-row">
-          <div className="score">
-            <span className="big">{venue.rating?.toFixed(1)}</span>
-            <div>
-              <div className="stars">{[1,2,3,4,5].map(i => <StarIcon key={i}/>)}</div>
-              <span><b>{venue.review_count?.toLocaleString()}</b> verified reviews</span>
-            </div>
-          </div>
-          <div className="quick">
-            <span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
-              Verified listing
-            </span>
-            <span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
-              Re-checked weekly
-            </span>
-            <span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
-              {venue.review_count?.toLocaleString()} reviews
-            </span>
-          </div>
-        </div>
-
-        <div dangerouslySetInnerHTML={{__html: staticBottom}} />
-      </div>
-    </>
-  )
-}
