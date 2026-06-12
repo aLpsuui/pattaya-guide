@@ -4,6 +4,7 @@ import BlogScript from '@/app/components/BlogScript'
 export const metadata = {
   title: 'Wellness & Beauty in Pattaya — Spas, Massage, Onsen & Beauty | Go To Pattaya',
   description: "Reset, recharge, repeat. Discover Pattaya's best spas, Thai massage, onsen baths, beauty salons, facials and wellness retreats — calmly curated and locally verified.",
+  alternates: { canonical: '/wellness-and-beauty' },
 }
 
 const HTML = String.raw`

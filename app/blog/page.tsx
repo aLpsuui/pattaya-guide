@@ -48,6 +48,7 @@ async function getBlogPosts(): Promise<BlogPost[]> {
 export const metadata = {
   title: 'Pattaya Blog — Honest Guides, Tips & Local Stories | Go To Pattaya',
   description: 'In-depth Pattaya guides written by locals: the best restaurants, things to do, wellness, nightlife, districts and practical travel tips.',
+  alternates: { canonical: '/blog' },
 }
 
 export default async function BlogPage() {

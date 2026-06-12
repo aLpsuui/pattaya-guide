@@ -4,6 +4,7 @@ import BlogScript from '@/app/components/BlogScript'
 export const metadata = {
   title: 'Areas of Pattaya — Find Your Neighborhood | Go To Pattaya',
   description: "An orientation guide to Pattaya's neighborhoods — Central, Jomtien, Naklua, Pratumnak Hill, Wong Amat and Walking Street. Compare vibes, beaches and nightlife to decide where to base yourself.",
+  alternates: { canonical: '/areas' },
 }
 
 const HTML = String.raw`

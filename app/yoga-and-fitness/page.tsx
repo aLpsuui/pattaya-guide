@@ -4,6 +4,7 @@ import BlogScript from '@/app/components/BlogScript'
 export const metadata = {
   title: 'Yoga & Fitness in Pattaya — Yoga Studios, Gyms & Muay Thai Camps | Go To Pattaya',
   description: 'Move your way in Pattaya. Browse yoga & pilates studios, fitness gyms and Muay Thai camps across three discipline lanes — Flow, Lift, Fight. Drop-ins welcome, locally verified.',
+  alternates: { canonical: '/yoga-and-fitness' },
 }
 
 const HTML = String.raw`

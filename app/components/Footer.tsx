@@ -59,9 +59,9 @@ const cols = [
       { label: 'About us', href: '/about' },
       { label: 'Editorial standards', href: '#' },
       { label: 'Our editorial team', href: '#' },
-      { label: 'Submit a venue', href: '#' },
-      { label: 'List your business', href: '#' },
-      { label: 'Contact us', href: '#' },
+      { label: 'Submit a venue', href: '/contact' },
+      { label: 'List your business', href: '/contact' },
+      { label: 'Contact us', href: '/contact' },
     ],
   },
 ]
@@ -128,10 +128,10 @@ export default function Footer() {
             <a href="#">ไทย</a>
           </div>
           <div className="legal">
-            <a href="#">Privacy</a>
-            <a href="#">Terms</a>
-            <a href="#">Cookies</a>
-            <a href="#">Sitemap</a>
+            <Link href="/privacy">Privacy</Link>
+            <Link href="/terms">Terms</Link>
+            <Link href="/privacy">Cookies</Link>
+            <a href="/sitemap.xml">Sitemap</a>
           </div>
         </div>
       </div>

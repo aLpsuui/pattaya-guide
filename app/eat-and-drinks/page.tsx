@@ -49,6 +49,7 @@ export const metadata = {
   title: 'Eat & Drinks in Pattaya — Where Pattaya Actually Eats | Go To Pattaya',
   description:
     'An honest, editor-curated guide to the best restaurants, cafés and rooftop bars in Pattaya. No pay-to-play. Filter by category and find where to eat.',
+  alternates: { canonical: '/eat-and-drinks' },
 }
 
 export default async function EatDrinksPage() {
