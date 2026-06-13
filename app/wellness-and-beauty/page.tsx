@@ -270,7 +270,7 @@ const HTML = String.raw`
                   <span class="nb"><svg class="pg-icon is-16 is-muted" aria-hidden="true"><use href="#pg-pin"></use></svg> North Pattaya</span>
                   <span class="price">from <b>฿700</b></span>
                 </div>
-                <a class="view" href="#">View details <svg class="pg-icon is-16" aria-hidden="true"><use href="#pg-chevron-right"></use></svg></a>
+                <a class="view" href="/wellness-and-beauty/siladon-spa-pattaya">View details <svg class="pg-icon is-16" aria-hidden="true"><use href="#pg-chevron-right"></use></svg></a>
               </div>
             </div>
           </article>

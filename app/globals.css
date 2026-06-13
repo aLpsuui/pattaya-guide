@@ -1094,6 +1094,8 @@ body.no-scroll{overflow:hidden;touch-action:none}
 .blog-page .toc-rail{top:138px}
 .blog-page .art-body h2{scroll-margin-top:138px}
 .blog-page .rest{scroll-margin-top:138px}
+/* body paragraphs 18px -> 16px (overrides the DB-stored .art-body size) */
+.blog-page .art-body>p{font-size:16px}
 @media(max-width:980px){
   .blog-page .mtoc{top:74px}
 }
