@@ -11,6 +11,7 @@ export const revalidate = 60
 
 interface Venue {
   id: string
+  slug: string
   name: string
   rating: number | null
   review_count: number | null
@@ -36,7 +37,7 @@ interface BlogPost {
 async function getTopVenues(): Promise<Venue[]> {
   const { data } = await supabase
     .from('venues')
-    .select('id, name, rating, review_count, venue_type, price_range, address, image_url, categories(name_en, slug)')
+    .select('id, slug, name, rating, review_count, venue_type, price_range, address, image_url, categories(name_en, slug)')
     .eq('is_active', true)
     .not('rating', 'is', null)
     .order('rating', { ascending: false })
@@ -48,7 +49,7 @@ async function getTopVenues(): Promise<Venue[]> {
 async function getAdventureVenues(): Promise<Venue[]> {
   const { data } = await supabase
     .from('venues')
-    .select('id, name, rating, review_count, venue_type, price_range, address, image_url, categories!inner(name_en, slug)')
+    .select('id, slug, name, rating, review_count, venue_type, price_range, address, image_url, categories!inner(name_en, slug)')
     .eq('is_active', true)
     .not('rating', 'is', null)
     .or('slug.eq.skydiving,slug.eq.tours,slug.eq.thinks-to-do', { referencedTable: 'categories' })
@@ -109,7 +110,7 @@ const SaveIcon = ({ stroke = '#054C86' }: { stroke?: string }) => (
 
 function VenueCard({ v, dark = false }: { v: Venue; dark?: boolean }) {
   return (
-    <Link href={`/venues/${v.id}`} className="place">
+    <Link href={`/venues/${v.slug}`} className="place">
       <div className="ph" style={{ backgroundImage: v.image_url ? `url(${v.image_url})` : 'var(--grad-brand)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <span className="tagpill">{v.categories?.name_en || v.venue_type}</span>
         <button className="save" aria-label="Save"><SaveIcon stroke={dark ? '#fff' : '#054C86'} /></button>
