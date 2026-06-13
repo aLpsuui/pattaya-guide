@@ -13,6 +13,10 @@ interface BlogPost {
   published_at: string
 }
 
+// Re-generate this page from the database at most once every 60s (ISR),
+// so newly published blog posts appear without a full rebuild.
+export const revalidate = 60
+
 function getInitials(name: string) {
   return name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'PG'
 }

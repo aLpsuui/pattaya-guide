@@ -5,6 +5,10 @@ import CarButton from '@/app/components/CarButton'
 
 const ASSETS = 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets'
 
+// Re-generate this page from the database at most once every 60s (ISR),
+// so newly published venues/blog posts appear without a full rebuild.
+export const revalidate = 60
+
 interface Venue {
   id: string
   name: string
