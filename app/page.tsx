@@ -137,8 +137,10 @@ export default async function Home() {
     <>
       {/* HERO */}
       <section className="hero">
-        <div className="hero-bg"></div>
-        <div className="hero-overlay"></div>
+        <div className="hero-media">
+          <div className="hero-bg"></div>
+          <div className="hero-overlay"></div>
+        </div>
         <div className="container hero-inner">
           <h1>Your complete guide<br />to <span>Pattaya.</span></h1>
           <p className="intro">Restaurants, beaches, attractions, day trips, wellness, sports — 600+ places and 50+ in-depth guides. Plan your trip in 5 minutes.</p>

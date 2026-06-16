@@ -171,7 +171,8 @@ h4{font-weight:700;font-size:17px;line-height:1.3}
 @media(max-width:1020px){.nav-links{display:none}.burger{display:inline-flex}}
 
 /* ============ HERO ============ */
-.hero{position:relative;min-height:680px;overflow:hidden;color:#fff;display:flex;align-items:center}
+.hero{position:relative;min-height:680px;overflow:visible;color:#fff;display:flex;align-items:center}
+.hero-media{position:absolute;inset:0;overflow:hidden;z-index:0}
 .hero-bg{position:absolute;inset:0;background:url("https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/pattaya-city-beach-1.jpg") center/cover no-repeat;animation:kenburns 28s ease-in-out infinite alternate}
 @keyframes kenburns{0%{transform:scale(1.04) translateX(-10px)}100%{transform:scale(1.12) translateX(10px)}}
 .hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(2,46,92,.32) 0%,rgba(2,46,92,.15) 35%,rgba(2,46,92,.58) 75%,rgba(2,46,92,.9) 100%)}
@@ -199,6 +200,7 @@ h4{font-weight:700;font-size:17px;line-height:1.3}
 .hs-label .hsdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .hs-cat{color:#0a6fc2}.hs-cat .hsdot{background:#0a6fc2}
 .hs-sub{color:#0f97b5}.hs-sub .hsdot{background:#2fbddc}
+.hs-area{color:#c9791a}.hs-area .hsdot{background:#e0911a}
 .hs-ven{color:#159a66}.hs-ven .hsdot{background:#16a06a}
 .hs-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 18px;font-size:15px;color:#23394f;text-decoration:none;cursor:pointer}
 .hs-item:hover,.hs-item.is-active{background:#f1f7fc}

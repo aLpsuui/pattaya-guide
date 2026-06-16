@@ -12,7 +12,14 @@ interface Cat { name: string; slug: string }
 interface Ven { slug: string; name: string; type: string | null; catSlug: string | null }
 interface Sub { label: string; catSlug: string; catName: string }
 
-type Result = { kind: 'cat' | 'sub' | 'ven'; name: string; meta: string; href: string }
+type Result = { kind: 'cat' | 'sub' | 'area' | 'ven'; name: string; meta: string; href: string }
+
+// Curated Pattaya areas/districts — all link to the Areas page.
+const AREAS = [
+  'Central Pattaya', 'Jomtien', 'Naklua', 'Pratumnak Hill', 'Wongamat',
+  'Walking Street', 'Soi Buakhao', 'Thappraya', 'Phra Tamnak',
+  'North Pattaya', 'South Pattaya', 'Koh Larn',
+]
 
 function highlight(text: string, term: string) {
   if (!term) return text
@@ -72,10 +79,11 @@ export default function HeroSearch() {
 
   const term = q.trim().toLowerCase()
   const groups = useMemo(() => {
-    if (!term) return { cat: [] as Cat[], sub: [] as Sub[], ven: [] as Ven[] }
+    if (!term) return { cat: [] as Cat[], sub: [] as Sub[], area: [] as string[], ven: [] as Ven[] }
     return {
       cat: cats.filter(c => c.name.toLowerCase().includes(term)).slice(0, 5),
       sub: subs.filter(s => s.label.toLowerCase().includes(term)).slice(0, 5),
+      area: AREAS.filter(a => a.toLowerCase().includes(term)).slice(0, 5),
       ven: vens.filter(v => v.name.toLowerCase().includes(term)).slice(0, 8),
     }
   }, [term, cats, subs, vens])
@@ -84,6 +92,7 @@ export default function HeroSearch() {
   const flat = useMemo<Result[]>(() => [
     ...groups.cat.map(c => ({ kind: 'cat' as const, name: c.name, meta: 'Category', href: `/${c.slug}` })),
     ...groups.sub.map(s => ({ kind: 'sub' as const, name: s.label, meta: s.catName, href: `/${s.catSlug}` })),
+    ...groups.area.map(a => ({ kind: 'area' as const, name: a, meta: 'Area', href: '/areas' })),
     ...groups.ven.map(v => ({ kind: 'ven' as const, name: v.name, meta: v.type ?? 'Place', href: `/venues/${v.slug}` })),
   ], [groups])
 
@@ -147,6 +156,12 @@ export default function HeroSearch() {
             <div className="hs-group">
               <div className="hs-label hs-sub"><span className="hsdot" /> Sub-categories</div>
               {groups.sub.map(s => <Item key={'s' + s.label} r={{ kind: 'sub', name: s.label, meta: s.catName, href: `/${s.catSlug}` }} />)}
+            </div>
+          )}
+          {groups.area.length > 0 && (
+            <div className="hs-group">
+              <div className="hs-label hs-area"><span className="hsdot" /> Areas</div>
+              {groups.area.map(a => <Item key={'a' + a} r={{ kind: 'area', name: a, meta: 'Area', href: '/areas' }} />)}
             </div>
           )}
           {groups.ven.length > 0 && (
