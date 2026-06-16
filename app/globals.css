@@ -190,6 +190,25 @@ h4{font-weight:700;font-size:17px;line-height:1.3}
 .hero-search .go{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:0 22px;height:52px;border-radius:var(--r-pill);background:var(--grad-cta);box-shadow:var(--sh-cta);color:#fff;font-family:var(--display);font-weight:600;font-size:15px;flex-shrink:0;transition:.2s;min-width:52px}
 .hero-search .go:hover{transform:translateY(-2px)}
 
+/* instant ("synthetic") search dropdown */
+.hero-search-wrap{position:relative;max-width:680px;margin-top:var(--s6)}
+.hero-search-wrap .hero-search{margin-top:0;max-width:none;width:100%}
+.hs-panel{position:absolute;top:calc(100% + 10px);left:0;right:0;background:#fff;border:1px solid #e6edf4;border-radius:16px;box-shadow:0 20px 44px rgba(3,68,135,.20);overflow:hidden auto;z-index:60;max-height:64vh;text-align:left}
+.hs-group+.hs-group{border-top:1px solid #eef3f8}
+.hs-label{display:flex;align-items:center;gap:8px;padding:11px 18px 5px;font-family:var(--display);font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase}
+.hs-label .hsdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.hs-cat{color:#0a6fc2}.hs-cat .hsdot{background:#0a6fc2}
+.hs-sub{color:#0f97b5}.hs-sub .hsdot{background:#2fbddc}
+.hs-ven{color:#159a66}.hs-ven .hsdot{background:#16a06a}
+.hs-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 18px;font-size:15px;color:#23394f;text-decoration:none;cursor:pointer}
+.hs-item:hover,.hs-item.is-active{background:#f1f7fc}
+.hs-item .hs-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hs-item .hs-name b{color:var(--ocean);font-weight:700}
+.hs-item .hs-meta{font-size:12px;color:#9fb0c0;flex-shrink:0;white-space:nowrap}
+.hs-empty{padding:20px 18px;color:#9fb0c0;font-size:14px;text-align:center}
+.hs-foot{display:flex;justify-content:space-between;padding:9px 18px;border-top:1px solid #eef3f8;font-size:12px;color:#9fb0c0}
+@media(max-width:640px){.hero-search-wrap{margin-top:var(--s5);margin-left:auto;margin-right:auto}}
+
 .hero-tags{display:flex;gap:8px;margin-top:var(--s5);flex-wrap:wrap;align-items:center}
 .qtag{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.24);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:var(--r-pill);font-size:13px;font-weight:600;color:#fff;transition:.18s;cursor:pointer;min-height:38px;text-decoration:none}
 .qtag:hover{background:rgba(255,255,255,.24);transform:translateY(-1px)}

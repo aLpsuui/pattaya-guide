@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import Icon from '@/app/components/Icon'
 import CarButton from '@/app/components/CarButton'
+import HeroSearch from '@/app/components/HeroSearch'
 
 const ASSETS = 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets'
 
@@ -142,16 +143,7 @@ export default async function Home() {
           <h1>Your complete guide<br />to <span>Pattaya.</span></h1>
           <p className="intro">Restaurants, beaches, attractions, day trips, wellness, sports — 600+ places and 50+ in-depth guides. Plan your trip in 5 minutes.</p>
 
-          <form className="hero-search" role="search">
-            <label className="hsr" htmlFor="heroInput">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
-              <input id="heroInput" type="search" placeholder="Search places, areas, or guides..." autoComplete="off" />
-            </label>
-            <button type="submit" className="go" aria-label="Search">
-              <span>Search</span>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
-            </button>
-          </form>
+          <HeroSearch />
 
           <div className="hero-tags" role="list">
             <a href="#cats" className="qtag" role="listitem"><Icon name="eat" size={14} /> Eat</a>
