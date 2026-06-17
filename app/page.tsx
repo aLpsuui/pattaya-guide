@@ -18,6 +18,7 @@ interface Venue {
   review_count: number | null
   venue_type: string | null
   price_range: string | null
+  price_from: number | null
   address: string | null
   image_url: string | null
   categories: { name_en: string; slug: string }
@@ -38,7 +39,7 @@ interface BlogPost {
 async function getTopVenues(): Promise<Venue[]> {
   const { data } = await supabase
     .from('venues')
-    .select('id, slug, name, rating, review_count, venue_type, price_range, address, image_url, categories(name_en, slug)')
+    .select('id, slug, name, rating, review_count, venue_type, price_range, price_from, address, image_url, categories(name_en, slug)')
     .eq('is_active', true)
     .not('rating', 'is', null)
     .order('rating', { ascending: false })
@@ -50,7 +51,7 @@ async function getTopVenues(): Promise<Venue[]> {
 async function getAdventureVenues(): Promise<Venue[]> {
   const { data } = await supabase
     .from('venues')
-    .select('id, slug, name, rating, review_count, venue_type, price_range, address, image_url, categories!inner(name_en, slug)')
+    .select('id, slug, name, rating, review_count, venue_type, price_range, price_from, address, image_url, categories!inner(name_en, slug)')
     .eq('is_active', true)
     .not('rating', 'is', null)
     .or('slug.eq.skydiving,slug.eq.tours,slug.eq.thinks-to-do', { referencedTable: 'categories' })
@@ -121,7 +122,7 @@ function VenueCard({ v, dark = false }: { v: Venue; dark?: boolean }) {
         <div className="meta"><span>{v.venue_type}</span>{v.address && <span>· {v.address.slice(0, 25)}</span>}</div>
         <div className="rate">
           <div className="left"><span className="star">★</span> {v.rating?.toFixed(1)} <span className="count">({v.review_count?.toLocaleString()})</span></div>
-          <span className="price">{v.price_range || '—'}</span>
+          <span className="price">{v.price_from != null ? `from ฿${v.price_from.toLocaleString()}` : (v.price_range || '—')}</span>
         </div>
       </div>
     </Link>
@@ -257,7 +258,7 @@ export default async function Home() {
               <h2>Pick your district</h2>
               <p>Pattaya is five very different cities in one. Each district has its own pace, prices and personality — pick yours before you book.</p>
             </div>
-            <a href="#map" className="viewall">Open the map <Arrow /></a>
+            <Link href="/map" className="viewall">Open the map <Arrow /></Link>
           </div>
           <div className="dist-grid">
             {districts.map(d => (
@@ -297,7 +298,7 @@ export default async function Home() {
                   <b>600+ places on the map</b>
                   <span style={{ display: 'block' }}>filter by category, district or rating</span>
                 </div>
-                <a href="#" className="btn btn-primary btn-sm">Open full map <Arrow /></a>
+                <Link href="/map" className="btn btn-primary btn-sm">Open full map <Arrow /></Link>
               </div>
             </div>
             <div className="map-side">
@@ -312,7 +313,7 @@ export default async function Home() {
                   </a>
                 ))}
               </div>
-              <a href="#" className="viewall" style={{ marginTop: 'auto' }}>See all 600 places <Arrow /></a>
+              <Link href="/map" className="viewall" style={{ marginTop: 'auto' }}>See all on the map <Arrow /></Link>
             </div>
           </div>
         </div>

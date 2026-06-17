@@ -5,6 +5,9 @@ import Link from 'next/link'
 import BlogScript from '@/app/components/BlogScript'
 import { SITE_URL } from '@/lib/site'
 import VenueIcons from './VenueIcons'
+import VenueMap from '@/app/components/VenueMap'
+
+const HAS_MAPS = !!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
 
 // Re-generate from the database at most once every 60s (ISR), so edits to a
 // venue and its child rows go live without a full rebuild.
@@ -47,6 +50,8 @@ interface Venue {
   map_road_label: string | null
   map_soi_label: string | null
   map_pin_label: string | null
+  latitude: number | null
+  longitude: number | null
   gallery_more_count: number | null
   image_url: string | null
   categories: { name_en: string; slug: string } | null
@@ -77,7 +82,7 @@ const SELECT = `
   tagline, description, about, address, neighborhood, nearby, hours, hours_note,
   phone, website, website_label, facebook_url, maps_query, price_from, price_from_label,
   menu_intro, menu_note, map_road_label, map_soi_label, map_pin_label,
-  gallery_more_count, image_url,
+  latitude, longitude, gallery_more_count, image_url,
   categories(name_en, slug),
   venue_photos(url, alt, caption, sort_order),
   venue_menu_items(section, name, detail, duration, price, is_featured, sort_order),
@@ -409,21 +414,27 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
               <h2 id="get-h">Getting there</h2>
             </div>
             <div className="det-yf__getting">
-              <figure className="det-yf__mapfig" role="img" aria-label={`Schematic map of ${v.name}`}>
-                <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-                  <rect width="400" height="300" fill="#eef7fc" />
-                  <rect x="40" y="40" width="110" height="64" rx="6" fill="#d6ebf6" />
-                  <rect x="250" y="40" width="110" height="64" rx="6" fill="#d6ebf6" />
-                  <rect x="40" y="196" width="120" height="70" rx="6" fill="#d6ebf6" />
-                  <rect x="250" y="196" width="110" height="70" rx="6" fill="#d6ebf6" />
-                  <rect x="0" y="120" width="400" height="24" fill="#ffffff" stroke="#cfe1ee" />
-                  <rect x="180" y="0" width="24" height="300" fill="#ffffff" stroke="#cfe1ee" />
-                  <rect x="214" y="150" width="96" height="38" rx="6" fill="#cfe8f5" stroke="#2fbddc" strokeWidth="2" />
-                  {v.map_road_label && <text x="60" y="136" fontFamily="Manrope, sans-serif" fontSize="9" fill="#5f6b75">{v.map_road_label}</text>}
-                  {v.map_soi_label && <text x="186" y="290" fontFamily="Manrope, sans-serif" fontSize="9" fill="#5f6b75" transform="rotate(-90 191 285)">{v.map_soi_label}</text>}
-                </svg>
-                <span className="det-yf__mappin" aria-hidden="true"><Icon id="pg-pin" size={40} /></span>
-                {v.map_pin_label && <span className="det-yf__maplabel">{v.map_pin_label}</span>}
+              <figure className="det-yf__mapfig" role="img" aria-label={`Map of ${v.name}`}>
+                {HAS_MAPS ? (
+                  <VenueMap lat={v.latitude} lng={v.longitude} query={v.maps_query || `${v.name} Pattaya`} label={v.name} />
+                ) : (
+                  <>
+                    <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                      <rect width="400" height="300" fill="#eef7fc" />
+                      <rect x="40" y="40" width="110" height="64" rx="6" fill="#d6ebf6" />
+                      <rect x="250" y="40" width="110" height="64" rx="6" fill="#d6ebf6" />
+                      <rect x="40" y="196" width="120" height="70" rx="6" fill="#d6ebf6" />
+                      <rect x="250" y="196" width="110" height="70" rx="6" fill="#d6ebf6" />
+                      <rect x="0" y="120" width="400" height="24" fill="#ffffff" stroke="#cfe1ee" />
+                      <rect x="180" y="0" width="24" height="300" fill="#ffffff" stroke="#cfe1ee" />
+                      <rect x="214" y="150" width="96" height="38" rx="6" fill="#cfe8f5" stroke="#2fbddc" strokeWidth="2" />
+                      {v.map_road_label && <text x="60" y="136" fontFamily="Manrope, sans-serif" fontSize="9" fill="#5f6b75">{v.map_road_label}</text>}
+                      {v.map_soi_label && <text x="186" y="290" fontFamily="Manrope, sans-serif" fontSize="9" fill="#5f6b75" transform="rotate(-90 191 285)">{v.map_soi_label}</text>}
+                    </svg>
+                    <span className="det-yf__mappin" aria-hidden="true"><Icon id="pg-pin" size={40} /></span>
+                    {v.map_pin_label && <span className="det-yf__maplabel">{v.map_pin_label}</span>}
+                  </>
+                )}
               </figure>
 
               <div className="det-yf__addr">
