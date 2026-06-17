@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Icon from '@/app/components/Icon'
 import CarButton from '@/app/components/CarButton'
 import HeroSearch from '@/app/components/HeroSearch'
+import ExploreMap from '@/app/components/ExploreMap'
 
 const ASSETS = 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets'
 
@@ -94,13 +95,6 @@ const districts = [
   { cls: '', img: 'Coral-Island-pattaya.jpg', pill: 'Day trip', name: 'Koh Larn Island', desc: '40 minutes by ferry. White-sand beaches and snorkel coves.' },
 ]
 
-const mapList = [
-  { name: 'Sanctuary of Truth', tag: 'Temple · Naklua', rate: '4.8' },
-  { name: 'Koh Larn day trip', tag: 'Island · Bali Hai', rate: '4.9' },
-  { name: 'Mae Sri Ruen', tag: 'Seafood · Jomtien', rate: '4.9' },
-  { name: 'The Sky Gallery', tag: 'Rooftop · Pratumnak', rate: '4.7' },
-  { name: 'Walking Street', tag: 'Nightlife · Central', rate: '4.5' },
-]
 
 const Arrow = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
@@ -285,36 +279,9 @@ export default async function Home() {
               <p>Filter by category or district. Save areas before you fly. See exactly which neighborhood each guide is in.</p>
             </div>
           </div>
-          <div className="map-block">
-            <div className="map-canvas">
-              <div className="map-pin map-pin-1"><span className="lbl">Sanctuary of Truth</span><div className="pin"></div></div>
-              <div className="map-pin map-pin-2 alt"><span className="lbl">Pattaya Beach</span><div className="pin"></div></div>
-              <div className="map-pin map-pin-3"><span className="lbl">Walking Street</span><div className="pin"></div></div>
-              <div className="map-pin map-pin-4"><span className="lbl">Sky Gallery</span><div className="pin"></div></div>
-              <div className="map-pin map-pin-5 alt"><span className="lbl">Jomtien Beach</span><div className="pin"></div></div>
-              <div className="map-pin map-pin-6"><span className="lbl">Koh Larn</span><div className="pin"></div></div>
-              <div className="map-fade">
-                <div>
-                  <b>600+ places on the map</b>
-                  <span style={{ display: 'block' }}>filter by category, district or rating</span>
-                </div>
-                <Link href="/map" className="btn btn-primary btn-sm">Open full map <Arrow /></Link>
-              </div>
-            </div>
-            <div className="map-side">
-              <h3>Most viewed this week</h3>
-              <span className="count">The five places readers opened most</span>
-              <div className="map-list">
-                {mapList.map((m, i) => (
-                  <a key={m.name} href="#" className="map-row">
-                    <div className="num">{i + 1}</div>
-                    <div className="info"><b>{m.name}</b><span>{m.tag}</span></div>
-                    <span className="star"><i>★</i> {m.rate}</span>
-                  </a>
-                ))}
-              </div>
-              <Link href="/map" className="viewall" style={{ marginTop: 'auto' }}>See all on the map <Arrow /></Link>
-            </div>
+          <ExploreMap />
+          <div style={{ marginTop: 'var(--s4)' }}>
+            <Link href="/map" className="btn btn-primary btn-sm">Open full map <Arrow /></Link>
           </div>
         </div>
       </section>
