@@ -1,7 +1,9 @@
 import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import BlogScript from '@/app/components/BlogScript'
-import { SITE_URL, SITE_NAME } from '@/lib/site'
+import { SITE_URL } from '@/lib/site'
+import { BLOG_TEMPLATE_SCRIPT } from './blogTemplate'
+import './blog-template.css'
 
 interface BlogPost {
   id: string
@@ -15,15 +17,39 @@ interface BlogPost {
   published_at: string | null
   updated_at_post: string | null
   page_html: string | null
-  styles_css: string | null
-  blog_script: string | null
+  schema_jsonld: string | null
   is_published: boolean
+}
+
+// The blog HTML is authored against the old static-site paths. Rewrite its
+// internal links to real Next routes and its image paths to the Supabase
+// `blog` storage bucket at render time.
+const IMG_BASE = 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/blog'
+const ROUTE_MAP: Record<string, string> = {
+  '01-homepage-v5.html': '/',
+  'blog.html': '/blog',
+  'plan-my-trip.html': '/plan-my-trip',
+  'pillar-areas.html': '/areas',
+  'pillar-things-to-do.html': '/thinks-to-do',
+  'pillar-wellness-beauty.html': '/wellness-and-beauty',
+  'pillar-eat-drink.html': '/eat-and-drinks',
+  'pillar-yoga-fitness.html': '/yoga-and-fitness',
+}
+function rewriteHtml(html: string): string {
+  let out = html.replace(/\.\.\/yeni-blog-gorselleri\//g, IMG_BASE + '/')
+  out = out.replace(/href="([^"]+\.html)"/g, (_m, file: string) => {
+    if (ROUTE_MAP[file]) return `href="${ROUTE_MAP[file]}"`
+    const blog = file.match(/^blog-(.+)\.html$/)
+    if (blog) return `href="/blog/${blog[1]}"`
+    return `href="/${file.replace(/\.html$/, '')}"`
+  })
+  return out
 }
 
 async function getBlogPost(slug: string): Promise<BlogPost | null> {
   const { data } = await supabase
     .from('blog_posts')
-    .select('id, slug, title, description, author, author_title, category, hero_image, published_at, updated_at_post, page_html, styles_css, blog_script, is_published')
+    .select('id, slug, title, description, author, author_title, category, hero_image, published_at, updated_at_post, page_html, schema_jsonld, is_published')
     .eq('slug', slug)
     .eq('is_published', true)
     .single()
@@ -94,10 +120,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      {post.styles_css && <style dangerouslySetInnerHTML={{ __html: post.styles_css }} />}
-      {post.page_html && <div dangerouslySetInnerHTML={{ __html: post.page_html }} />}
-      {post.blog_script && <BlogScript script={post.blog_script} />}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: post.schema_jsonld || JSON.stringify(jsonLd) }}
+      />
+      {post.page_html && <div dangerouslySetInnerHTML={{ __html: rewriteHtml(post.page_html) }} />}
+      <BlogScript script={BLOG_TEMPLATE_SCRIPT} />
     </>
   )
 }
