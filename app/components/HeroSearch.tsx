@@ -16,9 +16,9 @@ type Result = { kind: 'cat' | 'sub' | 'area' | 'ven'; name: string; meta: string
 
 // Curated Pattaya areas/districts — all link to the Areas page.
 const AREAS = [
-  'Central Pattaya', 'Jomtien', 'Naklua', 'Pratumnak Hill', 'Wongamat',
-  'Walking Street', 'Soi Buakhao', 'Thappraya', 'Phra Tamnak',
-  'North Pattaya', 'South Pattaya', 'Koh Larn',
+  'Central Pattaya', 'Jomtien', 'Naklua', 'Pratumnak Hill', 'Wong Amat',
+  'Walking Street', 'Islands', 'Koh Larn', 'Soi Buakhao', 'Thappraya',
+  'Phra Tamnak', 'North Pattaya', 'South Pattaya',
 ]
 
 function highlight(text: string, term: string) {

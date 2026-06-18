@@ -3,7 +3,7 @@ import BlogScript from '@/app/components/BlogScript'
 
 export const metadata = {
   title: 'Areas of Pattaya — Find Your Neighborhood | Go To Pattaya',
-  description: "An orientation guide to Pattaya's neighborhoods — Central, Jomtien, Naklua, Pratumnak Hill, Wong Amat and Walking Street. Compare vibes, beaches and nightlife to decide where to base yourself.",
+  description: "An orientation guide to Pattaya's neighborhoods — Central, Jomtien, Naklua, Pratumnak Hill, Wong Amat, Walking Street and the offshore islands. Compare vibes, beaches and nightlife to decide where to base yourself.",
   alternates: { canonical: '/areas' },
 }
 
@@ -57,7 +57,7 @@ const HTML = String.raw`
       <div class="container">
         <span class="kicker">Areas</span>
         <h1 id="ar-hero-title">Find Your Pattaya Neighborhood</h1>
-        <p class="ar-hero__lead">Pattaya is really six small cities in one bay. This is the map-first guide to where to base yourself — and what each district actually feels like.</p>
+        <p class="ar-hero__lead">Pattaya is really six districts around one bay — plus the islands offshore. This is the map-first guide to where to base yourself, and what each place actually feels like.</p>
         <nav class="ar-jump" aria-label="Jump to a district">
           <a class="chip" href="#central"><svg class="pg-icon is-16" aria-hidden="true"><use href="#pg-pin"></use></svg>Central</a>
           <a class="chip" href="#jomtien"><svg class="pg-icon is-16" aria-hidden="true"><use href="#pg-pin"></use></svg>Jomtien</a>
@@ -65,6 +65,7 @@ const HTML = String.raw`
           <a class="chip" href="#pratumnak"><svg class="pg-icon is-16" aria-hidden="true"><use href="#pg-pin"></use></svg>Pratumnak</a>
           <a class="chip" href="#wong-amat"><svg class="pg-icon is-16" aria-hidden="true"><use href="#pg-pin"></use></svg>Wong Amat</a>
           <a class="chip" href="#walking-street"><svg class="pg-icon is-16" aria-hidden="true"><use href="#pg-pin"></use></svg>Walking Street</a>
+          <a class="chip" href="#islands"><svg class="pg-icon is-16" aria-hidden="true"><use href="#pg-pin"></use></svg>Islands</a>
         </nav>
       </div>
     </div>
@@ -75,8 +76,8 @@ const HTML = String.raw`
     <div class="container">
       <div class="sec-head">
         <span class="kicker">Pattaya at a glance</span>
-        <h2 id="glance-title">One bay, six personalities</h2>
-        <p>South to north along the coast, here is how the districts line up — and the vibe each one is known for.</p>
+        <h2 id="glance-title">One bay, seven personalities</h2>
+        <p>South to north along the coast — and out to the islands offshore — here is how the districts line up, and the vibe each one is known for.</p>
       </div>
 
       <div class="glance">
@@ -152,6 +153,14 @@ const HTML = String.raw`
               <text x="240" y="324" text-anchor="end" class="ar-pin-label">Jomtien</text>
               <text x="240" y="336" text-anchor="end" class="ar-pin-sub">long quiet beach</text>
             </g>
+            <!-- Islands (offshore, in the sea to the west) -->
+            <g>
+              <path d="M54 214c10-6 30-6 40 0c-6 6-34 6-40 0z" fill="#0e2233" stroke="rgba(255,255,255,.12)" stroke-width="1.5"/>
+              <circle cx="74" cy="200" r="9" fill="#13a39a" stroke="#fff" stroke-width="2"/>
+              <circle cx="74" cy="200" r="3" fill="#fff"/>
+              <text x="86" y="194" text-anchor="start" class="ar-pin-label">Islands</text>
+              <text x="86" y="206" text-anchor="start" class="ar-pin-sub">Koh Larn · day-trip</text>
+            </g>
             <!-- N indicator -->
             <text x="34" y="30" class="ar-pin-sub" fill="rgba(255,255,255,.5)">N ↑</text>
           </svg>
@@ -218,6 +227,16 @@ const HTML = String.raw`
               </span>
             </span>
           </a>
+          <a class="ar-legend__row" href="#islands">
+            <span class="ar-legend__dot d-islands" aria-hidden="true"></span>
+            <span class="ar-legend__txt"><b>Islands</b>
+              <span class="vibes">
+                <span class="vibe vibe--beach">Beach</span>
+                <span class="vibe vibe--snorkel">Snorkel</span>
+                <span class="vibe vibe--daytrip">Day-trip</span>
+              </span>
+            </span>
+          </a>
         </div>
       </div>
     </div>
@@ -228,7 +247,7 @@ const HTML = String.raw`
     <div class="container">
       <div class="sec-head">
         <span class="kicker">The districts</span>
-        <h2 id="districts-title">Six neighborhoods, honestly compared</h2>
+        <h2 id="districts-title">Seven neighborhoods, honestly compared</h2>
         <p>An orientation card for each — who it suits, the numbers at a glance, and a few real spots to anchor your bearings.</p>
       </div>
 
@@ -497,6 +516,50 @@ const HTML = String.raw`
           </div>
         </article>
 
+        <!-- ===== Islands ===== -->
+        <article class="area-card" id="islands">
+          <div class="area-card__media">
+            <span class="area-card__num" aria-hidden="true">7</span>
+            <img src="https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/Coral-Island-pattaya.jpg"
+                 alt="Turquoise water and white sand at Koh Larn (Coral Island) off the Pattaya coast"
+                 loading="lazy" width="800" height="680">
+          </div>
+          <div class="area-card__body">
+            <span class="area-card__best"><svg class="pg-icon is-16 is-ocean" aria-hidden="true"><use href="#pg-anchor"></use></svg>Best for clear-water beach days, snorkelling and island day-trips</span>
+            <h3>Islands</h3>
+            <div class="area-card__vibes">
+              <span class="vibe vibe--beach">Beach</span>
+              <span class="vibe vibe--snorkel">Snorkel</span>
+              <span class="vibe vibe--daytrip">Day-trip</span>
+            </div>
+            <div class="area-card__stats">
+              <div class="ministat"><b>3</b><span>main islands</span></div>
+              <div class="ministat"><b>6+</b><span>beaches</span></div>
+              <div class="ministat"><b>40 min</b><span>by ferry</span></div>
+            </div>
+            <p class="area-card__desc">Just offshore lie Koh Larn (Coral Island) and its smaller neighbours Koh Sak and Koh Phai — the clearest water and best sand in the area. Ferries and speedboats run from Bali Hai Pier, making it the classic Pattaya day-trip for swimming, snorkelling and beach lunches. Most people go for the day, though Koh Larn has simple guesthouses if you want to stay over.</p>
+            <ul class="area-card__spots">
+              <li class="lbl">Top spots here</li>
+              <li class="spot">
+                <span class="spot__pin" aria-hidden="true"><svg class="pg-icon is-20 is-ocean"><use href="#pg-beach"></use></svg></span>
+                <span><span class="spot__name">Tawaen Beach</span><span class="spot__type">Koh Larn · main beach</span></span>
+              </li>
+              <li class="spot">
+                <span class="spot__pin" aria-hidden="true"><svg class="pg-icon is-20 is-ocean"><use href="#pg-beach"></use></svg></span>
+                <span><span class="spot__name">Tien Beach</span><span class="spot__type">Koh Larn · quieter cove</span></span>
+              </li>
+              <li class="spot">
+                <span class="spot__pin" aria-hidden="true"><svg class="pg-icon is-20 is-ocean"><use href="#pg-anchor"></use></svg></span>
+                <span><span class="spot__name">Bali Hai Pier</span><span class="spot__type">Ferry &amp; speedboat departure</span></span>
+              </li>
+            </ul>
+            <div class="area-card__cta">
+              <a class="btn btn--primary" href="#">Explore the Islands<svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-arrow-right"></use></svg></a>
+              <a class="btn btn--secondary" href="#"><svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-map"></use></svg>See on map</a>
+            </div>
+          </div>
+        </article>
+
       </div>
     </div>
   </section>
@@ -506,7 +569,7 @@ const HTML = String.raw`
     <div class="container">
       <div class="sec-head">
         <span class="kicker">At a glance</span>
-        <h2 id="compare-title">Compare the six districts</h2>
+        <h2 id="compare-title">Compare the seven districts</h2>
         <p>Scan it side by side. Dots show relative strength for beach and nightlife — more filled, more of it.</p>
       </div>
 
@@ -571,6 +634,14 @@ const HTML = String.raw`
               <td><span class="meter is-beach" aria-hidden="true"><i class="on"></i><i></i><i></i></span><span class="meter-lbl">Near, not for it</span></td>
               <td><span class="meter is-night" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></span><span class="meter-lbl">Highest</span></td>
               <td><span class="pill pill--warn">Pricey at night</span></td>
+            </tr>
+            <tr>
+              <th scope="row"><a href="#islands" style="color:var(--ocean)">Islands</a></th>
+              <td><span class="vibe vibe--daytrip">Day-trip</span></td>
+              <td>Snorkelling, clear water</td>
+              <td><span class="meter is-beach" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></span><span class="meter-lbl">Clearest water</span></td>
+              <td><span class="meter is-night" aria-hidden="true"><i class="on"></i><i></i><i></i></span><span class="meter-lbl">Barely any</span></td>
+              <td><span class="pill pill--blue">Mid</span></td>
             </tr>
           </tbody>
         </table>

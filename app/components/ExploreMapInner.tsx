@@ -15,10 +15,22 @@ interface VenuePin {
 
 type Filter = 'all' | 'venues' | 'areas'
 
-const icon = (cls: string) =>
-  L.divIcon({ className: '', html: `<span class="exm-pin ${cls}"></span>`, iconSize: [22, 22], iconAnchor: [11, 11] })
-const VENUE_ICON = icon('exm-pin--ven')
-const AREA_ICON = icon('exm-pin--area')
+// Per-area colours — match the /areas page legend dots.
+const AREA_COLORS: Record<string, string> = {
+  'Central Pattaya': '#0178B4',
+  'Jomtien': '#1ba672',
+  'Naklua': '#e8a33d',
+  'Pratumnak Hill': '#2FBDDC',
+  'Wong Amat': '#054C86',
+  'Walking Street': '#ef4d63',
+  'Islands': '#13a39a',
+}
+const areaColor = (name: string) => AREA_COLORS[name] ?? '#e0911a'
+const VENUE_COLOR = '#16a06a'
+
+const colorIcon = (color: string) =>
+  L.divIcon({ className: '', html: `<span class="exm-pin" style="background:${color}"></span>`, iconSize: [22, 22], iconAnchor: [11, 11] })
+const VENUE_ICON = colorIcon(VENUE_COLOR)
 
 // Fly the map when the user clicks a list row.
 function Flyer({ target }: { target: { lat: number; lng: number; zoom: number } | null }) {
@@ -53,11 +65,13 @@ export default function ExploreMapInner() {
   const showAreas = filter === 'all' || filter === 'areas'
 
   const list = useMemo(() => {
-    const items: { key: string; kind: 'area' | 'ven'; name: string; meta: string; lat: number; lng: number; href?: string }[] = []
-    if (showAreas) for (const a of AREAS) items.push({ key: 'a' + a.name, kind: 'area', name: a.name, meta: 'Area', lat: a.lat, lng: a.lng })
+    const items: { key: string; kind: 'area' | 'ven'; name: string; meta: string; vibes?: string[]; lat: number; lng: number; href?: string }[] = []
+    if (showAreas) for (const a of AREAS) items.push({ key: 'a' + a.name, kind: 'area', name: a.name, meta: 'Area', vibes: a.vibes, lat: a.lat, lng: a.lng })
     if (showVenues) for (const v of venues) items.push({ key: 'v' + v.slug, kind: 'ven', name: v.name, meta: v.type ?? 'Place', lat: v.lat, lng: v.lng, href: `/venues/${v.slug}` })
     return items
   }, [showAreas, showVenues, venues])
+
+  const vibeSlug = (v: string) => v.toLowerCase().replace(/[^a-z]/g, '')
 
   return (
     <div className="exmap">
@@ -76,7 +90,7 @@ export default function ExploreMapInner() {
             />
             <Flyer target={focus} />
             {showAreas && AREAS.map(a => (
-              <Marker key={'am' + a.name} position={[a.lat, a.lng]} icon={AREA_ICON}>
+              <Marker key={'am' + a.name} position={[a.lat, a.lng]} icon={colorIcon(areaColor(a.name))}>
                 <Popup><b>{a.name}</b><br /><a href="/areas">Explore area →</a></Popup>
               </Marker>
             ))}
@@ -98,10 +112,16 @@ export default function ExploreMapInner() {
           <div className="exmap-list-scroll">
             {list.map(it => (
               <div key={it.key} className="exm-row" onClick={() => setFocus({ lat: it.lat, lng: it.lng, zoom: it.kind === 'area' ? 14 : 16 })}>
-                <span className={`exm-dot ${it.kind === 'area' ? 'exm-pin--area' : 'exm-pin--ven'}`} />
+                <span className="exm-dot" style={{ background: it.kind === 'area' ? areaColor(it.name) : VENUE_COLOR }} />
                 <div className="exm-row-main">
                   {it.href ? <a href={it.href} onClick={e => e.stopPropagation()}><b>{it.name}</b></a> : <b>{it.name}</b>}
-                  <span>{it.meta}</span>
+                  {it.kind === 'area' && it.vibes?.length ? (
+                    <div className="exm-vibes">
+                      {it.vibes.map(v => <span key={v} className={`exm-vibe exm-vibe--${vibeSlug(v)}`}>{v}</span>)}
+                    </div>
+                  ) : (
+                    <span>{it.meta}</span>
+                  )}
                 </div>
               </div>
             ))}

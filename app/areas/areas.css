@@ -46,6 +46,7 @@
 .area-page .d-pratumnak{background:var(--lagoon)}
 .area-page .d-wongamat{background:var(--steel)}
 .area-page .d-walking{background:var(--live-500)}
+.area-page .d-islands{background:#13a39a}
 
 /* vibe tag pills (colour-coded, second signal = label text, never colour alone) */
 .area-page .vibe{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:var(--r-pill);font-family:var(--font-display);font-weight:600;font-size:var(--text-xs);line-height:1}
@@ -58,6 +59,8 @@
 .area-page .vibe--luxury{background:#efe9f7;color:#6a4fb0}
 .area-page .vibe--backpacker{background:#fef0e4;color:#b5651d}
 .area-page .vibe--foodie{background:#fdeef0;color:#b54a5a}
+.area-page .vibe--snorkel{background:#d8f3ee;color:#0a7d6b}
+.area-page .vibe--daytrip{background:#eaf2fb;color:#2a5fa6}
 
 /* —— DISTRICT CARDS ———————————————————————————————————————————————————————— */
 .area-page .ar-districts{display:flex;flex-direction:column;gap:var(--s6)}

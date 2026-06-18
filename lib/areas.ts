@@ -5,17 +5,18 @@ export interface Area {
   name: string
   lat: number
   lng: number
+  vibes: string[]
 }
 
+// The 7 official areas (must match the /areas page taxonomy + legend vibes).
 export const AREAS: Area[] = [
-  { name: 'Central Pattaya', lat: 12.9329, lng: 100.8821 },
-  { name: 'North Pattaya / Naklua', lat: 12.9620, lng: 100.8905 },
-  { name: 'Jomtien', lat: 12.8920, lng: 100.8760 },
-  { name: 'Pratumnak Hill', lat: 12.9180, lng: 100.8650 },
-  { name: 'Wongamat', lat: 12.9760, lng: 100.8880 },
-  { name: 'Walking Street', lat: 12.9230, lng: 100.8780 },
-  { name: 'Thepprasit', lat: 12.9050, lng: 100.8830 },
-  { name: 'Koh Larn', lat: 12.9180, lng: 100.7830 },
+  { name: 'Central Pattaya', lat: 12.9329, lng: 100.8821, vibes: ['Nightlife', 'Foodie', 'Backpacker'] },
+  { name: 'Jomtien', lat: 12.8920, lng: 100.8760, vibes: ['Beach', 'Family', 'Quiet'] },
+  { name: 'Naklua', lat: 12.9620, lng: 100.8905, vibes: ['Local', 'Quiet', 'Foodie'] },
+  { name: 'Pratumnak Hill', lat: 12.9180, lng: 100.8650, vibes: ['Quiet', 'Luxury', 'Beach'] },
+  { name: 'Wong Amat', lat: 12.9760, lng: 100.8880, vibes: ['Luxury', 'Beach', 'Quiet'] },
+  { name: 'Walking Street', lat: 12.9230, lng: 100.8780, vibes: ['Nightlife', 'Backpacker'] },
+  { name: 'Islands', lat: 12.9180, lng: 100.7830, vibes: ['Beach', 'Snorkel', 'Day-trip'] },
 ]
 
 // Pick an area centre for a venue that has no coordinates, from its
