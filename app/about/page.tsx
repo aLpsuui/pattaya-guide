@@ -131,7 +131,7 @@ export default function AboutPage() {
       {/* PROMISE */}
       <section className="section bleed">
         <div className="container split">
-          <div className="media"><img src={`${ASSETS}/pattaya-temputre.jpg`} alt="Golden Buddhist temple detail in Pattaya, Thailand" loading="lazy" /></div>
+          <div className="media"><img src={`${ASSETS}/pattaya-temputre.webp`} alt="Golden Buddhist temple detail in Pattaya, Thailand" loading="lazy" /></div>
           <div className="prose">
             <div className="kicker">Our promise</div>
             <h2>If it&apos;s on Go To Pattaya, we&apos;d send our own friends there.</h2>

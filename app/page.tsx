@@ -74,7 +74,7 @@ async function getBlogPosts(): Promise<BlogPost[]> {
 const categories = [
   { feat: true, img: 'best-restaurants-pattaya.jpg', icon: 'eat', name: 'Eat & Cafés', meta: '174 restaurants & cafés', href: '/eat-and-drinks' },
   { feat: true, img: 'pattaya-best-tours.jpg', icon: 'tours', name: 'Tours & Day Trips', meta: '77 islands, boats & tours', href: '#' },
-  { feat: false, img: 'pattaya-night-clubs-2.jpeg', icon: 'nightlife', name: 'Nightlife & Bars', meta: '77 clubs & bars', href: '#' },
+  { feat: false, img: 'pattaya-night-clubs-2.webp', icon: 'nightlife', name: 'Nightlife & Bars', meta: '77 clubs & bars', href: '#' },
   { feat: false, img: 'pattaya-wellness-1.jpeg', icon: 'wellness', name: 'Wellness & Spa', meta: '99 spa, massage & yoga', href: '#' },
   { feat: false, img: 'pattaya-muay-thai-1.jpg', icon: 'muay-thai', name: 'Gym & Muay Thai', meta: '125 gyms & training camps', href: '#' },
   { feat: false, img: 'pattaya-parasiling.webp', icon: 'transport', name: 'Adventures', meta: '48 skydiving & bike rentals', href: '#' },
@@ -84,7 +84,7 @@ const planCards = [
   { img: 'Koh-Sak.jpg', pill: 'When to visit', title: 'Best months for Pattaya', text: "Weather, crowds, prices — month by month, with the months we'd actually go.", arrow: 'Read the guide' },
   { img: 'pattaya-city-beach-1.jpg', pill: 'Getting there', title: 'Bangkok → Pattaya', text: 'Bus, taxi, train or private transfer — real prices, real travel times, no markup tricks.', arrow: 'Compare options' },
   { img: 'coral-island-pattaya-2.jpg', pill: 'Where to stay', title: 'Pick the right district', text: 'Central, Jomtien, Pratumnak, Naklua — choose your area before you book. Includes streets to avoid.', arrow: 'Compare districts' },
-  { img: 'pattaya-floating-market.png', pill: 'First-time tips', title: '8 mistakes to skip', text: 'From baht-bus etiquette to which beach to avoid — the things first-timers always regret.', arrow: 'Read the guide' },
+  { img: 'pattaya-floating-market.webp', pill: 'First-time tips', title: '8 mistakes to skip', text: 'From baht-bus etiquette to which beach to avoid — the things first-timers always regret.', arrow: 'Read the guide' },
 ]
 
 const districts = [
