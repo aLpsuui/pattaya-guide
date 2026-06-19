@@ -35,12 +35,41 @@ const ROUTE_MAP: Record<string, string> = {
   'pillar-eat-drink.html': '/eat-and-drinks',
   'pillar-yoga-fitness.html': '/yoga-and-fitness',
 }
-function rewriteHtml(html: string): string {
+function authorInitials(name: string): string {
+  return name.split(/\s+/).filter(Boolean).map((w) => w[0]).join('').slice(0, 2).toUpperCase()
+}
+
+// The page HTML bakes in a placeholder byline/bio author (Daniel Reyes, Olga
+// Vavilova, …). Swap it for the post's real DB author so the detail page matches
+// the author shown on the blog list/home cards.
+function normalizeAuthor(html: string, author: string): string {
+  const m = html.match(/<div class="who">\s*<b>([^<]+)<\/b>/)
+  if (!m) return html
+  const oldName = m[1].trim()
+  const oldFirst = oldName.split(/\s+/)[0]
+  const newFirst = author.split(/\s+/)[0]
+  const initials = authorInitials(author)
+  // full name in the byline and end bio heading
+  let out = html.split(oldName).join(author)
+  // first-name mentions, scoped to the end-bio paragraph only (avoids e.g. "Tom Yum")
+  out = out.replace(
+    /(<div class="bio[^"]*">[\s\S]*?<p>)([\s\S]*?)(<\/p>)/,
+    (_full, pre: string, body: string, tail: string) =>
+      pre + body.replace(new RegExp(`\\b${oldFirst}\\b`, 'g'), newFirst) + tail,
+  )
+  // avatar initials in the byline (.av) and bio (.ava)
+  return out
+    .replace(/(<div class="av">)[^<]*(<\/div>)/g, `$1${initials}$2`)
+    .replace(/(<div class="ava">)[^<]*(<\/div>)/g, `$1${initials}$2`)
+}
+
+function rewriteHtml(html: string, author?: string | null): string {
   // All authored image folders map flat into the Supabase `blog` bucket.
   let out = html
     .replace(/\.\.\/yeni-blog-gorselleri\//g, IMG_BASE + '/')
     .replace(/\.\.\/Pattaya-Tum-Gorseller-Resized\//g, IMG_BASE + '/')
     .replace(/\.\.\/pattaya-fotograflar\//g, IMG_BASE + '/')
+  if (author) out = normalizeAuthor(out, author)
   out = out.replace(/href="([^"]+\.html)"/g, (_m, file: string) => {
     if (ROUTE_MAP[file]) return `href="${ROUTE_MAP[file]}"`
     const blog = file.match(/^blog-(.+)\.html$/)
@@ -128,7 +157,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: post.schema_jsonld || JSON.stringify(jsonLd) }}
       />
-      {post.page_html && <div dangerouslySetInnerHTML={{ __html: rewriteHtml(post.page_html) }} />}
+      {post.page_html && <div dangerouslySetInnerHTML={{ __html: rewriteHtml(post.page_html, post.author) }} />}
       <BlogScript script={BLOG_TEMPLATE_SCRIPT} />
     </>
   )
