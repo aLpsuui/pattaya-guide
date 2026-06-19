@@ -63,6 +63,18 @@ function normalizeAuthor(html: string, author: string): string {
     .replace(/(<div class="ava">)[^<]*(<\/div>)/g, `$1${initials}$2`)
 }
 
+// The per-post schema_jsonld is authored with the hard-coded production domain
+// (gotopattaya.com) and the placeholder author. Align it with the configured
+// site domain (SITE_URL) and the post's real author so the structured data is
+// consistent with canonicals/OG and matches the visible byline.
+function rewriteSchema(schema: string, author?: string | null): string {
+  let out = schema.split('https://gotopattaya.com').join(SITE_URL)
+  if (author) {
+    out = out.replace(/("author":\s*\{[^}]*?"name":\s*")[^"]+(")/g, `$1${author}$2`)
+  }
+  return out
+}
+
 function rewriteHtml(html: string, author?: string | null): string {
   // All authored image folders map flat into the Supabase `blog` bucket.
   let out = html
@@ -155,7 +167,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: post.schema_jsonld || JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{
+          __html: post.schema_jsonld ? rewriteSchema(post.schema_jsonld, post.author) : JSON.stringify(jsonLd),
+        }}
       />
       {post.page_html && <div dangerouslySetInnerHTML={{ __html: rewriteHtml(post.page_html, post.author) }} />}
       <BlogScript script={BLOG_TEMPLATE_SCRIPT} />
