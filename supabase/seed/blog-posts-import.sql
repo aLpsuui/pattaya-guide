@@ -1,5 +1,5 @@
--- Blog posts import - dollar-quoted, safe for large HTML. Run in Supabase SQL editor.
--- Prereq: schema_jsonld column (migration 0002). Empty the table first if replacing.
+-- Blog import part 1/1 - dollar-quoted, encoding-repaired, CSS/JS dedup (NULL).
+-- Prereq: schema_jsonld column (migration 0002). Run parts in order.
 insert into public.blog_posts (id,slug,title,description,author,author_title,published_at,updated_at_post,category,tags,hero_image,read_time,content_html,is_published,created_at,styles_css,blog_script,page_html,schema_jsonld) values ($b$691cdd4d-049c-4d98-b190-92f7f17d1904$b$,$b$first-time-pattaya-mistakes$b$,$b$First Time in Pattaya: 10 Mistakes Everyone Makes$b$,$b$Don't get scammed, ripped off, or stuck eating bad pad thai. The 10 mistakes first-timers make in Pattaya — and exactly what to do instead, with real ฿ prices.$b$,$b$Daniel Reyes$b$,$b$Travel editor · 5 years across Chonburi$b$,'2026-06-07','2026-06-13',$b$Plan Your Trip$b$,ARRAY['first time pattaya','pattaya mistakes','pattaya scams','pattaya tips 2026','pattaya for beginners']::text[],$b$https://gotopattaya.com/images/first-time-pattaya.jpg$b$,14,$b$$b$,true,'2026-06-17 14:34:59.251+00',NULL,NULL,$b$<!-- reading progress -->
 <div class="read-progress" id="readProgress" aria-hidden="true"></div>
 

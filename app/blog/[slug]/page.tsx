@@ -36,7 +36,11 @@ const ROUTE_MAP: Record<string, string> = {
   'pillar-yoga-fitness.html': '/yoga-and-fitness',
 }
 function rewriteHtml(html: string): string {
-  let out = html.replace(/\.\.\/yeni-blog-gorselleri\//g, IMG_BASE + '/')
+  // All authored image folders map flat into the Supabase `blog` bucket.
+  let out = html
+    .replace(/\.\.\/yeni-blog-gorselleri\//g, IMG_BASE + '/')
+    .replace(/\.\.\/Pattaya-Tum-Gorseller-Resized\//g, IMG_BASE + '/')
+    .replace(/\.\.\/pattaya-fotograflar\//g, IMG_BASE + '/')
   out = out.replace(/href="([^"]+\.html)"/g, (_m, file: string) => {
     if (ROUTE_MAP[file]) return `href="${ROUTE_MAP[file]}"`
     const blog = file.match(/^blog-(.+)\.html$/)
