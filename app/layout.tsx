@@ -3,6 +3,7 @@ import './globals.css'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import MobileTabBar from './components/MobileTabBar'
+import RootChrome from './components/RootChrome'
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, INDEXABLE } from '@/lib/site'
 
 export const metadata: Metadata = {
@@ -62,10 +63,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
-        <MobileTabBar />
+        <RootChrome navbar={<Navbar />} footer={<><Footer /><MobileTabBar /></>}>
+          {children}
+        </RootChrome>
       </body>
     </html>
   )

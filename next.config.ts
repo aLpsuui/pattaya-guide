@@ -24,21 +24,9 @@ const securityHeaders = [
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
 ]
 
-// Admin panel runs as a separate Vercel project (a "zone") with basePath
-// /admin. Set ADMIN_ZONE_URL (e.g. https://pattaya-admin.vercel.app) in the
-// main project's env to expose it at gotopattaya.com/admin via a rewrite.
-const adminZone = process.env.ADMIN_ZONE_URL?.replace(/\/+$/, '')
-
 const nextConfig: NextConfig = {
   async headers() {
     return [{ source: '/:path*', headers: securityHeaders }]
-  },
-  async rewrites() {
-    if (!adminZone) return []
-    return [
-      { source: '/admin', destination: `${adminZone}/admin` },
-      { source: '/admin/:path*', destination: `${adminZone}/admin/:path*` },
-    ]
   },
 }
 

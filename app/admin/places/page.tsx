@@ -1,0 +1,88 @@
+import Link from 'next/link'
+import { db } from '@/lib/admin/db'
+import Shell from '@/app/admin/_components/Shell'
+import RowDelete from '@/app/admin/_components/RowDelete'
+import { deletePlace } from '@/app/admin/_actions/places'
+import { statusPill } from '@/lib/admin/options'
+import { IconChevR, IconPlus, IconPin, IconStar, IconEdit } from '@/app/admin/_components/icons'
+
+export const dynamic = 'force-dynamic'
+
+type Row = {
+  id: string; name: string; slug: string; neighborhood: string | null; rating: number | null
+  review_count: number | null; image_url: string | null; status: string | null; is_active: boolean | null
+  seo_title: string | null; description: string | null; categories: { name_en: string } | null
+}
+
+function seoScore(r: Row) {
+  let s = 0
+  if (r.seo_title) s += 25
+  if (r.description && r.description.length >= 80) s += 25
+  if (r.image_url) s += 25
+  if (/^[a-z0-9-]+$/.test(r.slug)) s += 25
+  return s
+}
+
+export default async function PlacesPage() {
+  const { data } = await db
+    .from('venues')
+    .select('id,name,slug,neighborhood,rating,review_count,image_url,status,is_active,seo_title,description,categories(name_en)')
+    .order('name', { ascending: true })
+    .limit(200)
+  const rows = (data || []) as unknown as Row[]
+
+  return (
+    <Shell active="places" crumb={<>Content <IconChevR /> Places</>} title="Places" search
+      actions={<Link className="btn btn--primary btn--sm" href="/admin/places/new"><IconPlus />Add Place</Link>}>
+      <div className="page-head">
+        <div className="ph-l"><h2>Places</h2><p>{rows.length} venues · manage status &amp; visibility</p></div>
+        <div className="ph-r"><Link className="btn btn--primary btn--sm" href="/admin/places/new"><IconPlus />Add Place</Link></div>
+      </div>
+
+      <section className="panel">
+        <div className="table-scroll">
+          <table className="data">
+            <thead>
+              <tr>
+                <th>Venue</th><th className="hide-xs">Category</th><th className="hide-xs">Area</th>
+                <th>Rating</th><th>Status</th><th className="hide-xs">SEO</th><th style={{ textAlign: 'right' }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r) => {
+                const sc = seoScore(r)
+                const band = sc >= 75 ? 'good' : sc >= 50 ? 'mid' : 'low'
+                const st = (r.status || (r.is_active ? 'published' : 'draft')).toLowerCase()
+                return (
+                  <tr key={r.id}>
+                    <td>
+                      <Link href={`/admin/places/${r.id}`}>
+                        <div className="cell-place">
+                          <div className="thumb" style={r.image_url ? { backgroundImage: `url(${r.image_url})` } : { background: 'linear-gradient(135deg,#2fbddc,#0178b4)' }} />
+                          <div className="info"><b className="list-link">{r.name}</b><span><IconPin />{r.neighborhood || '—'}</span></div>
+                        </div>
+                      </Link>
+                    </td>
+                    <td className="hide-xs"><span className="pill pill--cat">{r.categories?.name_en || '—'}</span></td>
+                    <td className="hide-xs muted-cell">{r.neighborhood || '—'}</td>
+                    <td>{r.rating != null ? <span className="rate-cell"><IconStar />{r.rating.toFixed(1)}<small>({(r.review_count || 0).toLocaleString()})</small></span> : <span className="muted-cell">—</span>}</td>
+                    <td><span className={`pill ${statusPill[st] || 'pill--draft'}`}><span className="pdot" />{st.charAt(0).toUpperCase() + st.slice(1)}</span></td>
+                    <td className="hide-xs"><span className={`score-badge ${band}`}>{sc}<span className="bar"><i style={{ width: `${sc}%` }} /></span></span></td>
+                    <td>
+                      <div className="row-act">
+                        <Link className="act-btn" href={`/admin/places/${r.id}`} aria-label="Edit"><IconEdit /></Link>
+                        <RowDelete action={deletePlace} id={r.id} name={r.name} />
+                      </div>
+                    </td>
+                  </tr>
+                )
+              })}
+              {rows.length === 0 && <tr><td colSpan={7}><div className="empty"><b>No venues yet</b><span>Add your first place to get started.</span></div></td></tr>}
+            </tbody>
+          </table>
+        </div>
+        <div className="table-foot"><div className="info">Showing <b>{rows.length}</b> venues</div></div>
+      </section>
+    </Shell>
+  )
+}
