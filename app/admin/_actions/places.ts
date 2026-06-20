@@ -64,3 +64,32 @@ export async function deletePlace(fd: FormData) {
   revalidatePath('/admin/places')
   redirect('/admin/places')
 }
+
+// ---- venue gallery (venue_photos) ----
+export async function addVenuePhotos(fd: FormData) {
+  const venueId = String(fd.get('venue_id') || '')
+  const slug = String(fd.get('slug') || 'venue')
+  if (!venueId) return
+  const files = (fd.getAll('photos') as File[]).filter((f) => f && f.size > 0)
+  if (!files.length) return
+
+  const { count } = await db.from('venue_photos').select('*', { count: 'exact', head: true }).eq('venue_id', venueId)
+  let order = count || 0
+  const rows: { venue_id: string; url: string; sort_order: number }[] = []
+  for (const file of files) {
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase()
+    const path = `${slug}/${slug}-gallery-${Date.now()}-${order}.${ext}`
+    const buf = Buffer.from(await file.arrayBuffer())
+    const { error } = await db.storage.from('venues').upload(path, buf, { contentType: file.type || 'image/jpeg', upsert: true })
+    if (!error) rows.push({ venue_id: venueId, url: `${STORAGE_BASE}/venues/${path}`, sort_order: order++ })
+  }
+  if (rows.length) await db.from('venue_photos').insert(rows)
+  revalidatePath(`/admin/places/${venueId}`)
+}
+
+export async function deleteVenuePhoto(fd: FormData) {
+  const id = String(fd.get('id') || '')
+  const venueId = String(fd.get('venue_id') || '')
+  if (id) await db.from('venue_photos').delete().eq('id', id)
+  if (venueId) revalidatePath(`/admin/places/${venueId}`)
+}

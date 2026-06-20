@@ -314,6 +314,12 @@
 .pg-admin .quick b{font-family:var(--font-display);font-size:14px;font-weight:700;color:var(--text-strong);display:block;line-height:1.2}
 .pg-admin .quick span{font-size:12px;color:var(--text-faint)}
 
+.pg-admin .gal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.pg-admin .gal-item{position:relative;aspect-ratio:4/3;border-radius:var(--r-md);overflow:hidden;border:1px solid var(--border);background-size:cover;background-position:center;background-color:var(--thumb-shade)}
+.pg-admin .gal-del{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:8px;background:rgba(224,82,77,.92);color:#fff;display:flex;align-items:center;justify-content:center;transition:var(--dur)}
+.pg-admin .gal-del:hover{background:var(--red-500)}
+.pg-admin .gal-del svg{width:14px;height:14px}
+
 .pg-admin .scrim{position:fixed;inset:0;background:rgba(2,46,92,.55);backdrop-filter:blur(2px);z-index:var(--z-scrim);opacity:0;pointer-events:none;transition:var(--dur)}
 .pg-admin .scrim.show{opacity:1;pointer-events:auto}
 

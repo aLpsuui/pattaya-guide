@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { savePlace } from '@/app/admin/_actions/places'
 import { AREAS, PRICE_RANGES, slugify } from '@/lib/admin/options'
 import { IconUpload, IconCheck, IconCross } from './icons'
+import VenueGallery, { type GalleryPhoto } from './VenueGallery'
 
 export type Category = { id: string; name_en: string }
 export type Place = {
@@ -15,7 +16,7 @@ export type Place = {
 
 const ring = 194.8
 
-export default function PlaceForm({ categories, place }: { categories: Category[]; place?: Place }) {
+export default function PlaceForm({ categories, place, photos = [] }: { categories: Category[]; place?: Place; photos?: GalleryPhoto[] }) {
   const [state, action, pending] = useActionState(savePlace, { error: '' })
   const formRef = useRef<HTMLFormElement>(null)
   const statusRef = useRef<HTMLInputElement>(null)
@@ -125,6 +126,8 @@ export default function PlaceForm({ categories, place }: { categories: Category[
               </div>
             </div>
           </section>
+
+          {place && <VenueGallery venueId={place.id} slug={place.slug} photos={photos} />}
 
           <section className="panel">
             <div className="panel-head">
