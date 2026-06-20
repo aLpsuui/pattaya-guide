@@ -2,6 +2,9 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Icon from '@/app/components/Icon'
+import type { MegaData } from '@/lib/megaNav'
+
+const StarSvg = () => (<svg viewBox="0 0 24 24" width="11" height="11" aria-hidden="true"><path d="M12 17.3 6.2 20.5l1.1-6.5L2.5 9.4l6.5-.9L12 2.5l3 6 6.5.9-4.8 4.6 1.1 6.5z" /></svg>)
 
 const LogoSVG = ({ size = 36 }: { size?: number }) => (
   <svg viewBox="0 0 220 240" xmlns="http://www.w3.org/2000/svg" style={{width:size,height:'auto',flexShrink:0}}>
@@ -53,7 +56,7 @@ const navItems = [
   ]},
 ]
 
-export default function Navbar() {
+export default function Navbar({ mega = {} }: { mega?: MegaData }) {
   const [scrolled, setScrolled] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [openMega, setOpenMega] = useState<string | null>(null)
@@ -114,18 +117,55 @@ export default function Navbar() {
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" className="cv" width="13" height="13"><path d="m6 9 6 6 6-6"/></svg>
                   </Link>
                   <div className="mega">
-                    <div className="container mega-wrap" style={{gridTemplateColumns:'200px 1fr'}}>
+                    <div className="container mega-wrap">
                       <div className="mega-rail">
                         <h5>Browse {item.label}</h5>
                         <ul>
                           {item.items.map(sub => (
                             <li key={sub.label}>
-                              <Link href={sub.href}>{sub.label} {sub.count && <span className="cnt">{sub.count}</span>}</Link>
+                              <Link href={sub.href} onClick={() => setOpenMega(null)}>{sub.label} {sub.count && <span className="cnt">{sub.count}</span>}</Link>
                             </li>
                           ))}
                         </ul>
-                        <Link className="pill-link" href={`/${item.slug}`}>All {item.label} →</Link>
+                        <Link className="pill-link" href={`/${item.slug}`} onClick={() => setOpenMega(null)}>All {item.label} →</Link>
                       </div>
+
+                      <div className="bento">
+                        {(mega[item.slug]?.venues?.length ?? 0) > 0 ? (
+                          mega[item.slug]!.venues.map((v, i) => (
+                            <Link key={v.slug} href={`/venues/${v.slug}`} onClick={() => setOpenMega(null)}>
+                              {v.image_url && <img src={v.image_url} alt={v.name} loading="lazy" />}
+                              {i === 0 && <span className="badge">Editor&apos;s pick</span>}
+                              {v.rating != null && <span className="rate-chip"><StarSvg />{v.rating.toFixed(1)}</span>}
+                              <span className="k">{v.categories?.name_en || v.neighborhood || item.label}</span>
+                              <b>{v.name}</b>
+                              {v.price_from != null
+                                ? <small>from ฿{v.price_from.toLocaleString()}</small>
+                                : v.neighborhood ? <small>{v.neighborhood}</small> : null}
+                            </Link>
+                          ))
+                        ) : (
+                          <Link href={`/${item.slug}`} onClick={() => setOpenMega(null)} style={{ background: 'var(--grad-brand)' }}>
+                            <span className="k">Explore</span>
+                            <b>Browse all {item.label}</b>
+                            <small>See every place →</small>
+                          </Link>
+                        )}
+                      </div>
+
+                      {mega[item.slug]?.guide && (
+                        <Link className="mega-promo" href={`/blog/${mega[item.slug]!.guide!.slug}`} onClick={() => setOpenMega(null)}>
+                          <div className="ph" style={{ background: 'var(--grad-brand)' }}><span className="ph-tag">Featured guide</span></div>
+                          <div className="bd">
+                            <div className="k">{item.label} guide</div>
+                            <h4>{mega[item.slug]!.guide!.title}</h4>
+                            {mega[item.slug]!.guide!.description && <p>{mega[item.slug]!.guide!.description}</p>}
+                            <div className="row">
+                              <small><StarSvg /> {mega[item.slug]!.guide!.read_time ? `${mega[item.slug]!.guide!.read_time} min read` : 'Read guide'}{mega[item.slug]!.guide!.author ? ` · ${mega[item.slug]!.guide!.author}` : ''}</small>
+                            </div>
+                          </div>
+                        </Link>
+                      )}
                     </div>
                   </div>
                 </li>
