@@ -829,6 +829,13 @@ body.mm-open{overflow:hidden;touch-action:none}
 .mega-promo .av span{width:26px;height:26px;border-radius:50%;border:2px solid #fff;margin-left:-8px;background-size:cover;background-position:center}
 .mega-promo .av span:first-child{margin-left:0}
 .mega-promo .row small{font-family:var(--display);font-size:12px;font-weight:600;color:var(--ink-500);display:inline-flex;align-items:center;gap:5px}
+/* mega card alignment hard-fix (keep card text bottom-LEFT, promo image filled) */
+.mega-wrap .bento a{align-items:flex-start;justify-content:flex-end;text-align:left}
+.mega-wrap .bento a .k,.mega-wrap .bento a b,.mega-wrap .bento a small{align-self:flex-start;text-align:left;width:100%}
+.mega-wrap .mega-promo{align-items:stretch}
+.mega-wrap .mega-promo .ph{background:var(--grad-brand)}
+.mega-wrap .mega-promo .bd{align-items:flex-start;text-align:left}
+
 /* STATS (new design) */
 .stats-wrap{margin-top:-44px;position:relative;z-index:5}
 .stats{background:#fff;border-radius:var(--r-xl);padding:var(--s5) var(--s6);box-shadow:var(--sh-lg);display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s5);border:1px solid var(--line);align-items:center}
