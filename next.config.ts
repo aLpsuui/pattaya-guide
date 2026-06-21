@@ -28,6 +28,13 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: '/:path*', headers: securityHeaders }]
   },
+  async redirects() {
+    // Old misspelled URL → corrected /things-to-do (keep existing links/SEO).
+    return [
+      { source: '/thinks-to-do', destination: '/things-to-do', permanent: true },
+      { source: '/thinks-to-do/:path*', destination: '/things-to-do/:path*', permanent: true },
+    ]
+  },
 }
 
 export default nextConfig;

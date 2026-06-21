@@ -977,10 +977,10 @@ body.no-scroll{overflow:hidden;touch-action:none}
 /* ============ BLOG LIST PAGE — missing classes ============ */
 .page-hero{position:relative;background:linear-gradient(135deg,#eaf6fb 0%,#cfe8f5 100%);overflow:hidden}
 .page-hero::after{content:"";position:absolute;right:-80px;top:-80px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(47,189,220,.25),transparent 70%);pointer-events:none}
-.page-hero .inner{position:relative;padding:var(--s8) 0 var(--s7);z-index:1}
+.page-hero .inner{position:relative;padding-top:var(--s8);padding-bottom:var(--s7);z-index:1}
 .page-hero h1{font-size:var(--text-display,clamp(40px,5vw,64px));max-width:18ch}
 .page-hero .lead{margin-top:var(--s3)}
-@media(max-width:560px){.page-hero .inner{padding:var(--s7) 0 var(--s6)}}
+@media(max-width:560px){.page-hero .inner{padding-top:var(--s7);padding-bottom:var(--s6)}}
 
 .filter-rail{position:sticky;top:64px;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:var(--s2) 0}
 .filterbar{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}

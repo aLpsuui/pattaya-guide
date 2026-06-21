@@ -4,7 +4,7 @@ import BlogScript from '@/app/components/BlogScript'
 export const metadata = {
   title: 'Things to Do in Pattaya — Tours, Islands, Diving & Adventure | Go To Pattaya',
   description: 'Browse the best things to do in Pattaya: island day trips, scuba diving, jet ski & water sports, temples, skydiving and bike rentals. A curated adventure catalog.',
-  alternates: { canonical: '/thinks-to-do' },
+  alternates: { canonical: '/things-to-do' },
 }
 
 const HTML = String.raw`<!-- ===== Hidden inline icon sprite (only the symbols used on this page) ===== -->

@@ -6,6 +6,9 @@ import type { MegaData } from '@/lib/megaNav'
 
 const StarSvg = () => (<svg viewBox="0 0 24 24" width="11" height="11" aria-hidden="true"><path d="M12 17.3 6.2 20.5l1.1-6.5L2.5 9.4l6.5-.9L12 2.5l3 6 6.5.9-4.8 4.6 1.1 6.5z" /></svg>)
 
+// The "Things to Do" category slug stays 'thinks-to-do' (DB), but its public URL is /things-to-do.
+const routeFor = (slug: string) => (slug === 'thinks-to-do' ? '/things-to-do' : `/${slug}`)
+
 const LogoSVG = ({ size = 36 }: { size?: number }) => (
   <svg viewBox="0 0 220 240" xmlns="http://www.w3.org/2000/svg" style={{width:size,height:'auto',flexShrink:0}}>
     <defs><linearGradient id="npb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#034487"/><stop offset="1" stopColor="#0178B4"/></linearGradient></defs>
@@ -26,12 +29,12 @@ const navItems = [
     { label: 'Vegan & healthy', count: '16', href: '/eat-and-drinks' },
   ]},
   { label: 'Things to Do', icon: 'tours', slug: 'thinks-to-do', items: [
-    { label: 'Tours & day trips', count: '83', href: '/thinks-to-do' },
-    { label: 'Islands & beaches', count: '14', href: '/thinks-to-do#islands' },
-    { label: 'Temples & culture', count: '19', href: '/thinks-to-do' },
-    { label: 'Diving & snorkeling', count: '12', href: '/thinks-to-do' },
-    { label: 'Skydiving & adrenaline', count: '21', href: '/thinks-to-do' },
-    { label: 'Rent a bike / car', count: '30', href: '/thinks-to-do' },
+    { label: 'Tours & day trips', count: '83', href: '/things-to-do' },
+    { label: 'Islands & beaches', count: '14', href: '/things-to-do#islands' },
+    { label: 'Temples & culture', count: '19', href: '/things-to-do' },
+    { label: 'Diving & snorkeling', count: '12', href: '/things-to-do' },
+    { label: 'Skydiving & adrenaline', count: '21', href: '/things-to-do' },
+    { label: 'Rent a bike / car', count: '30', href: '/things-to-do' },
   ]},
   { label: 'Yoga & Fitness', icon: 'muay-thai', slug: 'yoga-and-fitness', items: [
     { label: 'Yoga & Pilates', count: '26', href: '/yoga-and-fitness#lane-yoga' },
@@ -111,7 +114,7 @@ export default function Navbar({ mega = {} }: { mega?: MegaData }) {
                 <li key={item.label} className={openMega === item.label ? 'open' : ''}
                   onMouseEnter={() => setOpenMega(item.label)}
                   onMouseLeave={() => setOpenMega(null)}>
-                  <Link href={`/${item.slug}`} onClick={() => setOpenMega(null)}>
+                  <Link href={routeFor(item.slug)} onClick={() => setOpenMega(null)}>
                     <Icon name={item.icon} size={18} className="ic" />
                     {item.label}
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" className="cv" width="13" height="13"><path d="m6 9 6 6 6-6"/></svg>
@@ -127,7 +130,7 @@ export default function Navbar({ mega = {} }: { mega?: MegaData }) {
                             </li>
                           ))}
                         </ul>
-                        <Link className="pill-link" href={`/${item.slug}`} onClick={() => setOpenMega(null)}>All {item.label} →</Link>
+                        <Link className="pill-link" href={routeFor(item.slug)} onClick={() => setOpenMega(null)}>All {item.label} →</Link>
                       </div>
 
                       <div className="bento">
@@ -145,7 +148,7 @@ export default function Navbar({ mega = {} }: { mega?: MegaData }) {
                             </Link>
                           ))
                         ) : (
-                          <Link href={`/${item.slug}`} onClick={() => setOpenMega(null)} style={{ background: 'var(--grad-brand)' }}>
+                          <Link href={routeFor(item.slug)} onClick={() => setOpenMega(null)} style={{ background: 'var(--grad-brand)' }}>
                             <span className="k">Explore</span>
                             <b>Browse all {item.label}</b>
                             <small>See every place →</small>

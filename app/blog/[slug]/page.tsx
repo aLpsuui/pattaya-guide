@@ -30,7 +30,7 @@ const ROUTE_MAP: Record<string, string> = {
   'blog.html': '/blog',
   'plan-my-trip.html': '/plan-my-trip',
   'pillar-areas.html': '/areas',
-  'pillar-things-to-do.html': '/thinks-to-do',
+  'pillar-things-to-do.html': '/things-to-do',
   'pillar-wellness-beauty.html': '/wellness-and-beauty',
   'pillar-eat-drink.html': '/eat-and-drinks',
   'pillar-yoga-fitness.html': '/yoga-and-fitness',
