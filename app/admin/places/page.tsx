@@ -4,29 +4,21 @@ import Shell from '@/app/admin/_components/Shell'
 import RowDelete from '@/app/admin/_components/RowDelete'
 import { deletePlace } from '@/app/admin/_actions/places'
 import { statusPill } from '@/lib/admin/options'
-import { IconChevR, IconPlus, IconPin, IconStar, IconEdit } from '@/app/admin/_components/icons'
+import { venueChecks, scoreOf } from '@/lib/admin/seo'
+import { IconChevR, IconPlus, IconPin, IconStar, IconEdit, IconEye } from '@/app/admin/_components/icons'
 
 export const dynamic = 'force-dynamic'
 
 type Row = {
   id: string; name: string; slug: string; neighborhood: string | null; rating: number | null
   review_count: number | null; image_url: string | null; status: string | null; is_active: boolean | null
-  seo_title: string | null; description: string | null; categories: { name_en: string } | null
-}
-
-function seoScore(r: Row) {
-  let s = 0
-  if (r.seo_title) s += 25
-  if (r.description && r.description.length >= 80) s += 25
-  if (r.image_url) s += 25
-  if (/^[a-z0-9-]+$/.test(r.slug)) s += 25
-  return s
+  seo_title: string | null; description: string | null; focus_keyword: string | null; categories: { name_en: string } | null
 }
 
 export default async function PlacesPage() {
   const { data } = await db
     .from('venues')
-    .select('id,name,slug,neighborhood,rating,review_count,image_url,status,is_active,seo_title,description,categories(name_en)')
+    .select('id,name,slug,neighborhood,rating,review_count,image_url,status,is_active,seo_title,description,focus_keyword,categories(name_en)')
     .order('name', { ascending: true })
     .limit(200)
   const rows = (data || []) as unknown as Row[]
@@ -50,7 +42,7 @@ export default async function PlacesPage() {
             </thead>
             <tbody>
               {rows.map((r) => {
-                const sc = seoScore(r)
+                const sc = scoreOf(venueChecks(r))
                 const band = sc >= 75 ? 'good' : sc >= 50 ? 'mid' : 'low'
                 const st = (r.status || (r.is_active ? 'published' : 'draft')).toLowerCase()
                 return (
@@ -70,6 +62,7 @@ export default async function PlacesPage() {
                     <td className="hide-xs"><span className={`score-badge ${band}`}>{sc}<span className="bar"><i style={{ width: `${sc}%` }} /></span></span></td>
                     <td>
                       <div className="row-act">
+                        <a className="act-btn" href={`/venues/${r.slug}`} target="_blank" rel="noreferrer" aria-label="Preview"><IconEye /></a>
                         <Link className="act-btn" href={`/admin/places/${r.id}`} aria-label="Edit"><IconEdit /></Link>
                         <RowDelete action={deletePlace} id={r.id} name={r.name} />
                       </div>

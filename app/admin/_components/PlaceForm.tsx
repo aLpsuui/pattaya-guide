@@ -3,6 +3,7 @@ import { useActionState, useRef, useState } from 'react'
 import Link from 'next/link'
 import { savePlace } from '@/app/admin/_actions/places'
 import { AREAS, PRICE_RANGES, slugify } from '@/lib/admin/options'
+import { venueChecks, scoreOf } from '@/lib/admin/seo'
 import { IconUpload, IconCheck, IconCross } from './icons'
 import VenueGallery, { type GalleryPhoto } from './VenueGallery'
 
@@ -32,15 +33,9 @@ export default function PlaceForm({ categories, place, photos = [] }: { categori
 
   function onName(v: string) { setName(v); if (!slugTouched) setSlug(slugify(v)) }
 
-  const checks = [
-    { ok: seoTitle.length > 0 && seoTitle.length <= 60, label: 'SEO title set', sub: `${seoTitle.length} characters` },
-    { ok: /^[a-z0-9-]+$/.test(slug), label: 'Slug is clean', sub: 'Lowercase, hyphenated' },
-    { ok: meta.length >= 120 && meta.length <= 160, label: 'Meta description', sub: `${meta.length} / 155` },
-    { ok: hasImage, label: 'Cover image', sub: hasImage ? 'Set' : 'Needed for social cards' },
-    { ok: keyword.trim().length > 0, label: 'Focus keyword', sub: keyword ? `“${keyword}”` : 'Set a primary keyword' },
-  ]
+  const checks = venueChecks({ seo_title: seoTitle, description: meta, image_url: hasImage ? 'set' : null, slug, focus_keyword: keyword })
   const passed = checks.filter((c) => c.ok).length
-  const score = Math.round((passed / checks.length) * 100)
+  const score = scoreOf(checks)
   const tone = score >= 80 ? 'var(--green-500)' : score >= 50 ? 'var(--amber-500)' : 'var(--red-500)'
 
   const serpTitle = seoTitle || name || 'Venue name — Pattaya'
