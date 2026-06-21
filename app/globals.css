@@ -97,7 +97,7 @@
   --live-soft:#fde7ea;
 }
 /* Icon helpers (ported from design-system/icons.css) for inline pg-icon sprites */
-.pg-icon{width:var(--pg-icon-size,24px);height:var(--pg-icon-size,24px);display:inline-block;vertical-align:middle;flex:0 0 auto;color:inherit;stroke:currentColor;fill:none}
+.pg-icon{width:var(--pg-icon-size,24px);height:var(--pg-icon-size,24px);display:inline-block;vertical-align:middle;flex:0 0 auto;color:inherit;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;fill:none}
 .pg-icon.is-16{--pg-icon-size:16px;stroke-width:2.25}.pg-icon.is-20{--pg-icon-size:20px}
 .pg-icon.is-24{--pg-icon-size:24px}.pg-icon.is-28{--pg-icon-size:28px}
 .pg-icon.is-32{--pg-icon-size:32px}.pg-icon.is-40{--pg-icon-size:40px;stroke-width:1.75}.pg-icon.is-48{--pg-icon-size:48px;stroke-width:1.75}
