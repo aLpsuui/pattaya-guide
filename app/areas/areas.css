@@ -5,6 +5,11 @@
 
 .area-page{display:block}
 
+/* —— LIVE MAP (interactive, injected between orientation & district cards) —— */
+.ar-livemap{padding:var(--s5) 0 var(--s7)}
+.ar-livemap .sec-head{margin-bottom:var(--s4);text-align:center}
+.ar-livemap .sec-head p{margin-inline:auto}
+
 /* —— HERO —————————————————————————————————————————————————————————————————— */
 .area-page .ar-hero{position:relative;min-height:clamp(420px,62vh,560px);display:flex;align-items:flex-end;overflow:hidden;border-radius:0}
 .area-page .ar-hero__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}

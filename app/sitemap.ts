@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { supabase } from '@/lib/supabase'
 import { SITE_URL } from '@/lib/site'
+import { AREAS } from '@/lib/areas'
 
 export const revalidate = 3600 // refresh the sitemap hourly
 
@@ -23,6 +24,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/terms`, lastModified: now, changeFrequency: 'yearly', priority: 0.2 },
   ]
 
+  // The seven area guide pages.
+  const areaRoutes: MetadataRoute.Sitemap = AREAS.map((a) => ({
+    url: `${SITE_URL}/areas/${a.slug}`,
+    lastModified: now,
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }))
+
   // Dynamic: published blog posts.
   let blogRoutes: MetadataRoute.Sitemap = []
   try {
@@ -41,5 +50,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     blogRoutes = []
   }
 
-  return [...staticRoutes, ...blogRoutes]
+  return [...staticRoutes, ...areaRoutes, ...blogRoutes]
 }

@@ -2,22 +2,27 @@
 // Used by the explore map and as a coordinate fallback for venues whose
 // own lat/lng aren't set yet (matched via the venue's neighborhood text).
 export interface Area {
+  slug: string
   name: string
   lat: number
   lng: number
   vibes: string[]
+  // neighborhood substrings (case-insensitive) that map a venue to this area
+  match: string[]
 }
 
 // The 7 official areas (must match the /areas page taxonomy + legend vibes).
 export const AREAS: Area[] = [
-  { name: 'Central Pattaya', lat: 12.9329, lng: 100.8821, vibes: ['Nightlife', 'Foodie', 'Backpacker'] },
-  { name: 'Jomtien', lat: 12.8920, lng: 100.8760, vibes: ['Beach', 'Family', 'Quiet'] },
-  { name: 'Naklua', lat: 12.9620, lng: 100.8905, vibes: ['Local', 'Quiet', 'Foodie'] },
-  { name: 'Pratumnak Hill', lat: 12.9180, lng: 100.8650, vibes: ['Quiet', 'Luxury', 'Beach'] },
-  { name: 'Wong Amat', lat: 12.9760, lng: 100.8880, vibes: ['Luxury', 'Beach', 'Quiet'] },
-  { name: 'Walking Street', lat: 12.9230, lng: 100.8780, vibes: ['Nightlife', 'Backpacker'] },
-  { name: 'Islands', lat: 12.9180, lng: 100.7830, vibes: ['Beach', 'Snorkel', 'Day-trip'] },
+  { slug: 'central-pattaya', name: 'Central Pattaya', lat: 12.9329, lng: 100.8821, vibes: ['Nightlife', 'Foodie', 'Backpacker'], match: ['Central Pattaya', 'Central', 'Beach Road', 'Soi Buakhao'] },
+  { slug: 'jomtien', name: 'Jomtien', lat: 12.8920, lng: 100.8760, vibes: ['Beach', 'Family', 'Quiet'], match: ['Jomtien', 'Na Jomtien', 'Thappraya'] },
+  { slug: 'naklua', name: 'Naklua', lat: 12.9620, lng: 100.8905, vibes: ['Local', 'Quiet', 'Foodie'], match: ['Naklua', 'North Pattaya'] },
+  { slug: 'pratumnak-hill', name: 'Pratumnak Hill', lat: 12.9180, lng: 100.8650, vibes: ['Quiet', 'Luxury', 'Beach'], match: ['Pratumnak', 'Pratamnak', 'Phra Tamnak'] },
+  { slug: 'wong-amat', name: 'Wong Amat', lat: 12.9760, lng: 100.8880, vibes: ['Luxury', 'Beach', 'Quiet'], match: ['Wong Amat', 'Wongamat'] },
+  { slug: 'walking-street', name: 'Walking Street', lat: 12.9230, lng: 100.8780, vibes: ['Nightlife', 'Backpacker'], match: ['Walking Street', 'South Pattaya'] },
+  { slug: 'islands', name: 'Islands', lat: 12.9180, lng: 100.7830, vibes: ['Beach', 'Snorkel', 'Day-trip'], match: ['Koh Larn', 'Island'] },
 ]
+
+export const areaBySlug = (slug: string) => AREAS.find((a) => a.slug === slug)
 
 // Pick an area centre for a venue that has no coordinates, from its
 // neighborhood string (e.g. "Naklua · Bang Lamung").

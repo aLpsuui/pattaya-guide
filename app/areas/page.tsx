@@ -1,5 +1,6 @@
 import './areas.css'
 import BlogScript from '@/app/components/BlogScript'
+import ExploreMap from '@/app/components/ExploreMap'
 
 export const metadata = {
   title: 'Areas of Pattaya — Find Your Neighborhood | Go To Pattaya',
@@ -291,8 +292,8 @@ const HTML = String.raw`
               </li>
             </ul>
             <div class="area-card__cta">
-              <a class="btn btn--primary" href="#">Explore Central<svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-arrow-right"></use></svg></a>
-              <a class="btn btn--secondary" href="#"><svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-map"></use></svg>See on map</a>
+              <a class="btn btn--primary" href="/areas/central-pattaya">Explore Central<svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-arrow-right"></use></svg></a>
+              <a class="btn btn--secondary" href="#areas-map"><svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-map"></use></svg>See on map</a>
             </div>
           </div>
         </article>
@@ -335,8 +336,8 @@ const HTML = String.raw`
               </li>
             </ul>
             <div class="area-card__cta">
-              <a class="btn btn--primary" href="#">Explore Jomtien<svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-arrow-right"></use></svg></a>
-              <a class="btn btn--secondary" href="#"><svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-map"></use></svg>See on map</a>
+              <a class="btn btn--primary" href="/areas/jomtien">Explore Jomtien<svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-arrow-right"></use></svg></a>
+              <a class="btn btn--secondary" href="#areas-map"><svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-map"></use></svg>See on map</a>
             </div>
           </div>
         </article>
@@ -379,8 +380,8 @@ const HTML = String.raw`
               </li>
             </ul>
             <div class="area-card__cta">
-              <a class="btn btn--primary" href="#">Explore Naklua<svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-arrow-right"></use></svg></a>
-              <a class="btn btn--secondary" href="#"><svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-map"></use></svg>See on map</a>
+              <a class="btn btn--primary" href="/areas/naklua">Explore Naklua<svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-arrow-right"></use></svg></a>
+              <a class="btn btn--secondary" href="#areas-map"><svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-map"></use></svg>See on map</a>
             </div>
           </div>
         </article>
@@ -423,8 +424,8 @@ const HTML = String.raw`
               </li>
             </ul>
             <div class="area-card__cta">
-              <a class="btn btn--primary" href="#">Explore Pratumnak<svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-arrow-right"></use></svg></a>
-              <a class="btn btn--secondary" href="#"><svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-map"></use></svg>See on map</a>
+              <a class="btn btn--primary" href="/areas/pratumnak-hill">Explore Pratumnak<svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-arrow-right"></use></svg></a>
+              <a class="btn btn--secondary" href="#areas-map"><svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-map"></use></svg>See on map</a>
             </div>
           </div>
         </article>
@@ -467,8 +468,8 @@ const HTML = String.raw`
               </li>
             </ul>
             <div class="area-card__cta">
-              <a class="btn btn--primary" href="#">Explore Wong Amat<svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-arrow-right"></use></svg></a>
-              <a class="btn btn--secondary" href="#"><svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-map"></use></svg>See on map</a>
+              <a class="btn btn--primary" href="/areas/wong-amat">Explore Wong Amat<svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-arrow-right"></use></svg></a>
+              <a class="btn btn--secondary" href="#areas-map"><svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-map"></use></svg>See on map</a>
             </div>
           </div>
         </article>
@@ -510,8 +511,8 @@ const HTML = String.raw`
               </li>
             </ul>
             <div class="area-card__cta">
-              <a class="btn btn--primary" href="#">Explore Walking Street<svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-arrow-right"></use></svg></a>
-              <a class="btn btn--secondary" href="#"><svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-map"></use></svg>See on map</a>
+              <a class="btn btn--primary" href="/areas/walking-street">Explore Walking Street<svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-arrow-right"></use></svg></a>
+              <a class="btn btn--secondary" href="#areas-map"><svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-map"></use></svg>See on map</a>
             </div>
           </div>
         </article>
@@ -554,8 +555,8 @@ const HTML = String.raw`
               </li>
             </ul>
             <div class="area-card__cta">
-              <a class="btn btn--primary" href="#">Explore the Islands<svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-arrow-right"></use></svg></a>
-              <a class="btn btn--secondary" href="#"><svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-map"></use></svg>See on map</a>
+              <a class="btn btn--primary" href="/areas/islands">Explore the Islands<svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-arrow-right"></use></svg></a>
+              <a class="btn btn--secondary" href="#areas-map"><svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-map"></use></svg>See on map</a>
             </div>
           </div>
         </article>
@@ -768,10 +769,35 @@ const SCRIPT = String.raw`
 })();
 `
 
+// Split the static page between the orientation section and the district
+// cards so the real interactive Leaflet map can be injected as a sibling
+// React section. HEAD keeps the `.area-page` wrapper open (we re-close it);
+// the closing </div> for `.area-page` lives at the end of REST, so we
+// re-open the wrapper on the second half to keep the nesting balanced.
+// Cut the static markup at the comment that opens the district-cards section.
+// HEAD keeps the `.area-page` wrapper open (we re-close it); the wrapper's
+// own closing </div> lives at the very end of REST, so we re-open it on the
+// second half. The real interactive map is injected between the two.
+const MARKER = 'DISTRICT CARDS'
+const cut = HTML.lastIndexOf('<!--', HTML.indexOf(MARKER))
+const HEAD = HTML.slice(0, cut)
+const REST = HTML.slice(cut)
+
 export default function AreasPage() {
   return (
     <>
-      <div dangerouslySetInnerHTML={{ __html: HTML }} />
+      <div dangerouslySetInnerHTML={{ __html: HEAD + '</div>' }} />
+      <section className="ar-livemap" aria-labelledby="areas-map-title" id="areas-map">
+        <div className="container">
+          <div className="sec-head">
+            <span className="kicker">Live map</span>
+            <h2 id="areas-map-title">Explore Pattaya on the map</h2>
+            <p>All seven areas and every place we cover, pinned on one map. Tap an area to open its guide, or a venue for details.</p>
+          </div>
+          <ExploreMap />
+        </div>
+      </section>
+      <div dangerouslySetInnerHTML={{ __html: '<div class="area-page">' + REST }} />
       <BlogScript script={SCRIPT} />
     </>
   )

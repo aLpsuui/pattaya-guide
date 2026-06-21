@@ -1,0 +1,111 @@
+/* Single-area guide page (/areas/[slug]) */
+.adx-hero {
+  position: relative;
+  min-height: 44vh;
+  display: flex;
+  align-items: flex-end;
+  color: #fff;
+  overflow: hidden;
+}
+.adx-hero__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.adx-hero__veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(4, 18, 32, 0.1) 0%, rgba(4, 18, 32, 0.55) 55%, rgba(4, 18, 32, 0.9) 100%);
+}
+.adx-hero__inner {
+  position: relative;
+  width: 100%;
+  padding-top: var(--s7);
+  padding-bottom: var(--s6);
+}
+.adx-hero h1 {
+  font-size: clamp(2rem, 5.5vw, 3.4rem);
+  line-height: 1.05;
+  margin: 0.15em 0 0.25em;
+}
+.adx-lead {
+  max-width: 62ch;
+  font-size: 1.06rem;
+  line-height: 1.55;
+  opacity: 0.95;
+}
+.adx-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: #fff;
+  opacity: 0.9;
+  margin-bottom: var(--s4);
+}
+.adx-back:hover { opacity: 1; }
+.adx-vibes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: var(--s4);
+}
+.adx-chip {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(4px);
+}
+.adx-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s4);
+  margin-top: var(--s5);
+  font-size: 0.98rem;
+}
+.adx-meta b { font-size: 1.15rem; }
+.adx-meta a { color: #bfe3ff; font-weight: 600; }
+.adx-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.adx-section { padding: var(--s7) 0; }
+
+.adx-empty {
+  text-align: center;
+  color: var(--text-muted);
+  padding: var(--s7) var(--s4);
+  line-height: 1.7;
+}
+.adx-empty a { color: var(--ocean); font-weight: 600; }
+
+.adx-other {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: var(--s7);
+  padding-top: var(--s5);
+  border-top: 1px solid var(--line, #e6ebf0);
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+.adx-otherlink {
+  color: var(--ocean);
+  font-weight: 600;
+}
+.adx-otherlink:hover { text-decoration: underline; }
+
+@media (max-width: 560px) {
+  .adx-hero { min-height: 38vh; }
+}

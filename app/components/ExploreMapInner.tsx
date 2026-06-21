@@ -66,7 +66,7 @@ export default function ExploreMapInner() {
 
   const list = useMemo(() => {
     const items: { key: string; kind: 'area' | 'ven'; name: string; meta: string; vibes?: string[]; lat: number; lng: number; href?: string }[] = []
-    if (showAreas) for (const a of AREAS) items.push({ key: 'a' + a.name, kind: 'area', name: a.name, meta: 'Area', vibes: a.vibes, lat: a.lat, lng: a.lng })
+    if (showAreas) for (const a of AREAS) items.push({ key: 'a' + a.name, kind: 'area', name: a.name, meta: 'Area', vibes: a.vibes, lat: a.lat, lng: a.lng, href: `/areas/${a.slug}` })
     if (showVenues) for (const v of venues) items.push({ key: 'v' + v.slug, kind: 'ven', name: v.name, meta: v.type ?? 'Place', lat: v.lat, lng: v.lng, href: `/venues/${v.slug}` })
     return items
   }, [showAreas, showVenues, venues])
@@ -91,7 +91,7 @@ export default function ExploreMapInner() {
             <Flyer target={focus} />
             {showAreas && AREAS.map(a => (
               <Marker key={'am' + a.name} position={[a.lat, a.lng]} icon={colorIcon(areaColor(a.name))}>
-                <Popup><b>{a.name}</b><br /><a href="/areas">Explore area →</a></Popup>
+                <Popup><b>{a.name}</b><br /><a href={`/areas/${a.slug}`}>Explore area →</a></Popup>
               </Marker>
             ))}
             {showVenues && venues.map(v => (
