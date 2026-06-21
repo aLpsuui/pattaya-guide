@@ -204,10 +204,6 @@ export default function Navbar({ mega = {} }: { mega?: MegaData }) {
         </div>
         <div className="drawer-foot">
           <Link href="/plan-my-trip" className="btn btn-primary" onClick={() => setDrawerOpen(false)}>Plan my trip →</Link>
-          <div className="frow">
-            <a href="#">🌐 English · ฿ THB</a>
-            <a href="#">+ Add your place</a>
-          </div>
         </div>
       </aside>
     </>
