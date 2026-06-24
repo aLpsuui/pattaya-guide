@@ -163,7 +163,7 @@ export default async function Home() {
             </div>
             <a href="#" className="viewall">All categories <Arrow /></a>
           </div>
-          <div className="cats-grid">
+          <div className="cats-grid" translate="no">
             {categories.map(cat => (
               <Link key={cat.name} href={cat.href} className={`cat${cat.feat ? ' cat-feat' : ''}`}>
                 <div className="bg" style={{ backgroundImage: `url(${ASSETS}/${cat.img})` }}></div>
@@ -187,7 +187,7 @@ export default async function Home() {
             </div>
             <a href="#" className="viewall">All planning guides <Arrow /></a>
           </div>
-          <div className="plan-grid">
+          <div className="plan-grid" translate="no">
             {planCards.map(card => (
               <a key={card.title} href="#" className="plan-card">
                 <div className="bg" style={{ backgroundImage: `url(${ASSETS}/${card.img})` }}></div>
@@ -254,7 +254,7 @@ export default async function Home() {
             </div>
             <Link href="/map" className="viewall">Open the map <Arrow /></Link>
           </div>
-          <div className="dist-grid">
+          <div className="dist-grid" translate="no">
             {districts.map(d => (
               <a key={d.name} href="#" className={`dist ${d.cls}`}>
                 <div className="dist-bg" style={{ backgroundImage: `url(${ASSETS}/${d.img})` }}></div>
