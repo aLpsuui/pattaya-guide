@@ -1,0 +1,61 @@
+/* Contact form */
+.cform { margin-top: var(--s5); display: flex; flex-direction: column; gap: var(--s4); }
+.cform-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s4); }
+@media (max-width: 560px) { .cform-row { grid-template-columns: 1fr; } }
+
+.cfield { display: flex; flex-direction: column; gap: 6px; }
+.cfield > span { font-family: var(--font-display); font-weight: 600; font-size: var(--text-sm); color: var(--text-strong); }
+.cfield > span em { color: var(--text-faint); font-weight: 400; font-style: normal; }
+.cfield input,
+.cfield textarea {
+  width: 100%;
+  font: inherit;
+  color: var(--text-body);
+  background: var(--bg-surface, #fff);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 12px 14px;
+  transition: border-color var(--dur, .15s), box-shadow var(--dur, .15s);
+}
+.cfield textarea { resize: vertical; min-height: 130px; }
+.cfield input:focus,
+.cfield textarea:focus {
+  outline: none;
+  border-color: var(--ocean);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ocean) 18%, transparent);
+}
+
+.cform-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+
+.cform-err { color: var(--danger, #e0524d); font-size: var(--text-sm); margin: -2px 0 0; }
+
+.cform-btn {
+  align-self: flex-start;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-base);
+  color: #fff;
+  background: var(--grad-brand, var(--ocean));
+  border: none;
+  border-radius: var(--r-md);
+  padding: 13px 26px;
+  min-height: 44px;
+  cursor: pointer;
+  transition: filter var(--dur, .15s), transform var(--dur, .15s);
+}
+.cform-btn:hover { filter: brightness(1.05); }
+.cform-btn:active { transform: translateY(1px); }
+.cform-btn:disabled { opacity: .6; cursor: default; }
+
+.cform-done {
+  margin-top: var(--s5);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px 22px;
+  border: 1px solid color-mix(in srgb, var(--ok, #1ba672) 35%, var(--border));
+  background: color-mix(in srgb, var(--ok, #1ba672) 8%, #fff);
+  border-radius: var(--r-lg);
+}
+.cform-done strong { font-family: var(--font-display); color: var(--text-strong); }
+.cform-done span { color: var(--text-muted); font-size: var(--text-sm); }

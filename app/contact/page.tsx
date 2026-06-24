@@ -1,4 +1,6 @@
 import Link from 'next/link'
+import './contact.css'
+import ContactForm from './ContactForm'
 
 export const metadata = {
   title: 'Contact Us | Go To Pattaya',
@@ -38,9 +40,11 @@ export default function ContactPage() {
               <p><a href="mailto:partners@gotopattaya.com" style={{ color: 'var(--ocean)', fontWeight: 600 }}>partners@gotopattaya.com</a></p>
             </div>
           </div>
-          <p style={{ color: 'var(--ink-400)', fontSize: 13, marginTop: 'var(--s5)' }}>
-            Placeholder contact addresses — replace with your real inboxes (or wire a contact form to your backend).
-          </p>
+          <div style={{ marginTop: 'var(--s6)' }}>
+            <h2 style={{ fontSize: 'var(--text-h4)' }}>Send us a message</h2>
+            <p style={{ color: 'var(--text-muted)', marginTop: 4 }}>Prefer a form? Fill this in and it reaches our team directly.</p>
+            <ContactForm />
+          </div>
         </div>
       </section>
     </div>
