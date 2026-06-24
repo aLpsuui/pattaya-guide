@@ -3,13 +3,14 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import { logout } from '@/app/admin/_actions/auth'
 import {
-  IconPin, IconDoc, IconImage, IconDash, IconSearch, IconSun, IconMoon, IconBurger, IconLogout,
+  IconPin, IconDoc, IconImage, IconDash, IconSearch, IconSun, IconMoon, IconBurger, IconLogout, IconMail,
 } from './icons'
 
-type Active = 'dashboard' | 'places' | 'blog' | 'media' | 'seo'
+type Active = 'dashboard' | 'places' | 'blog' | 'media' | 'seo' | 'messages'
 
 const NAV: { key: Active; href: string; label: string; icon: ReactNode; group: string }[] = [
   { key: 'dashboard', href: '/admin', label: 'Dashboard', icon: <IconDash />, group: 'Overview' },
+  { key: 'messages', href: '/admin/messages', label: 'Messages', icon: <IconMail />, group: 'Overview' },
   { key: 'places', href: '/admin/places', label: 'Places', icon: <IconPin />, group: 'Content' },
   { key: 'blog', href: '/admin/blog', label: 'Blog & Guides', icon: <IconDoc />, group: 'Content' },
   { key: 'media', href: '/admin/media', label: 'Media', icon: <IconImage />, group: 'Content' },

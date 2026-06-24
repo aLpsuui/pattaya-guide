@@ -24,3 +24,4 @@ export const IconCheck = (p: SVGProps<SVGSVGElement>) => (<svg {...S({ strokeWid
 export const IconWarn = (p: SVGProps<SVGSVGElement>) => (<svg {...S({ strokeWidth: 2.2, ...p })}><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" /></svg>)
 export const IconCross = (p: SVGProps<SVGSVGElement>) => (<svg {...S({ strokeWidth: 2.4, ...p })}><path d="M6 6l12 12M18 6 6 18" /></svg>)
 export const IconEye = (p: SVGProps<SVGSVGElement>) => (<svg {...S(p)}><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>)
+export const IconMail = (p: SVGProps<SVGSVGElement>) => (<svg {...S(p)}><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>)
