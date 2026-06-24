@@ -40,7 +40,7 @@ export default async function MessagesPage() {
         </div></section>
       ) : rows.length === 0 ? (
         <section className="panel"><div className="empty">
-          <IconMail />
+          <span className="e-ic"><IconMail /></span>
           <b>No messages yet</b>
           <span>Submissions from the /contact form will appear here.</span>
         </div></section>
