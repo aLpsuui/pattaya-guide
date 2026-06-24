@@ -97,6 +97,10 @@
 .area-page .area-card__cta{display:flex;gap:var(--s2);flex-wrap:wrap;margin-top:auto}
 
 /* —— COMPARE TABLE — colour helpers ——————————————————————————————————————— */
+/* Scroll the wide table inside its own wrapper so it never widens the page
+   (fixes the mobile "shrink-to-fit" where /areas rendered at 487px). */
+.area-page .compare-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+.area-page .compare{min-width:640px}
 .area-page .compare th:first-child,.area-page .compare td:first-child{position:sticky;left:0;background:var(--bg-surface);font-family:var(--font-display);font-weight:700;color:var(--text-strong);box-shadow:1px 0 0 var(--border)}
 .area-page .compare th:first-child{background:var(--blue-50)}
 .area-page .compare .cell-strong{font-weight:700}

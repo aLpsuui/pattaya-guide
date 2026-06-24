@@ -19,25 +19,24 @@ const cols = [
     title: 'Explore',
     links: [
       { label: 'Where to eat & drink', href: '/eat-and-drinks' },
-      { label: 'Beaches & islands', href: '#' },
-      { label: 'Things to do', href: '#' },
-      { label: 'Wellness & spa', href: '#' },
-      { label: 'Nightlife', href: '#' },
-      { label: 'Tours & day trips', href: '#' },
-      { label: 'Interactive map', href: '/#map' },
-      { label: 'Plan your trip', href: '/blog' },
+      { label: 'Things to do', href: '/things-to-do' },
+      { label: 'Wellness & spa', href: '/wellness-and-beauty' },
+      { label: 'Yoga & fitness', href: '/yoga-and-fitness' },
+      { label: 'Beaches & islands', href: '/areas/islands' },
+      { label: 'Interactive map', href: '/map' },
+      { label: 'Plan your trip', href: '/plan-my-trip' },
     ],
   },
   {
     title: 'Districts',
     links: [
-      { label: 'Central Pattaya', href: '#' },
-      { label: 'Jomtien Beach', href: '#' },
-      { label: 'Naklua', href: '#' },
-      { label: 'Pratumnak Hill', href: '#' },
-      { label: 'Wong Amat', href: '#' },
-      { label: 'Walking Street', href: '#' },
-      { label: 'Koh Larn Island', href: '#' },
+      { label: 'Central Pattaya', href: '/areas/central-pattaya' },
+      { label: 'Jomtien Beach', href: '/areas/jomtien' },
+      { label: 'Naklua', href: '/areas/naklua' },
+      { label: 'Pratumnak Hill', href: '/areas/pratumnak-hill' },
+      { label: 'Wong Amat', href: '/areas/wong-amat' },
+      { label: 'Walking Street', href: '/areas/walking-street' },
+      { label: 'Koh Larn Island', href: '/areas/islands' },
     ],
   },
   {
@@ -57,8 +56,8 @@ const cols = [
     title: 'Company',
     links: [
       { label: 'About us', href: '/about' },
-      { label: 'Editorial standards', href: '#' },
-      { label: 'Our editorial team', href: '#' },
+      { label: 'Editorial standards', href: '/about' },
+      { label: 'Our editorial team', href: '/about' },
       { label: 'Submit a venue', href: '/contact' },
       { label: 'List your business', href: '/contact' },
       { label: 'Contact us', href: '/contact' },
@@ -121,12 +120,6 @@ export default function Footer() {
 
         <div className="footer-bottom">
           <span>© 2026 Go To Pattaya · Made in Pattaya 🇹🇭</span>
-          <div className="fb-lang">
-            <a href="#" className="active">EN</a>
-            <a href="#">RU</a>
-            <a href="#">中文</a>
-            <a href="#">ไทย</a>
-          </div>
           <div className="legal">
             <Link href="/privacy">Privacy</Link>
             <Link href="/terms">Terms</Link>
