@@ -34,12 +34,12 @@ export default async function MessagesPage() {
       </div>
 
       {needsSetup ? (
-        <section className="panel"><div className="empty">
+        <section className="panel" style={{ minHeight: '62vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><div className="empty">
           <b>Inbox not set up yet</b>
           <span>Run <code>supabase-contact-table.sql</code> in the Supabase SQL editor to create the <code>contact_messages</code> table.</span>
         </div></section>
       ) : rows.length === 0 ? (
-        <section className="panel"><div className="empty">
+        <section className="panel" style={{ minHeight: '62vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><div className="empty">
           <span className="e-ic"><IconMail /></span>
           <b>No messages yet</b>
           <span>Submissions from the /contact form will appear here.</span>
