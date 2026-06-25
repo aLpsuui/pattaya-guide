@@ -35,8 +35,8 @@ function parse(html, slug) {
   const tagline = strip(m1(/<p class="det-nc__tagline">([\s\S]*?)<\/p>/, html))
 
   // breadcrumb type = last <a> text in the crumb nav
-  const crumb = m1(/<nav class="[^"]*det-nc__crumb[^"]*"[\s\S]*?<\/nav>/, html) || ''
-  const links = all(/<a [^>]*>([\s\S]*?)<\/a>/g, crumb).map((x) => strip(x[1]))
+  const crumb = m1(/(<nav class="[^"]*det-nc__crumb[^"]*"[\s\S]*?<\/nav>)/, html) || ''
+  const links = all(/<a [^>]*>([\s\S]*?)<\/a>/g, crumb).map((x) => strip(x[1])).filter((t) => t && t !== 'Home' && t !== 'Nightlife')
   const rawType = links.length ? links[links.length - 1] : null
   const venueType = rawType ? (TYPE[rawType] || rawType.replace(/s$/, '')) : 'Nightclub'
 
