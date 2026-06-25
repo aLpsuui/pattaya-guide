@@ -10,9 +10,13 @@ const db = createClient('https://jsxtfodewyvxnplbtfnv.supabase.co', process.env.
 const DRY = process.argv.includes('--dry')
 const ROOT = 'C:\\Users\\DELL5280 Touch\\Desktop\\Go To Pattaya - Final'
 const CDN = 'https://cdn.gotopattaya.com/Venues/'
+const TTD = '6653922a-531d-491e-8a37-91b821118741' // Things To Do
 const SOURCES = [
   { dir: 'gyms', category_id: '6ca72f37-8334-41a2-8a79-118ae0f85925' },       // Yoga & Fitness
-  { dir: 'adrenaline', category_id: '6653922a-531d-491e-8a37-91b821118741' }, // Things To Do
+  { dir: 'adrenaline', category_id: TTD },
+  { dir: 'tours', category_id: TTD },
+  { dir: 'diving-snorkeling', category_id: TTD },
+  { dir: 'rentals', category_id: TTD },
 ]
 
 const ENT = { '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'", '&nbsp;': ' ', '&middot;': '·', '&rsquo;': '’', '&ldquo;': '“', '&rdquo;': '”', '&hellip;': '…', '&deg;': '°' }
@@ -118,6 +122,16 @@ for (const src of SOURCES) {
   }
   console.log(`${src.dir}: ${files.length} files`)
 }
+// Dedupe by slug (a venue can appear in two folders, e.g. adrenaline + tours).
+const seen = new Set()
+const dups = []
+const deduped = parsed.filter((p) => {
+  if (seen.has(p.venue.slug)) { dups.push(p.venue.slug); return false }
+  seen.add(p.venue.slug); return true
+})
+if (dups.length) console.log(`Dropped ${dups.length} duplicate slugs: ${dups.join(', ')}`)
+parsed.length = 0
+parsed.push(...deduped)
 console.log(`Parsed ${parsed.length} venues · ${parsed.filter((p) => p.photos.length).length} with photos`)
 
 if (DRY) {
