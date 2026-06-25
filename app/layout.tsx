@@ -63,6 +63,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const mega = await getMegaData()
   return (
     <html lang="en">
+      <head>
+        {/* Warm up the image hosts so the first venue/hero images start sooner. */}
+        <link rel="preconnect" href="https://cdn.gotopattaya.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://jsxtfodewyvxnplbtfnv.supabase.co" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://cdn.gotopattaya.com" />
+        <link rel="dns-prefetch" href="https://jsxtfodewyvxnplbtfnv.supabase.co" />
+      </head>
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         <RootChrome navbar={<Navbar mega={mega} />} footer={<><Footer /><MobileTabBar /></>}>
