@@ -813,6 +813,11 @@ body.mm-open{overflow:hidden;touch-action:none}
 .bento .badge{position:absolute;top:12px;left:12px;font-family:var(--display);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;background:rgba(255,255,255,.95);color:var(--steel);padding:4px 9px;border-radius:var(--r-pill);z-index:1}
 .bento .rate-chip{position:absolute;top:11px;right:11px;display:inline-flex;align-items:center;gap:4px;font-family:var(--display);font-size:11px;font-weight:700;color:var(--ink-900);background:rgba(255,255,255,.94);padding:3px 8px;border-radius:var(--r-pill);z-index:1}
 .bento .hmeta{display:flex;align-items:center;gap:9px;margin-top:8px;font-family:var(--display);font-size:12.5px;font-weight:600;opacity:.96}
+/* Areas mega: 6 equal cells (no featured-first spanning) */
+.bento--even{grid-auto-rows:152px}
+.bento--even a:first-child{grid-row:auto}
+.bento--even a:first-child b{font-size:15px;line-height:1.18}
+.bento--even .badge{display:none}
 .mega-promo{border-radius:var(--r-xl);overflow:hidden;background:var(--paper);border:1px solid var(--line);display:flex;flex-direction:column;transition:transform .25s,box-shadow .25s;text-decoration:none}
 .mega-promo:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
 .mega-promo .ph{position:relative;height:154px;overflow:hidden}

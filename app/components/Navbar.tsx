@@ -133,7 +133,7 @@ export default function Navbar({ mega = {} }: { mega?: MegaData }) {
                         <Link className="pill-link" href={routeFor(item.slug)} onClick={() => setOpenMega(null)}>All {item.label} →</Link>
                       </div>
 
-                      <div className="bento">
+                      <div className={`bento${item.slug === 'areas' ? ' bento--even' : ''}`}>
                         {(mega[item.slug]?.venues?.length ?? 0) > 0 ? (
                           mega[item.slug]!.venues.map((v, i) => (
                             <Link key={v.slug} href={v.href} onClick={() => setOpenMega(null)}>
