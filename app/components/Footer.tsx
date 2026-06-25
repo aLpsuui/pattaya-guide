@@ -20,8 +20,9 @@ const cols = [
     links: [
       { label: 'Where to eat & drink', href: '/eat-and-drinks' },
       { label: 'Things to do', href: '/things-to-do' },
+      { label: 'Nightlife & bars', href: '/nightlife' },
       { label: 'Wellness & spa', href: '/wellness-and-beauty' },
-      { label: 'Yoga & fitness', href: '/yoga-and-fitness' },
+      { label: 'Gym, Muay Thai & yoga', href: '/yoga-and-fitness' },
       { label: 'Beaches & islands', href: '/areas/islands' },
       { label: 'Interactive map', href: '/map' },
       { label: 'Plan your trip', href: '/plan-my-trip' },

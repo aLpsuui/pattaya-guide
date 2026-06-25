@@ -74,7 +74,7 @@ async function getBlogPosts(): Promise<BlogPost[]> {
 const categories = [
   { feat: true, img: 'best-restaurants-pattaya.jpg', icon: 'eat', name: 'Eat & Cafés', meta: '174 restaurants & cafés', href: '/eat-and-drinks' },
   { feat: true, img: 'pattaya-best-tours.jpg', icon: 'tours', name: 'Tours & Day Trips', meta: '77 islands, boats & tours', href: '/things-to-do' },
-  { feat: false, img: 'pattaya-night-clubs-2.webp', icon: 'nightlife', name: 'Nightlife & Bars', meta: '77 clubs & bars', href: '/things-to-do' },
+  { feat: false, img: 'pattaya-night-clubs-2.webp', icon: 'nightlife', name: 'Nightlife & Bars', meta: '77 clubs & bars', href: '/nightlife' },
   { feat: false, img: 'pattaya-wellness-1.jpeg', icon: 'wellness', name: 'Wellness & Spa', meta: '99 spa, massage & yoga', href: '/wellness-and-beauty' },
   { feat: false, img: 'pattaya-muay-thai-1.jpg', icon: 'muay-thai', name: 'Gym & Muay Thai', meta: '125 gyms & training camps', href: '/yoga-and-fitness' },
   { feat: false, img: 'pattaya-parasiling.webp', icon: 'transport', name: 'Adventures', meta: '48 skydiving & bike rentals', href: '/things-to-do' },
