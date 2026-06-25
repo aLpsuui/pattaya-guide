@@ -60,7 +60,7 @@ function parse(html, slug, category_id) {
   const about = all(/<p>([\s\S]*?)<\/p>/g, prose).map((x) => strip(x[1])).filter(Boolean)
 
   // maps + website
-  const mapsQ = m1(/maps\.google\.com\/\?q=([^"&]+)/, html)
+  const mapsQ = m1(/maps\.google\.com\/\?q=([^"&]+)/, html) || m1(/google\.com\/maps\?q=([^"&]+)/, html)
   const maps_query = mapsQ ? decodeURIComponent(mapsQ.replace(/\+/g, ' ')) : null
   const secHref = m1(/<a class="btn btn--secondary"[^>]*href="([^"]+)"/, html)
   const website = secHref && !/google\.com\/search/.test(secHref) ? secHref : null
