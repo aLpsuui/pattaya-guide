@@ -119,7 +119,6 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
                 <div className="eat-card__media">
                   {v.image_url && <img src={v.image_url} alt={v.name} loading={i < 8 ? 'eager' : 'lazy'} fetchPriority={i < 8 ? 'high' : undefined} />}
                   <span className="eat-card__tag">{v.venue_type || 'Place'}</span>
-                  <button className="eat-card__save" type="button" aria-pressed="false" aria-label={`Save ${v.name}`} data-save><Icon name="heart" size={20} /></button>
                 </div>
                 <div className="eat-card__body">
                   {v.venue_type && <div className="eat-card__cuisine">{v.venue_type}</div>}

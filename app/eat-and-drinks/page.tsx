@@ -139,7 +139,6 @@ export default async function EatDrinksPage() {
                   <div className="eat-card__media">
                     {v.image_url && <img src={v.image_url} alt={v.name} loading="eager" fetchPriority="high" />}
                     <span className="eat-card__tag">{v.venue_type || v.categories?.name_en}</span>
-                    <button className="eat-card__save" type="button" aria-pressed="false" aria-label={`Save ${v.name}`} data-save><Icon name="heart" size={20} /></button>
                     <span className="eat-card__pick"><span className="star" aria-hidden="true">★</span> Editor&apos;s pick</span>
                     {isOpen(v.status) && <span className="eat-card__open"><span className="dot" aria-hidden="true"></span>Open now</span>}
                   </div>
@@ -184,7 +183,6 @@ export default async function EatDrinksPage() {
                   <div className="eat-card__media">
                     {v.image_url && <img src={v.image_url} alt={v.name} loading={i < 8 ? 'eager' : 'lazy'} fetchPriority={i < 8 ? 'high' : undefined} />}
                     <span className="eat-card__tag">{v.venue_type || v.categories?.name_en}</span>
-                    <button className="eat-card__save" type="button" aria-pressed="false" aria-label={`Save ${v.name}`} data-save><Icon name="heart" size={20} /></button>
                     {open && <span className="eat-card__open"><span className="dot" aria-hidden="true"></span>Open now</span>}
                   </div>
                   <div className="eat-card__body">
