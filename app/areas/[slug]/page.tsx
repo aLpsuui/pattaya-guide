@@ -1,6 +1,7 @@
 import '../areas.css'
 import './area-detail.css'
 import './area-guide.css'
+import './area-guide-fixes.css'
 import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'

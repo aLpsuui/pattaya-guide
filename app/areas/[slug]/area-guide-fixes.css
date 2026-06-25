@@ -1,0 +1,31 @@
+/* Base component rules the bespoke .det-area pages expect from the
+   design-system's components.css — which isn't loaded on the live site.
+   Re-implemented here, scoped to .det-area, so nothing leaks elsewhere. */
+
+/* Quick-numbers stats: value <b> + sub <span> were inline (cramped). Stack them. */
+.det-area .glance-grid .stat { display: flex; flex-direction: column; gap: 4px; }
+.det-area .glance-grid .stat > b { font-size: var(--text-h4); line-height: 1.15; }
+.det-area .glance-grid .stat > span:last-child { font-size: var(--text-sm); color: var(--text-muted); line-height: 1.3; }
+
+/* FAQ accordion: collapse answers by default; the script toggles .open. */
+.det-area .faq .acc { border-top: 1px solid var(--border); }
+.det-area .faq .acc:last-child { border-bottom: 1px solid var(--border); }
+.det-area .faq .acc .q {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  text-align: left;
+  padding: var(--s3) 0;
+  color: var(--text-strong);
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+.det-area .faq .acc .q .pg-icon { flex-shrink: 0; color: var(--ocean); transition: transform 0.25s; }
+.det-area .faq .acc.open .q .pg-icon { transform: rotate(45deg); }
+.det-area .faq .acc .a { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+.det-area .faq .acc .a-in { padding-bottom: var(--s3); }
