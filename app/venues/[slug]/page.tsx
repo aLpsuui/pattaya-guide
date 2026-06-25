@@ -157,6 +157,8 @@ const SPRITE = new Set([
   'pg-wellness', 'pg-massage', 'pg-star', 'pg-clock', 'pg-pin', 'pg-near-me', 'pg-directions',
   'pg-phone', 'pg-globe', 'pg-calendar', 'pg-air-con', 'pg-parking', 'pg-card', 'pg-sun',
   'pg-check', 'pg-info', 'pg-local-verified', 'pg-chevron-right', 'pg-arrow-right', 'pg-arrow-left', 'pg-close',
+  'pg-music', 'pg-drink', 'pg-ticket', 'pg-moon', 'pg-users', 'pg-fire', 'pg-dumbbell', 'pg-glove',
+  'pg-ring', 'pg-pool', 'pg-pulse', 'pg-trophy', 'pg-parachute', 'pg-plane', 'pg-mountain', 'pg-wave', 'pg-target',
 ])
 const Icon = ({ id, size = 16, cls = '' }: { id: string; size?: number; cls?: string }) => (
   <svg className={`pg-icon is-${size}${cls ? ' ' + cls : ''}`} aria-hidden="true"><use href={`#${SPRITE.has(id) ? id : 'pg-check'}`} /></svg>
