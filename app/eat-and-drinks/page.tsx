@@ -137,7 +137,7 @@ export default async function EatDrinksPage() {
               {picks.map(v => (
                 <article key={v.id} className="eat-card">
                   <div className="eat-card__media">
-                    {v.image_url && <img src={v.image_url} alt={v.name} loading="lazy" />}
+                    {v.image_url && <img src={v.image_url} alt={v.name} loading="eager" fetchPriority="high" />}
                     <span className="eat-card__tag">{v.venue_type || v.categories?.name_en}</span>
                     <button className="eat-card__save" type="button" aria-pressed="false" aria-label={`Save ${v.name}`} data-save><Icon name="heart" size={20} /></button>
                     <span className="eat-card__pick"><span className="star" aria-hidden="true">★</span> Editor&apos;s pick</span>
@@ -172,7 +172,7 @@ export default async function EatDrinksPage() {
           </div>
 
           <div className="eat-grid" id="eatGrid">
-            {venues.map(v => {
+            {venues.map((v, i) => {
               const open = isOpen(v.status)
               return (
                 <article
@@ -182,7 +182,7 @@ export default async function EatDrinksPage() {
                   data-name={`${v.name} ${v.venue_type || ''}`.toLowerCase()}
                 >
                   <div className="eat-card__media">
-                    {v.image_url && <img src={v.image_url} alt={v.name} loading="lazy" />}
+                    {v.image_url && <img src={v.image_url} alt={v.name} loading={i < 8 ? 'eager' : 'lazy'} fetchPriority={i < 8 ? 'high' : undefined} />}
                     <span className="eat-card__tag">{v.venue_type || v.categories?.name_en}</span>
                     <button className="eat-card__save" type="button" aria-pressed="false" aria-label={`Save ${v.name}`} data-save><Icon name="heart" size={20} /></button>
                     {open && <span className="eat-card__open"><span className="dot" aria-hidden="true"></span>Open now</span>}

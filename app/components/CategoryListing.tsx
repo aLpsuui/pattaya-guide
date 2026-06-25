@@ -114,10 +114,10 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
           </div>
 
           <div className="eat-grid" id="eatGrid">
-            {venues.map((v) => (
+            {venues.map((v, i) => (
               <article key={v.id} className="eat-card" data-cat={typeSlug(v.venue_type)} data-name={`${v.name} ${v.venue_type || ''} ${v.neighborhood || ''}`.toLowerCase()}>
                 <div className="eat-card__media">
-                  {v.image_url && <img src={v.image_url} alt={v.name} loading="lazy" />}
+                  {v.image_url && <img src={v.image_url} alt={v.name} loading={i < 8 ? 'eager' : 'lazy'} fetchPriority={i < 8 ? 'high' : undefined} />}
                   <span className="eat-card__tag">{v.venue_type || 'Place'}</span>
                   <button className="eat-card__save" type="button" aria-pressed="false" aria-label={`Save ${v.name}`} data-save><Icon name="heart" size={20} /></button>
                 </div>
