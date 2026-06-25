@@ -110,7 +110,7 @@ function VenueCard({ v, dark = false }: { v: Venue; dark?: boolean }) {
         <h4>{v.name}</h4>
         <div className="meta"><span>{v.venue_type}</span>{v.address && <span>· {v.address.slice(0, 25)}</span>}</div>
         <div className="rate">
-          <div className="left"><span className="star">★</span> {v.rating?.toFixed(1)} <span className="count">({v.review_count?.toLocaleString()})</span></div>
+          <div className="left"><span className="star">★</span> {v.rating?.toFixed(1)} {v.review_count != null && <span className="count">({v.review_count.toLocaleString()})</span>}</div>
           <span className="price">{v.price_from != null ? `from ฿${v.price_from.toLocaleString()}` : (v.price_range || '—')}</span>
         </div>
       </div>
