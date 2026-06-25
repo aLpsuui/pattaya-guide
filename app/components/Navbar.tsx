@@ -158,7 +158,9 @@ export default function Navbar({ mega = {} }: { mega?: MegaData }) {
 
                       {mega[item.slug]?.guide && (
                         <Link className="mega-promo" href={`/blog/${mega[item.slug]!.guide!.slug}`} onClick={() => setOpenMega(null)}>
-                          <div className="ph" style={{ background: 'var(--grad-brand)' }}><span className="ph-tag">Featured guide</span></div>
+                          <div className="ph" style={mega[item.slug]!.guide!.hero_image
+                            ? { backgroundImage: `url(${mega[item.slug]!.guide!.hero_image})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+                            : { background: 'var(--grad-brand)' }}><span className="ph-tag">Featured guide</span></div>
                           <div className="bd">
                             <div className="k">{item.label} guide</div>
                             <h4>{mega[item.slug]!.guide!.title}</h4>

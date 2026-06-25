@@ -5,7 +5,7 @@
    ============================================================================ */
 .det-yf{display:block;background:var(--bg-surface);overflow-x:clip;color:var(--text-body);
   --focus-ring:0 0 0 3px rgba(1,120,180,.35)}
-.det-yf section{scroll-margin-top:var(--s4)}
+.det-yf section{scroll-margin-top:138px}
 .det-yf__wrap{max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad)}
 .det-yf .kicker{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-display);
   font-weight:700;font-size:var(--text-2xs);text-transform:uppercase;letter-spacing:var(--tracking-kicker);
@@ -65,9 +65,11 @@
 .det-yf__layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:var(--s6);
   padding-top:var(--s6);padding-bottom:var(--s7);align-items:start}
 .det-yf__content{display:flex;flex-direction:column;gap:var(--s7);min-width:0}
-.det-yf__content > section{scroll-margin-top:var(--s4)}
-.det-yf__aside{position:sticky;top:var(--s4);align-self:start;
-  max-height:calc(100vh - var(--s4) * 2);overflow-y:auto;scrollbar-width:none}
+.det-yf__content > section{scroll-margin-top:138px}
+/* Clear the global sticky header (tier1 74px + tier2 54px = 128px) so the
+   sticky info card doesn't slide up behind it — the source page was header-less. */
+.det-yf__aside{position:sticky;top:138px;align-self:start;
+  max-height:calc(100vh - 138px - var(--s4));overflow-y:auto;scrollbar-width:none}
 .det-yf__aside::-webkit-scrollbar{display:none}
 @media(max-width:980px){
   .det-yf__layout{grid-template-columns:minmax(0,1fr);gap:var(--s6)}

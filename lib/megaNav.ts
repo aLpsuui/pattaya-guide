@@ -9,7 +9,7 @@ export type MegaVenue = {
   review_count: number | null; price_from: number | null; neighborhood: string | null
   categories: { slug: string; name_en: string } | null
 }
-export type MegaGuide = { slug: string; title: string; description: string | null; read_time: number | null; author: string | null }
+export type MegaGuide = { slug: string; title: string; description: string | null; read_time: number | null; author: string | null; hero_image: string | null }
 export type MegaEntry = { venues: MegaVenue[]; guide: MegaGuide | null }
 export type MegaData = Record<string, MegaEntry>
 
@@ -37,7 +37,7 @@ export const getMegaData = unstable_cache(
           .limit(5),
         supabase
           .from('blog_posts')
-          .select('slug,title,description,read_time,author')
+          .select('slug,title,description,read_time,author,hero_image')
           .eq('is_published', true)
           .eq('category', n.pillar)
           .order('published_at', { ascending: false })
@@ -48,6 +48,6 @@ export const getMegaData = unstable_cache(
     }
     return out
   },
-  ['mega-nav-v1'],
+  ['mega-nav-v2'],
   { revalidate: 600, tags: ['mega-nav'] },
 )
