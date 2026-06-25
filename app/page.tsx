@@ -100,16 +100,11 @@ const Arrow = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
 )
 
-const SaveIcon = ({ stroke = '#054C86' }: { stroke?: string }) => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth="2"><path d="M6.5 4.5h11a1 1 0 0 1 1 1V21l-6.5-4-6.5 4V5.5a1 1 0 0 1 1-1z" /></svg>
-)
-
 function VenueCard({ v, dark = false }: { v: Venue; dark?: boolean }) {
   return (
     <Link href={`/venues/${v.slug}`} className="place">
       <div className="ph" style={{ backgroundImage: v.image_url ? `url(${v.image_url})` : 'var(--grad-brand)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <span className="tagpill">{v.categories?.name_en || v.venue_type}</span>
-        <button className="save" aria-label="Save"><SaveIcon stroke={dark ? '#fff' : '#054C86'} /></button>
       </div>
       <div className="pb">
         <h4>{v.name}</h4>
