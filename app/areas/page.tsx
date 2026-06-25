@@ -50,7 +50,7 @@ const HTML = String.raw`
 
   <!-- ===================== 1 · HERO ===================== -->
   <section class="ar-hero" aria-labelledby="ar-hero-title">
-    <img class="ar-hero__img" src="https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/pattaya-city-beach-1.jpg"
+    <img class="ar-hero__img" src="https://cdn.gotopattaya.com/Assets/pattaya-city-beach-1.webp"
          alt="Aerial view of Pattaya's curved bay, beachfront skyline and the Gulf of Thailand at dusk"
          width="1600" height="900">
     <div class="ar-hero__veil" aria-hidden="true"></div>
@@ -258,7 +258,7 @@ const HTML = String.raw`
         <article class="area-card" id="central">
           <div class="area-card__media">
             <span class="area-card__num" aria-hidden="true">1</span>
-            <img src="https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/pattaya-city-beach-2.webp"
+            <img src="https://cdn.gotopattaya.com/Assets/pattaya-city-beach-2.webp"
                  alt="Central Pattaya beachfront with the city skyline and Beach Road behind the sand"
                  loading="lazy" width="800" height="680">
           </div>
@@ -279,15 +279,15 @@ const HTML = String.raw`
             <ul class="area-card__spots">
               <li class="lbl">Top spots here</li>
               <li class="spot">
-                <img class="spot__thumb" src="https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/nitan-coffee-pattaya.webp" alt="The Coffee Club Central storefront" loading="lazy" width="44" height="44">
+                <img class="spot__thumb" src="https://cdn.gotopattaya.com/Assets/nitan-coffee-pattaya.webp" alt="The Coffee Club Central storefront" loading="lazy" width="44" height="44">
                 <span><span class="spot__name">The Coffee Club Central</span><span class="spot__type">All-day café</span></span>
               </li>
               <li class="spot">
-                <img class="spot__thumb" src="https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/best-restaurants-pattaya.jpg" alt="Hard Rock Cafe Pattaya interior" loading="lazy" width="44" height="44">
+                <img class="spot__thumb" src="https://cdn.gotopattaya.com/Assets/best-restaurants-pattaya.webp" alt="Hard Rock Cafe Pattaya interior" loading="lazy" width="44" height="44">
                 <span><span class="spot__name">Hard Rock Cafe Pattaya</span><span class="spot__type">Bar &amp; grill</span></span>
               </li>
               <li class="spot">
-                <img class="spot__thumb" src="https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/best-restaurants-pattaya.jpg" alt="Indiagate Restaurant dining area" loading="lazy" width="44" height="44">
+                <img class="spot__thumb" src="https://cdn.gotopattaya.com/Assets/best-restaurants-pattaya.webp" alt="Indiagate Restaurant dining area" loading="lazy" width="44" height="44">
                 <span><span class="spot__name">Indiagate Restaurant</span><span class="spot__type">Indian dining</span></span>
               </li>
             </ul>
@@ -302,7 +302,7 @@ const HTML = String.raw`
         <article class="area-card flip" id="jomtien">
           <div class="area-card__media">
             <span class="area-card__num" aria-hidden="true">2</span>
-            <img src="https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/best-island-pattaya.jpg"
+            <img src="https://cdn.gotopattaya.com/Assets/best-island-pattaya.webp"
                  alt="The long, calm Jomtien beach stretching south with palm trees and quiet sand"
                  loading="lazy" width="800" height="680">
           </div>
@@ -327,11 +327,11 @@ const HTML = String.raw`
                 <span><span class="spot__name">Skoop Beach Café</span><span class="spot__type">Beachfront café</span></span>
               </li>
               <li class="spot">
-                <img class="spot__thumb" src="https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/pattaya-night-clubs-1.jpg" alt="Jomtien Sauna and Gym fitness floor" loading="lazy" width="44" height="44">
+                <img class="spot__thumb" src="https://cdn.gotopattaya.com/Assets/pattaya-night-clubs-1.webp" alt="Jomtien Sauna and Gym fitness floor" loading="lazy" width="44" height="44">
                 <span><span class="spot__name">Jomtien Sauna &amp; Gym</span><span class="spot__type">Gym &amp; sauna</span></span>
               </li>
               <li class="spot">
-                <img class="spot__thumb" src="https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/pattaya-night-clubs-1.jpg" alt="Rage Fight Academy training gym" loading="lazy" width="44" height="44">
+                <img class="spot__thumb" src="https://cdn.gotopattaya.com/Assets/pattaya-night-clubs-1.webp" alt="Rage Fight Academy training gym" loading="lazy" width="44" height="44">
                 <span><span class="spot__name">Rage Fight Academy</span><span class="spot__type">Muay Thai &amp; fitness</span></span>
               </li>
             </ul>
@@ -346,7 +346,7 @@ const HTML = String.raw`
         <article class="area-card" id="naklua">
           <div class="area-card__media">
             <span class="area-card__num" aria-hidden="true">3</span>
-            <img src="https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/SanctuaryofTruth.jpg"
+            <img src="https://cdn.gotopattaya.com/Assets/pattaya-buddhist-pagoda-golden.webp"
                  alt="The all-teak Sanctuary of Truth temple on the Naklua headland"
                  loading="lazy" width="800" height="680">
           </div>
@@ -367,11 +367,11 @@ const HTML = String.raw`
             <ul class="area-card__spots">
               <li class="lbl">Top spots here</li>
               <li class="spot">
-                <img class="spot__thumb" src="https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/pattaya-massage-1.jpeg" alt="Yunomori Onsen and Spa indoor onsen pool" loading="lazy" width="44" height="44">
+                <img class="spot__thumb" src="https://cdn.gotopattaya.com/Assets/pattaya-massage-1.webp" alt="Yunomori Onsen and Spa indoor onsen pool" loading="lazy" width="44" height="44">
                 <span><span class="spot__name">Yunomori Onsen &amp; Spa</span><span class="spot__type">Onsen &amp; spa</span></span>
               </li>
               <li class="spot">
-                <img class="spot__thumb" src="https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/pattaya-wellness-1.jpeg" alt="The Sea.Spa reception" loading="lazy" width="44" height="44">
+                <img class="spot__thumb" src="https://cdn.gotopattaya.com/Assets/pattaya-wellness-1.webp" alt="The Sea.Spa reception" loading="lazy" width="44" height="44">
                 <span><span class="spot__name">The Sea.Spa</span><span class="spot__type">Day spa</span></span>
               </li>
               <li class="spot">
@@ -390,7 +390,7 @@ const HTML = String.raw`
         <article class="area-card flip" id="pratumnak">
           <div class="area-card__media">
             <span class="area-card__num" aria-hidden="true">4</span>
-            <img src="https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/pattaya-buddhist-pagoda-golden.jpg"
+            <img src="https://cdn.gotopattaya.com/Assets/pattaya-buddhist-pagoda-golden.webp"
                  alt="The golden Big Buddha hilltop temple on Pratumnak Hill above Pattaya"
                  loading="lazy" width="800" height="680">
           </div>
@@ -411,11 +411,11 @@ const HTML = String.raw`
             <ul class="area-card__spots">
               <li class="lbl">Top spots here</li>
               <li class="spot">
-                <img class="spot__thumb" src="https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/nitan-coffee-pattaya.webp" alt="La Baguette Phra Tamnak storefront" loading="lazy" width="44" height="44">
+                <img class="spot__thumb" src="https://cdn.gotopattaya.com/Assets/nitan-coffee-pattaya.webp" alt="La Baguette Phra Tamnak storefront" loading="lazy" width="44" height="44">
                 <span><span class="spot__name">La Baguette Phra Tamnak</span><span class="spot__type">Bakery café</span></span>
               </li>
               <li class="spot">
-                <img class="spot__thumb" src="https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/nitan-coffee-pattaya.webp" alt="King of Coffee Pratumnak drink menu board" loading="lazy" width="44" height="44">
+                <img class="spot__thumb" src="https://cdn.gotopattaya.com/Assets/nitan-coffee-pattaya.webp" alt="King of Coffee Pratumnak drink menu board" loading="lazy" width="44" height="44">
                 <span><span class="spot__name">King of Coffee Pratumnak</span><span class="spot__type">Coffee roaster</span></span>
               </li>
               <li class="spot">
@@ -434,7 +434,7 @@ const HTML = String.raw`
         <article class="area-card" id="wong-amat">
           <div class="area-card__media">
             <span class="area-card__num" aria-hidden="true">5</span>
-            <img src="https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/Coral-Island-pattaya.jpg"
+            <img src="https://cdn.gotopattaya.com/Assets/Coral-Island-pattaya.webp"
                  alt="The calm, upscale Wong Amat beach in north Pattaya with clear water and resorts"
                  loading="lazy" width="800" height="680">
           </div>
@@ -455,11 +455,11 @@ const HTML = String.raw`
             <ul class="area-card__spots">
               <li class="lbl">Top spots here</li>
               <li class="spot">
-                <img class="spot__thumb" src="https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/pattaya-wellness-1.jpeg" alt="The Sea.Spa reception" loading="lazy" width="44" height="44">
+                <img class="spot__thumb" src="https://cdn.gotopattaya.com/Assets/pattaya-wellness-1.webp" alt="The Sea.Spa reception" loading="lazy" width="44" height="44">
                 <span><span class="spot__name">The Sea.Spa</span><span class="spot__type">Day spa</span></span>
               </li>
               <li class="spot">
-                <img class="spot__thumb" src="https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/pattaya-wellness-1.jpeg" alt="Makkha Health and Spa interior detail" loading="lazy" width="44" height="44">
+                <img class="spot__thumb" src="https://cdn.gotopattaya.com/Assets/pattaya-wellness-1.webp" alt="Makkha Health and Spa interior detail" loading="lazy" width="44" height="44">
                 <span><span class="spot__name">Makkha Health &amp; Spa</span><span class="spot__type">Wellness spa</span></span>
               </li>
               <li class="spot">
@@ -478,7 +478,7 @@ const HTML = String.raw`
         <article class="area-card flip" id="walking-street">
           <div class="area-card__media">
             <span class="area-card__num" aria-hidden="true">6</span>
-            <img src="https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/pattaya-night-clubs-1.jpg"
+            <img src="https://cdn.gotopattaya.com/Assets/pattaya-night-clubs-1.webp"
                  alt="Neon-lit Walking Street at night, packed with bars and clubs"
                  loading="lazy" width="800" height="680">
           </div>
@@ -498,7 +498,7 @@ const HTML = String.raw`
             <ul class="area-card__spots">
               <li class="lbl">Top spots here</li>
               <li class="spot">
-                <img class="spot__thumb" src="https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/pattaya-night-clubs-1.jpg" alt="Lucifer club bar and dance floor" loading="lazy" width="44" height="44">
+                <img class="spot__thumb" src="https://cdn.gotopattaya.com/Assets/pattaya-night-clubs-1.webp" alt="Lucifer club bar and dance floor" loading="lazy" width="44" height="44">
                 <span><span class="spot__name">Lucifer</span><span class="spot__type">Nightclub</span></span>
               </li>
               <li class="spot">
@@ -506,7 +506,7 @@ const HTML = String.raw`
                 <span><span class="spot__name">Hollywood Pattaya</span><span class="spot__type">Disco &amp; live</span></span>
               </li>
               <li class="spot">
-                <img class="spot__thumb" src="https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/pattaya-night-clubs-1.jpg" alt="808 Night Club bar area" loading="lazy" width="44" height="44">
+                <img class="spot__thumb" src="https://cdn.gotopattaya.com/Assets/pattaya-night-clubs-1.webp" alt="808 Night Club bar area" loading="lazy" width="44" height="44">
                 <span><span class="spot__name">808 Night Club</span><span class="spot__type">Nightclub</span></span>
               </li>
             </ul>
@@ -521,7 +521,7 @@ const HTML = String.raw`
         <article class="area-card" id="islands">
           <div class="area-card__media">
             <span class="area-card__num" aria-hidden="true">7</span>
-            <img src="https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/Coral-Island-pattaya.jpg"
+            <img src="https://cdn.gotopattaya.com/Assets/Coral-Island-pattaya.webp"
                  alt="Turquoise water and white sand at Koh Larn (Coral Island) off the Pattaya coast"
                  loading="lazy" width="800" height="680">
           </div>

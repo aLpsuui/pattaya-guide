@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Icon from '@/app/components/Icon'
 
-const ASSETS = 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets'
+const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 
 export const metadata = {
   title: 'About Go To Pattaya — The Honest Local Guide to Pattaya, Thailand',
@@ -77,7 +77,7 @@ export default function AboutPage() {
             <p>If a place slips — prices jump, quality drops, it closes — we update it. The guide you read today reflects the Pattaya of <strong>this week</strong>, not last year.</p>
             <Link href="/blog" className="viewall">Read our latest guides <Arrow /></Link>
           </div>
-          <div className="media"><img src={`${ASSETS}/pattaya-city-beach-1.jpg`} alt="Pattaya city beach and bay seen from above at daytime" loading="lazy" /></div>
+          <div className="media"><img src={`${ASSETS}/pattaya-city-beach-1.webp`} alt="Pattaya city beach and bay seen from above at daytime" loading="lazy" /></div>
         </div>
       </section>
 

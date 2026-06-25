@@ -8,7 +8,7 @@ import path from 'node:path'
 const SRC = 'C:\\Users\\DELL5280 Touch\\Desktop\\Go To Pattaya - Final\\areas'
 const OUT = 'C:\\Users\\DELL5280 Touch\\Desktop\\pg\\pattaya-guide\\app\\areas\\[slug]'
 const CDN = 'https://cdn.gotopattaya.com/'
-const ASSETS = 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/'
+const ASSETS = 'https://cdn.gotopattaya.com/Assets/'
 
 const ROUTE = {
   '01-homepage-v5.html': '/',
@@ -28,7 +28,7 @@ function rewrite(html) {
   let out = html
   // images (always carry the ../ prefix)
   out = out.replace(/\.\.\/images\/Venues\//g, CDN + 'Venues/')
-  out = out.replace(/\.\.\/images\/([^"')]+?)\.(webp|png|jpg|jpeg)/g, (_m, name) => `${ASSETS}${name}.jpg`)
+  out = out.replace(/\.\.\/images\/([^"')]+?)\.(webp|png|jpg|jpeg)/g, (_m, name) => `${ASSETS}${name}.webp`)
   // internal links — the ../ prefix is inconsistent in the source, so make it optional
   out = out.replace(/href="(?:\.\.\/)?detail-areas-([a-z-]+)\.html"/g, 'href="/areas/$1"')
   out = out.replace(/href="(?:\.\.\/)?([^"/]+\.html)"/g, (_m, file) => {

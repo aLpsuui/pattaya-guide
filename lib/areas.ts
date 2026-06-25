@@ -15,12 +15,12 @@ export interface Area {
 // The 7 official areas (must match the /areas page taxonomy + legend vibes).
 export const AREAS: Area[] = [
   { slug: 'central-pattaya', name: 'Central Pattaya', lat: 12.9329, lng: 100.8821, vibes: ['Nightlife', 'Foodie', 'Backpacker'], match: ['Central Pattaya', 'Central', 'Beach Road', 'Soi Buakhao'], image: 'pattaya-city-beach-2.webp' },
-  { slug: 'jomtien', name: 'Jomtien', lat: 12.8920, lng: 100.8760, vibes: ['Beach', 'Family', 'Quiet'], match: ['Jomtien', 'Na Jomtien', 'Thappraya'], image: 'best-island-pattaya.jpg' },
-  { slug: 'naklua', name: 'Naklua', lat: 12.9620, lng: 100.8905, vibes: ['Local', 'Quiet', 'Foodie'], match: ['Naklua', 'North Pattaya'], image: 'SanctuaryofTruth.jpg' },
-  { slug: 'pratumnak-hill', name: 'Pratumnak Hill', lat: 12.9180, lng: 100.8650, vibes: ['Quiet', 'Luxury', 'Beach'], match: ['Pratumnak', 'Pratamnak', 'Phra Tamnak'], image: 'best-island-pattaya.jpg' },
-  { slug: 'wong-amat', name: 'Wong Amat', lat: 12.9760, lng: 100.8880, vibes: ['Luxury', 'Beach', 'Quiet'], match: ['Wong Amat', 'Wongamat'], image: 'pattaya-city-beach-1.jpg' },
-  { slug: 'walking-street', name: 'Walking Street', lat: 12.9230, lng: 100.8780, vibes: ['Nightlife', 'Backpacker'], match: ['Walking Street', 'South Pattaya'], image: 'pattaya-night-clubs-1.jpg' },
-  { slug: 'islands', name: 'Islands', lat: 12.9180, lng: 100.7830, vibes: ['Beach', 'Snorkel', 'Day-trip'], match: ['Koh Larn', 'Island'], image: 'Coral-Island-pattaya.jpg' },
+  { slug: 'jomtien', name: 'Jomtien', lat: 12.8920, lng: 100.8760, vibes: ['Beach', 'Family', 'Quiet'], match: ['Jomtien', 'Na Jomtien', 'Thappraya'], image: 'best-island-pattaya.webp' },
+  { slug: 'naklua', name: 'Naklua', lat: 12.9620, lng: 100.8905, vibes: ['Local', 'Quiet', 'Foodie'], match: ['Naklua', 'North Pattaya'], image: 'pattaya-buddhist-pagoda-golden.webp' },
+  { slug: 'pratumnak-hill', name: 'Pratumnak Hill', lat: 12.9180, lng: 100.8650, vibes: ['Quiet', 'Luxury', 'Beach'], match: ['Pratumnak', 'Pratamnak', 'Phra Tamnak'], image: 'best-island-pattaya.webp' },
+  { slug: 'wong-amat', name: 'Wong Amat', lat: 12.9760, lng: 100.8880, vibes: ['Luxury', 'Beach', 'Quiet'], match: ['Wong Amat', 'Wongamat'], image: 'pattaya-city-beach-1.webp' },
+  { slug: 'walking-street', name: 'Walking Street', lat: 12.9230, lng: 100.8780, vibes: ['Nightlife', 'Backpacker'], match: ['Walking Street', 'South Pattaya'], image: 'pattaya-night-clubs-1.webp' },
+  { slug: 'islands', name: 'Islands', lat: 12.9180, lng: 100.7830, vibes: ['Beach', 'Snorkel', 'Day-trip'], match: ['Koh Larn', 'Island'], image: 'Coral-Island-pattaya.webp' },
 ]
 
 export const areaBySlug = (slug: string) => AREAS.find((a) => a.slug === slug)

@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Icon from '@/app/components/Icon'
 import EatFilters from '@/app/eat-and-drinks/EatFilters'
 
-const ASSETS = 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets'
+const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 
 interface Venue {
   id: string; slug: string | null; name: string; rating: number | null; review_count: number | null

@@ -2,7 +2,7 @@ import { supabase } from '@/lib/supabase'
 import { unstable_cache } from 'next/cache'
 import { AREAS } from '@/lib/areas'
 
-const ASSETS = 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets'
+const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 
 // Per nav category: top active venues (with an image) + the latest published
 // guide for that pillar. Cached and revalidated so it doesn't run per request.

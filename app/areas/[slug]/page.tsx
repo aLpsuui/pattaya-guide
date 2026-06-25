@@ -34,17 +34,17 @@ const AREA_GUIDE_SCRIPT = String.raw`
 })();
 `
 
-const ASSETS = 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets'
+const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 const guides = guidesData as Record<string, { name: string; html: string }>
 
 const INFO: Record<string, { blurb: string; hero: string }> = {
   'central-pattaya': { blurb: 'The all-in-one heart of the bay — Beach Road, malls, street food and nightlife, all walkable.', hero: `${ASSETS}/pattaya-city-beach-2.webp` },
-  'jomtien': { blurb: 'A long, calm beach with a residential feel — the family and long-stay pick.', hero: `${ASSETS}/best-island-pattaya.jpg` },
-  'naklua': { blurb: 'The older, more local north end — fishing-village roots, seafood and a quieter pace.', hero: `${ASSETS}/pattaya-buddhist-pagoda-golden.jpg` },
-  'pratumnak-hill': { blurb: 'The leafy headland between the two beaches — upscale, calm, with viewpoints and coves.', hero: `${ASSETS}/pattaya-city-beach-1.jpg` },
-  'wong-amat': { blurb: 'The bay’s most refined beach — clean sand, boutique resorts and a peaceful escape.', hero: `${ASSETS}/pattaya-city-beach-1.jpg` },
-  'walking-street': { blurb: 'The full-throttle nightlife strip and the sois around it — clubs, bars and late-night energy.', hero: `${ASSETS}/pattaya-night-clubs-1.jpg` },
-  'islands': { blurb: 'Just offshore lie Koh Larn (Coral Island) and its neighbours — the clearest water and best sand.', hero: `${ASSETS}/Coral-Island-pattaya.jpg` },
+  'jomtien': { blurb: 'A long, calm beach with a residential feel — the family and long-stay pick.', hero: `${ASSETS}/best-island-pattaya.webp` },
+  'naklua': { blurb: 'The older, more local north end — fishing-village roots, seafood and a quieter pace.', hero: `${ASSETS}/pattaya-buddhist-pagoda-golden.webp` },
+  'pratumnak-hill': { blurb: 'The leafy headland between the two beaches — upscale, calm, with viewpoints and coves.', hero: `${ASSETS}/pattaya-city-beach-1.webp` },
+  'wong-amat': { blurb: 'The bay’s most refined beach — clean sand, boutique resorts and a peaceful escape.', hero: `${ASSETS}/pattaya-city-beach-1.webp` },
+  'walking-street': { blurb: 'The full-throttle nightlife strip and the sois around it — clubs, bars and late-night energy.', hero: `${ASSETS}/pattaya-night-clubs-1.webp` },
+  'islands': { blurb: 'Just offshore lie Koh Larn (Coral Island) and its neighbours — the clearest water and best sand.', hero: `${ASSETS}/Coral-Island-pattaya.webp` },
 }
 
 interface AreaVenue {
@@ -103,7 +103,7 @@ export default async function AreaDetailPage({ params }: { params: Promise<{ slu
       ) : (
         // Fallback hero for areas without a guide (e.g. the islands)
         <section className="adx-hero">
-          <img className="adx-hero__img" src={venues.find((v) => v.image_url)?.image_url || info?.hero || `${ASSETS}/pattaya-city-beach-1.jpg`} alt={`${area.name}, Pattaya`} />
+          <img className="adx-hero__img" src={venues.find((v) => v.image_url)?.image_url || info?.hero || `${ASSETS}/pattaya-city-beach-1.webp`} alt={`${area.name}, Pattaya`} />
           <div className="adx-hero__veil" aria-hidden="true" />
           <div className="adx-hero__inner">
             <div className="container">

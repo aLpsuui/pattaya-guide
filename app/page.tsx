@@ -5,7 +5,7 @@ import CarButton from '@/app/components/CarButton'
 import HeroSearch from '@/app/components/HeroSearch'
 import ExploreMap from '@/app/components/ExploreMap'
 
-const ASSETS = 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets'
+const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 
 // Re-generate this page from the database at most once every 60s (ISR),
 // so newly published venues/blog posts appear without a full rebuild.
@@ -72,27 +72,27 @@ async function getBlogPosts(): Promise<BlogPost[]> {
 }
 
 const categories = [
-  { feat: true, img: 'best-restaurants-pattaya.jpg', icon: 'eat', name: 'Eat & Cafés', meta: '174 restaurants & cafés', href: '/eat-and-drinks' },
-  { feat: true, img: 'pattaya-best-tours.jpg', icon: 'tours', name: 'Tours & Day Trips', meta: '77 islands, boats & tours', href: '/things-to-do' },
+  { feat: true, img: 'best-restaurants-pattaya.webp', icon: 'eat', name: 'Eat & Cafés', meta: '174 restaurants & cafés', href: '/eat-and-drinks' },
+  { feat: true, img: 'pattaya-best-tours.webp', icon: 'tours', name: 'Tours & Day Trips', meta: '77 islands, boats & tours', href: '/things-to-do' },
   { feat: false, img: 'pattaya-night-clubs-2.webp', icon: 'nightlife', name: 'Nightlife & Bars', meta: '77 clubs & bars', href: '/nightlife' },
-  { feat: false, img: 'pattaya-wellness-1.jpeg', icon: 'wellness', name: 'Wellness & Spa', meta: '99 spa, massage & yoga', href: '/wellness-and-beauty' },
-  { feat: false, img: 'pattaya-muay-thai-1.jpg', icon: 'muay-thai', name: 'Gym & Muay Thai', meta: '125 gyms & training camps', href: '/yoga-and-fitness' },
+  { feat: false, img: 'pattaya-wellness-1.webp', icon: 'wellness', name: 'Wellness & Spa', meta: '99 spa, massage & yoga', href: '/wellness-and-beauty' },
+  { feat: false, img: 'pattaya-muay-thai-1.webp', icon: 'muay-thai', name: 'Gym & Muay Thai', meta: '125 gyms & training camps', href: '/yoga-and-fitness' },
   { feat: false, img: 'pattaya-parasiling.webp', icon: 'transport', name: 'Adventures', meta: '48 skydiving & bike rentals', href: '/things-to-do' },
 ]
 
 const planCards = [
-  { img: 'Koh-Sak.jpg', pill: 'When to visit', href: '/blog', title: 'Best months for Pattaya', text: "Weather, crowds, prices — month by month, with the months we'd actually go.", arrow: 'Read the guide' },
-  { img: 'pattaya-city-beach-1.jpg', pill: 'Getting there', href: '/blog', title: 'Bangkok → Pattaya', text: 'Bus, taxi, train or private transfer — real prices, real travel times, no markup tricks.', arrow: 'Compare options' },
-  { img: 'coral-island-pattaya-2.jpg', pill: 'Where to stay', href: '/areas', title: 'Pick the right district', text: 'Central, Jomtien, Pratumnak, Naklua — choose your area before you book. Includes streets to avoid.', arrow: 'Compare districts' },
+  { img: 'Koh-Sak.webp', pill: 'When to visit', href: '/blog', title: 'Best months for Pattaya', text: "Weather, crowds, prices — month by month, with the months we'd actually go.", arrow: 'Read the guide' },
+  { img: 'pattaya-city-beach-1.webp', pill: 'Getting there', href: '/blog', title: 'Bangkok → Pattaya', text: 'Bus, taxi, train or private transfer — real prices, real travel times, no markup tricks.', arrow: 'Compare options' },
+  { img: 'coral-island-pattaya-2.webp', pill: 'Where to stay', href: '/areas', title: 'Pick the right district', text: 'Central, Jomtien, Pratumnak, Naklua — choose your area before you book. Includes streets to avoid.', arrow: 'Compare districts' },
   { img: 'pattaya-floating-market.webp', pill: 'First-time tips', href: '/blog', title: '8 mistakes to skip', text: 'From baht-bus etiquette to which beach to avoid — the things first-timers always regret.', arrow: 'Read the guide' },
 ]
 
 const districts = [
-  { cls: 'dist-1', img: 'pattaya-night-clubs-1.jpg', pill: 'Most central', name: 'Central Pattaya', href: '/areas/central-pattaya', desc: 'Beach Road, Walking Street, Soi Buakhao — the busy, loud, never-sleeping heart of the city.' },
+  { cls: 'dist-1', img: 'pattaya-night-clubs-1.webp', pill: 'Most central', name: 'Central Pattaya', href: '/areas/central-pattaya', desc: 'Beach Road, Walking Street, Soi Buakhao — the busy, loud, never-sleeping heart of the city.' },
   { cls: '', img: 'pattaya-city-beach-2.webp', pill: 'Calm & clean', name: 'Jomtien', href: '/areas/jomtien', desc: 'Longer, quieter beach. Best for families and longer stays.' },
-  { cls: '', img: 'best-island-pattaya.jpg', pill: 'Views & sunsets', name: 'Pratumnak Hill', href: '/areas/pratumnak-hill', desc: 'Quiet hill between Central & Jomtien. Rooftops, viewpoints, walkable.' },
-  { cls: '', img: 'SanctuaryofTruth.jpg', pill: 'Local feel', name: 'Naklua', href: '/areas/naklua', desc: 'Northern fishing village vibe. Real Thai seafood and Sanctuary of Truth.' },
-  { cls: '', img: 'Coral-Island-pattaya.jpg', pill: 'Day trip', name: 'Koh Larn Island', href: '/areas/islands', desc: '40 minutes by ferry. White-sand beaches and snorkel coves.' },
+  { cls: '', img: 'best-island-pattaya.webp', pill: 'Views & sunsets', name: 'Pratumnak Hill', href: '/areas/pratumnak-hill', desc: 'Quiet hill between Central & Jomtien. Rooftops, viewpoints, walkable.' },
+  { cls: '', img: 'pattaya-buddhist-pagoda-golden.webp', pill: 'Local feel', name: 'Naklua', href: '/areas/naklua', desc: 'Northern fishing village vibe. Real Thai seafood and Sanctuary of Truth.' },
+  { cls: '', img: 'Coral-Island-pattaya.webp', pill: 'Day trip', name: 'Koh Larn Island', href: '/areas/islands', desc: '40 minutes by ferry. White-sand beaches and snorkel coves.' },
 ]
 
 

@@ -9,7 +9,7 @@ export const metadata = {
 }
 
 // Swap these for the real venue images when available.
-const A = 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets/'
+const A = 'https://cdn.gotopattaya.com/Assets/'
 
 const HTML = String.raw`
 <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
@@ -68,19 +68,19 @@ const HTML = String.raw`
   <section class="det-yf__wrap" aria-label="Photo gallery">
     <div class="det-yf__gallery" id="det-gallery">
       <button class="det-yf__gitem det-yf__gitem--hero" type="button" data-lb="0" aria-label="Open photo: Reception lounge at Siladon Spa Pattaya — a spa in Pattaya, Thailand.">
-        <img src="${A}pattaya-massage-4.png" alt="Reception lounge at Siladon Spa Pattaya — a spa in Pattaya, Thailand." width="800" height="600">
+        <img src="${A}pattaya-massage-4.webp" alt="Reception lounge at Siladon Spa Pattaya — a spa in Pattaya, Thailand." width="800" height="600">
       </button>
       <button class="det-yf__gitem" type="button" data-lb="1" aria-label="Open photo: Relaxation area at Siladon Spa Pattaya — a spa in Pattaya, Thailand.">
-        <img src="${A}pattaya-wellness-1.jpeg" alt="Relaxation area at Siladon Spa Pattaya — a spa in Pattaya, Thailand." loading="lazy" width="400" height="300">
+        <img src="${A}pattaya-wellness-1.webp" alt="Relaxation area at Siladon Spa Pattaya — a spa in Pattaya, Thailand." loading="lazy" width="400" height="300">
       </button>
       <button class="det-yf__gitem" type="button" data-lb="2" aria-label="Open photo: Spa reception at Siladon Spa Pattaya — a spa in Pattaya, Thailand.">
-        <img src="${A}pattaya-massage-2.jpg" alt="Spa reception at Siladon Spa Pattaya — a spa in Pattaya, Thailand." loading="lazy" width="400" height="300">
+        <img src="${A}pattaya-massage-2.webp" alt="Spa reception at Siladon Spa Pattaya — a spa in Pattaya, Thailand." loading="lazy" width="400" height="300">
       </button>
       <button class="det-yf__gitem" type="button" data-lb="3" aria-label="Open photo: Wellness lounge at Siladon Spa Pattaya — a spa in Pattaya, Thailand.">
-        <img src="${A}pattaya-wellnes-2.jpg" alt="Wellness lounge at Siladon Spa Pattaya — a spa in Pattaya, Thailand." loading="lazy" width="400" height="300">
+        <img src="${A}pattaya-wellnes-2.webp" alt="Wellness lounge at Siladon Spa Pattaya — a spa in Pattaya, Thailand." loading="lazy" width="400" height="300">
       </button>
       <button class="det-yf__gitem det-yf__gitem--hidemobile" type="button" data-lb="4" aria-label="Open photo: Aromatherapy treatment at Siladon Spa Pattaya — a spa in Pattaya, Thailand.">
-        <img src="${A}pattaya-massage-1.jpeg" alt="Aromatherapy treatment at Siladon Spa Pattaya — a spa in Pattaya, Thailand." loading="lazy" width="400" height="300">
+        <img src="${A}pattaya-massage-1.webp" alt="Aromatherapy treatment at Siladon Spa Pattaya — a spa in Pattaya, Thailand." loading="lazy" width="400" height="300">
         <span class="det-yf__gmore" aria-hidden="true">+7 photos</span>
       </button>
     </div>
@@ -369,7 +369,7 @@ const HTML = String.raw`
 
         <a class="det-yf__morecard" href="/wellness-and-beauty/lets-relax-north-pattaya">
           <div class="det-yf__morecard__media">
-            <img src="${A}pattaya-massage-1.jpeg" alt="Tropical garden courtyard at Let's Relax Spa, Pattaya — a spa in Pattaya, Thailand." loading="lazy" width="560" height="420">
+            <img src="${A}pattaya-massage-1.webp" alt="Tropical garden courtyard at Let's Relax Spa, Pattaya — a spa in Pattaya, Thailand." loading="lazy" width="560" height="420">
             <span class="det-yf__morecard__tag"><svg class="pg-icon is-16" aria-hidden="true"><use href="#pg-massage"></use></svg> Spa</span>
           </div>
           <div class="det-yf__morecard__body">
@@ -381,7 +381,7 @@ const HTML = String.raw`
         </a>
         <a class="det-yf__morecard" href="/wellness-and-beauty/tea-tree-spa-pattaya">
           <div class="det-yf__morecard__media">
-            <img src="${A}best-island-pattaya.jpg" alt="Ocean-view relaxation lounge at Tea Tree Spa Pattaya — a spa in Pattaya, Thailand." loading="lazy" width="560" height="420">
+            <img src="${A}best-island-pattaya.webp" alt="Ocean-view relaxation lounge at Tea Tree Spa Pattaya — a spa in Pattaya, Thailand." loading="lazy" width="560" height="420">
             <span class="det-yf__morecard__tag"><svg class="pg-icon is-16" aria-hidden="true"><use href="#pg-massage"></use></svg> Hotel spa</span>
           </div>
           <div class="det-yf__morecard__body">
@@ -393,7 +393,7 @@ const HTML = String.raw`
         </a>
         <a class="det-yf__morecard" href="/wellness-and-beauty/lets-relax-onsen-and-spa-pattaya">
           <div class="det-yf__morecard__media">
-            <img src="${A}pattaya-massage-2.jpg" alt="Courtyard stone fountain at Let's Relax Onsen &amp; Spa Pattaya — a spa in Pattaya, Thailand." loading="lazy" width="560" height="420">
+            <img src="${A}pattaya-massage-2.webp" alt="Courtyard stone fountain at Let's Relax Onsen &amp; Spa Pattaya — a spa in Pattaya, Thailand." loading="lazy" width="560" height="420">
             <span class="det-yf__morecard__tag"><svg class="pg-icon is-16" aria-hidden="true"><use href="#pg-wellness"></use></svg> Onsen</span>
           </div>
           <div class="det-yf__morecard__body">
@@ -405,7 +405,7 @@ const HTML = String.raw`
         </a>
         <a class="det-yf__morecard" href="/wellness-and-beauty/rinn-spa-massage">
           <div class="det-yf__morecard__media">
-            <img src="${A}pattaya-wellnes-2.jpg" alt="Thai massage room at RINN Spa &amp; Massage — a spa in Pattaya, Thailand." loading="lazy" width="560" height="420">
+            <img src="${A}pattaya-wellnes-2.webp" alt="Thai massage room at RINN Spa &amp; Massage — a spa in Pattaya, Thailand." loading="lazy" width="560" height="420">
             <span class="det-yf__morecard__tag"><svg class="pg-icon is-16" aria-hidden="true"><use href="#pg-massage"></use></svg> Massage</span>
           </div>
           <div class="det-yf__morecard__body">
@@ -443,13 +443,13 @@ const SCRIPT = String.raw`
   var root = document.querySelector('.det-yf');
   if(!root) return;
   var photos = [
-    {src:"${A}pattaya-massage-4.png", cap:"Reception lounge at Siladon Spa Pattaya — a spa in Pattaya, Thailand."},
-    {src:"${A}pattaya-wellness-1.jpeg", cap:"Relaxation area at Siladon Spa Pattaya — a spa in Pattaya, Thailand."},
-    {src:"${A}pattaya-massage-2.jpg", cap:"Spa reception at Siladon Spa Pattaya — a spa in Pattaya, Thailand."},
-    {src:"${A}pattaya-wellnes-2.jpg", cap:"Wellness lounge at Siladon Spa Pattaya — a spa in Pattaya, Thailand."},
-    {src:"${A}pattaya-massage-1.jpeg", cap:"Aromatherapy treatment at Siladon Spa Pattaya — a spa in Pattaya, Thailand."},
-    {src:"${A}best-island-pattaya.jpg", cap:"Spa interior at Siladon Spa Pattaya — a spa in Pattaya, Thailand."},
-    {src:"${A}pattaya-wellness-1.jpeg", cap:"Couples treatment room at Siladon Spa Pattaya — a spa in Pattaya, Thailand."}
+    {src:"${A}pattaya-massage-4.webp", cap:"Reception lounge at Siladon Spa Pattaya — a spa in Pattaya, Thailand."},
+    {src:"${A}pattaya-wellness-1.webp", cap:"Relaxation area at Siladon Spa Pattaya — a spa in Pattaya, Thailand."},
+    {src:"${A}pattaya-massage-2.webp", cap:"Spa reception at Siladon Spa Pattaya — a spa in Pattaya, Thailand."},
+    {src:"${A}pattaya-wellnes-2.webp", cap:"Wellness lounge at Siladon Spa Pattaya — a spa in Pattaya, Thailand."},
+    {src:"${A}pattaya-massage-1.webp", cap:"Aromatherapy treatment at Siladon Spa Pattaya — a spa in Pattaya, Thailand."},
+    {src:"${A}best-island-pattaya.webp", cap:"Spa interior at Siladon Spa Pattaya — a spa in Pattaya, Thailand."},
+    {src:"${A}pattaya-wellness-1.webp", cap:"Couples treatment room at Siladon Spa Pattaya — a spa in Pattaya, Thailand."}
   ];
   var lb = document.getElementById('det-lb');
   var lbImg = document.getElementById('det-lb-img');

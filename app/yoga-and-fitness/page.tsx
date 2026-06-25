@@ -15,7 +15,7 @@ const cfg: CatConfig = {
   h1: 'Train hard, recover well in Pattaya',
   em: 'Train hard',
   lead: "From world-famous Muay Thai camps to 24-hour fitness gyms, yoga and pilates studios and climbing walls — find where to train, with real prices and the city's highest-rated coaches.",
-  heroImg: 'pattaya-muay-thai-1.jpg',
+  heroImg: 'pattaya-muay-thai-1.webp',
   heroImg2: 'pattaya-yoga-1.webp',
   badge: 'Locally verified · weekly',
   searchPlaceholder: 'Search gyms, Muay Thai, yoga…',

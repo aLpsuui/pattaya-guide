@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Icon from '@/app/components/Icon'
 import EatFilters from './EatFilters'
 
-const ASSETS = 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets'
+const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 
 interface Venue {
   id: string
@@ -96,7 +96,7 @@ export default async function EatDrinksPage() {
           </div>
 
           <div className="eat-hero__art" aria-hidden="true">
-            <div className="eat-hero__img main" style={{ backgroundImage: `url('${ASSETS}/best-restaurants-pattaya.jpg')` }}></div>
+            <div className="eat-hero__img main" style={{ backgroundImage: `url('${ASSETS}/best-restaurants-pattaya.webp')` }}></div>
             <div className="eat-hero__img sub" style={{ backgroundImage: `url('${ASSETS}/nitan-coffee-pattaya.webp')` }}></div>
             <div className="eat-hero__badge">
               <Icon name="local-verified" size={20} className="ic" />
