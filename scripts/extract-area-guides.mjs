@@ -15,19 +15,23 @@ const ROUTE = {
   'pillar-areas.html': '/areas',
   'pillar-things-to-do.html': '/things-to-do',
   'pillar-eat-drink.html': '/eat-and-drinks',
+  'pillar-eat-drinks.html': '/eat-and-drinks',
   'pillar-wellness-beauty.html': '/wellness-and-beauty',
   'pillar-yoga-fitness.html': '/yoga-and-fitness',
+  'pillar-fitness-muay-thai.html': '/yoga-and-fitness',
   'pillar-nightlife.html': '/nightlife',
+  'plan-my-trip.html': '/plan-my-trip',
+  'blog.html': '/blog',
 }
 
 function rewrite(html) {
   let out = html
-  // images
+  // images (always carry the ../ prefix)
   out = out.replace(/\.\.\/images\/Venues\//g, CDN + 'Venues/')
   out = out.replace(/\.\.\/images\/([^"')]+?)\.(webp|png|jpg|jpeg)/g, (_m, name) => `${ASSETS}${name}.jpg`)
-  // internal links
-  out = out.replace(/href="\.\.\/detail-areas-([a-z-]+)\.html"/g, 'href="/areas/$1"')
-  out = out.replace(/href="\.\.\/([^"]+\.html)"/g, (_m, file) => {
+  // internal links — the ../ prefix is inconsistent in the source, so make it optional
+  out = out.replace(/href="(?:\.\.\/)?detail-areas-([a-z-]+)\.html"/g, 'href="/areas/$1"')
+  out = out.replace(/href="(?:\.\.\/)?([^"/]+\.html)"/g, (_m, file) => {
     if (ROUTE[file]) return `href="${ROUTE[file]}"`
     const v = file.match(/^([a-z0-9-]+)\.html$/)
     return v ? `href="/venues/${v[1]}"` : `href="/${file.replace(/\.html$/, '')}"`
