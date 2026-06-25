@@ -1068,7 +1068,9 @@ body.no-scroll{overflow:hidden;touch-action:none}
 .eat-hero__badge b{font-family:var(--font-display);color:var(--text-strong);font-size:13px}
 
 /* sub-nav */
-.eat-subnav{position:sticky;top:0;z-index:var(--z-sticky);background:rgba(255,255,255,.92);backdrop-filter:saturate(160%) blur(10px);border-bottom:1px solid var(--border);padding:var(--s2) 0}
+/* Sticks below the global header (it was designed header-less). Lower z-index
+   than the header so the nav's mega dropdown opens in front of it. */
+.eat-subnav{position:sticky;top:118px;z-index:40;background:rgba(255,255,255,.92);backdrop-filter:saturate(160%) blur(10px);border-bottom:1px solid var(--border);padding:var(--s2) 0}
 .eat-subnav .filterbar{align-items:center}
 .eat-page .chip .ct{color:var(--text-faint);font-weight:600}
 .eat-page .chip[aria-pressed="true"] .ct{color:rgba(255,255,255,.78)}
