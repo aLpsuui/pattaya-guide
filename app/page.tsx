@@ -81,18 +81,18 @@ const categories = [
 ]
 
 const planCards = [
-  { img: 'Koh-Sak.jpg', pill: 'When to visit', title: 'Best months for Pattaya', text: "Weather, crowds, prices — month by month, with the months we'd actually go.", arrow: 'Read the guide' },
-  { img: 'pattaya-city-beach-1.jpg', pill: 'Getting there', title: 'Bangkok → Pattaya', text: 'Bus, taxi, train or private transfer — real prices, real travel times, no markup tricks.', arrow: 'Compare options' },
-  { img: 'coral-island-pattaya-2.jpg', pill: 'Where to stay', title: 'Pick the right district', text: 'Central, Jomtien, Pratumnak, Naklua — choose your area before you book. Includes streets to avoid.', arrow: 'Compare districts' },
-  { img: 'pattaya-floating-market.webp', pill: 'First-time tips', title: '8 mistakes to skip', text: 'From baht-bus etiquette to which beach to avoid — the things first-timers always regret.', arrow: 'Read the guide' },
+  { img: 'Koh-Sak.jpg', pill: 'When to visit', href: '/blog', title: 'Best months for Pattaya', text: "Weather, crowds, prices — month by month, with the months we'd actually go.", arrow: 'Read the guide' },
+  { img: 'pattaya-city-beach-1.jpg', pill: 'Getting there', href: '/blog', title: 'Bangkok → Pattaya', text: 'Bus, taxi, train or private transfer — real prices, real travel times, no markup tricks.', arrow: 'Compare options' },
+  { img: 'coral-island-pattaya-2.jpg', pill: 'Where to stay', href: '/areas', title: 'Pick the right district', text: 'Central, Jomtien, Pratumnak, Naklua — choose your area before you book. Includes streets to avoid.', arrow: 'Compare districts' },
+  { img: 'pattaya-floating-market.webp', pill: 'First-time tips', href: '/blog', title: '8 mistakes to skip', text: 'From baht-bus etiquette to which beach to avoid — the things first-timers always regret.', arrow: 'Read the guide' },
 ]
 
 const districts = [
-  { cls: 'dist-1', img: 'pattaya-night-clubs-1.jpg', pill: 'Most central', name: 'Central Pattaya', desc: 'Beach Road, Walking Street, Soi Buakhao — the busy, loud, never-sleeping heart of the city.' },
-  { cls: '', img: 'pattaya-city-beach-2.webp', pill: 'Calm & clean', name: 'Jomtien', desc: 'Longer, quieter beach. Best for families and longer stays.' },
-  { cls: '', img: 'best-island-pattaya.jpg', pill: 'Views & sunsets', name: 'Pratumnak Hill', desc: 'Quiet hill between Central & Jomtien. Rooftops, viewpoints, walkable.' },
-  { cls: '', img: 'SanctuaryofTruth.jpg', pill: 'Local feel', name: 'Naklua', desc: 'Northern fishing village vibe. Real Thai seafood and Sanctuary of Truth.' },
-  { cls: '', img: 'Coral-Island-pattaya.jpg', pill: 'Day trip', name: 'Koh Larn Island', desc: '40 minutes by ferry. White-sand beaches and snorkel coves.' },
+  { cls: 'dist-1', img: 'pattaya-night-clubs-1.jpg', pill: 'Most central', name: 'Central Pattaya', href: '/areas/central-pattaya', desc: 'Beach Road, Walking Street, Soi Buakhao — the busy, loud, never-sleeping heart of the city.' },
+  { cls: '', img: 'pattaya-city-beach-2.webp', pill: 'Calm & clean', name: 'Jomtien', href: '/areas/jomtien', desc: 'Longer, quieter beach. Best for families and longer stays.' },
+  { cls: '', img: 'best-island-pattaya.jpg', pill: 'Views & sunsets', name: 'Pratumnak Hill', href: '/areas/pratumnak-hill', desc: 'Quiet hill between Central & Jomtien. Rooftops, viewpoints, walkable.' },
+  { cls: '', img: 'SanctuaryofTruth.jpg', pill: 'Local feel', name: 'Naklua', href: '/areas/naklua', desc: 'Northern fishing village vibe. Real Thai seafood and Sanctuary of Truth.' },
+  { cls: '', img: 'Coral-Island-pattaya.jpg', pill: 'Day trip', name: 'Koh Larn Island', href: '/areas/islands', desc: '40 minutes by ferry. White-sand beaches and snorkel coves.' },
 ]
 
 
@@ -161,7 +161,7 @@ export default async function Home() {
               <h2>Six categories. Every kind of day.</h2>
               <p>Six categories cover every kind of day in Pattaya. Re-checked weekly — if a place closes or changes, the page updates within days.</p>
             </div>
-            <a href="#" className="viewall">All categories <Arrow /></a>
+            <a href="/map" className="viewall">All categories <Arrow /></a>
           </div>
           <div className="cats-grid" translate="no">
             {categories.map(cat => (
@@ -185,11 +185,11 @@ export default async function Home() {
               <h2>Start here if you&apos;re visiting Pattaya.</h2>
               <p>Four detailed guides covering the questions every first-time visitor asks before booking — month, transport, district and the small things that catch people out.</p>
             </div>
-            <a href="#" className="viewall">All planning guides <Arrow /></a>
+            <a href="/plan-my-trip" className="viewall">All planning guides <Arrow /></a>
           </div>
           <div className="plan-grid" translate="no">
             {planCards.map(card => (
-              <a key={card.title} href="#" className="plan-card">
+              <a key={card.title} href={card.href} className="plan-card">
                 <div className="bg" style={{ backgroundImage: `url(${ASSETS}/${card.img})` }}></div>
                 <span className="pill">{card.pill}</span>
                 <h3>{card.title}</h3>
@@ -210,7 +210,7 @@ export default async function Home() {
               <h2>The 30 best places in Pattaya</h2>
               <p>Hand-picked by our editorial team. Every place visited in person, photographed by us, re-checked weekly.</p>
             </div>
-            <a href="#" className="viewall">View all 30 <Arrow /></a>
+            <a href="/map" className="viewall">View all 30 <Arrow /></a>
           </div>
           <div className="carousel-wrap">
             <CarButton target="topCar" dir={-1} label="Previous" />
@@ -231,7 +231,7 @@ export default async function Home() {
               <h2>Adrenaline &amp; adventure</h2>
               <p>Sky dives, paramotors, jet skis, PADI courses and bungee — every operator licensed in Thailand and re-checked every 30 days for safety standards.</p>
             </div>
-            <a href="#" className="viewall">All adventures <Arrow /></a>
+            <a href="/things-to-do" className="viewall">All adventures <Arrow /></a>
           </div>
           <div className="carousel-wrap">
             <CarButton target="extremeCar" dir={-1} label="Previous" />
@@ -256,7 +256,7 @@ export default async function Home() {
           </div>
           <div className="dist-grid" translate="no">
             {districts.map(d => (
-              <a key={d.name} href="#" className={`dist ${d.cls}`}>
+              <a key={d.name} href={d.href} className={`dist ${d.cls}`}>
                 <div className="dist-bg" style={{ backgroundImage: `url(${ASSETS}/${d.img})` }}></div>
                 <div className="dist-content">
                   <span className="pill pill-glass">{d.pill}</span>

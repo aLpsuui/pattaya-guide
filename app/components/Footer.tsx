@@ -66,6 +66,16 @@ const cols = [
   },
 ]
 
+// Social links — add a real URL to a platform's `href` and its icon appears.
+// Empty href => not rendered (no dead links).
+const SOCIALS: { label: string; href: string; stroke?: boolean; svg: string }[] = [
+  { label: 'Instagram', href: '', stroke: true, svg: '<rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" />' },
+  { label: 'TikTok', href: '', svg: '<path d="M19.5 7.5a5.5 5.5 0 0 1-4.5-2.4V16a5 5 0 1 1-5-5v3a2 2 0 1 0 2 2V2h3a5.5 5.5 0 0 0 4.5 5.5Z" />' },
+  { label: 'YouTube', href: '', svg: '<path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4a2.5 2.5 0 0 0-1.8 1.8A26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8ZM10 15V9l5 3-5 3Z" />' },
+  { label: 'Facebook', href: '', svg: '<path d="M14 13.5h2.5l1-4H14v-2c0-1 .5-2 2-2h1.5V2.1S16.1 2 14.7 2C11.9 2 10 3.7 10 6.9V9.5H7v4h3V22h4v-8.5Z" />' },
+  { label: 'WeChat', href: '', svg: '<path d="M8.5 4C4.4 4 1 6.9 1 10.5c0 2 1 3.8 2.7 5L3 18l2.7-1.4c.5.1 1 .2 1.5.2-.1-.4-.2-.9-.2-1.3 0-3.2 3.1-5.8 7-5.8.3 0 .6 0 .9.1C14.3 7.1 11.7 4 8.5 4Z" />' },
+]
+
 function FooterCol({ title, links }: { title: string; links: { label: string; href: string; all?: boolean }[] }) {
   const [open, setOpen] = useState(false)
   return (
@@ -104,15 +114,17 @@ export default function Footer() {
             <div className="f-trust">
               <div className="f-trust-item"><Icon name="check" size={14} style={{ color: 'var(--lagoon)' }} /> Verified by 800+ residents</div>
               <div className="f-trust-item"><Icon name="check" size={14} style={{ color: 'var(--lagoon)' }} /> Updated weekly · No paid placements</div>
-              <div className="f-trust-item"><Icon name="check" size={14} style={{ color: 'var(--lagoon)' }} /> 600+ places · 50+ guides · 4 languages</div>
+              <div className="f-trust-item"><Icon name="check" size={14} style={{ color: 'var(--lagoon)' }} /> 500+ places · 100+ guides · locally verified</div>
             </div>
-            <div className="socials">
-              <a href="#" aria-label="Instagram"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" /></svg></a>
-              <a href="#" aria-label="TikTok"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M19.5 7.5a5.5 5.5 0 0 1-4.5-2.4V16a5 5 0 1 1-5-5v3a2 2 0 1 0 2 2V2h3a5.5 5.5 0 0 0 4.5 5.5Z" /></svg></a>
-              <a href="#" aria-label="YouTube"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4a2.5 2.5 0 0 0-1.8 1.8A26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8ZM10 15V9l5 3-5 3Z" /></svg></a>
-              <a href="#" aria-label="Facebook"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M14 13.5h2.5l1-4H14v-2c0-1 .5-2 2-2h1.5V2.1S16.1 2 14.7 2C11.9 2 10 3.7 10 6.9V9.5H7v4h3V22h4v-8.5Z" /></svg></a>
-              <a href="#" aria-label="WeChat"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M8.5 4C4.4 4 1 6.9 1 10.5c0 2 1 3.8 2.7 5L3 18l2.7-1.4c.5.1 1 .2 1.5.2-.1-.4-.2-.9-.2-1.3 0-3.2 3.1-5.8 7-5.8.3 0 .6 0 .9.1C14.3 7.1 11.7 4 8.5 4Zm-2.7 4c.5 0 .9.4.9.9 0 .5-.4.9-.9.9s-.9-.4-.9-.9c0-.5.4-.9.9-.9Zm5.4 0c.5 0 .9.4.9.9 0 .5-.4.9-.9.9s-.9-.4-.9-.9c0-.5.4-.9.9-.9ZM14.5 11C11 11 8 13.3 8 16.2c0 2.9 3 5.3 6.5 5.3.7 0 1.4-.1 2-.3l2.5 1.3-.6-2c1.4-1 2.6-2.5 2.6-4.3 0-2.9-3-5.2-6.5-5.2Zm-2 3c.4 0 .7.3.7.7 0 .4-.3.7-.7.7-.4 0-.7-.3-.7-.7 0-.4.3-.7.7-.7Zm4.5 0c.4 0 .7.3.7.7 0 .4-.3.7-.7.7-.4 0-.7-.3-.7-.7 0-.4.3-.7.7-.7Z" /></svg></a>
-            </div>
+            {SOCIALS.some((s) => s.href) && (
+              <div className="socials">
+                {SOCIALS.filter((s) => s.href).map((s) => (
+                  <a key={s.label} href={s.href} aria-label={s.label} target="_blank" rel="noopener noreferrer">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill={s.stroke ? 'none' : 'currentColor'} stroke={s.stroke ? 'currentColor' : undefined} strokeWidth={s.stroke ? 2 : undefined} dangerouslySetInnerHTML={{ __html: s.svg }} />
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
 
           {cols.map(c => <FooterCol key={c.title} title={c.title} links={c.links} />)}
