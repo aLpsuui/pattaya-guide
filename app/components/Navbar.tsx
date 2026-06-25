@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Icon from '@/app/components/Icon'
+import HeroSearch from '@/app/components/HeroSearch'
 import type { MegaData } from '@/lib/megaNav'
 
 const StarSvg = () => (<svg viewBox="0 0 24 24" width="11" height="11" aria-hidden="true"><path d="M12 17.3 6.2 20.5l1.1-6.5L2.5 9.4l6.5-.9L12 2.5l3 6 6.5.9-4.8 4.6 1.1 6.5z" /></svg>)
@@ -83,17 +84,7 @@ export default function Navbar({ mega = {} }: { mega?: MegaData }) {
               <LogoSVG />
               <div className="wm"><i>Go To&nbsp;</i><u>Pattaya</u></div>
             </Link>
-            <div className="searchbar">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-  <input type="search" placeholder="Search 1,200+ places, tours & areas…" aria-label="Search"/>
-  <button type="button" className="scope" aria-label="Search scope: All">
-    All
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" width="10" height="10"><path d="m6 9 6 6 6-6"/></svg>
-  </button>
-  <button type="button" className="go" aria-label="Search">
-    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.4" width="16" height="16"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
-  </button>
-</div>
+            <HeroSearch variant="header" />
             <div className="tier1-actions">
               <button className="lang-chip" aria-label="Language">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="15" height="15"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.5 4 5.7 4 9s-1.4 6.5-4 9c-2.6-2.5-4-5.7-4-9s1.4-6.5 4-9z"/></svg>
