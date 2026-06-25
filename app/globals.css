@@ -818,6 +818,10 @@ body.mm-open{overflow:hidden;touch-action:none}
 .bento--even a:first-child{grid-row:auto}
 .bento--even a:first-child b{font-size:15px;line-height:1.18}
 .bento--even .badge{display:none}
+/* Mega-menu links keep their own colour on hover — no blue shift.
+   (Overrides the generic .nav-links a:hover { color: ocean }.) */
+.nav-links .mega a:hover{color:inherit}
+.nav-links .mega .bento a:hover{color:#fff}
 .mega-promo{border-radius:var(--r-xl);overflow:hidden;background:var(--paper);border:1px solid var(--line);display:flex;flex-direction:column;transition:transform .25s,box-shadow .25s;text-decoration:none}
 .mega-promo:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
 .mega-promo .ph{position:relative;height:154px;overflow:hidden}
