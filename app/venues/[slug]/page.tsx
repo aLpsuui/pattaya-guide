@@ -150,8 +150,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 }
 
+// Symbols defined in <VenueIcons/>. Imported venues use richer icon ids
+// (pg-music, pg-dumbbell…) that aren't in the sprite — fall back so no icon
+// box renders blank.
+const SPRITE = new Set([
+  'pg-wellness', 'pg-massage', 'pg-star', 'pg-clock', 'pg-pin', 'pg-near-me', 'pg-directions',
+  'pg-phone', 'pg-globe', 'pg-calendar', 'pg-air-con', 'pg-parking', 'pg-card', 'pg-sun',
+  'pg-check', 'pg-info', 'pg-local-verified', 'pg-chevron-right', 'pg-arrow-right', 'pg-arrow-left', 'pg-close',
+])
 const Icon = ({ id, size = 16, cls = '' }: { id: string; size?: number; cls?: string }) => (
-  <svg className={`pg-icon is-${size}${cls ? ' ' + cls : ''}`} aria-hidden="true"><use href={`#${id}`} /></svg>
+  <svg className={`pg-icon is-${size}${cls ? ' ' + cls : ''}`} aria-hidden="true"><use href={`#${SPRITE.has(id) ? id : 'pg-check'}`} /></svg>
 )
 
 export default async function VenuePage({ params }: { params: Promise<{ slug: string }> }) {
