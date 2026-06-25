@@ -132,21 +132,21 @@ export default async function AreaDetailPage({ params }: { params: Promise<{ slu
           {venues.length > 0 ? (
             <div className="eat-grid">
               {venues.map((v) => (
-                <article key={v.id} className="eat-card">
+                <Link key={v.id} href={`/venues/${v.slug}`} className="eat-card">
                   <div className="eat-card__media">
                     {v.image_url && <img src={v.image_url} alt={v.name} loading="lazy" />}
                     <span className="eat-card__tag">{v.venue_type || v.categories?.name_en}</span>
                   </div>
                   <div className="eat-card__body">
                     {v.venue_type && <div className="eat-card__cuisine">{v.venue_type}</div>}
-                    <h3><Link href={`/venues/${v.slug}`}>{v.name}</Link></h3>
+                    <h3>{v.name}</h3>
                     {v.address && <div className="eat-card__loc"><Icon name="pin" size={16} className="ic" />{v.address}</div>}
                     <div className="eat-card__foot">
                       <span className="eat-card__rate"><span className="star">★</span> {v.rating?.toFixed(1) ?? '—'} {v.review_count != null && <span className="count">({v.review_count.toLocaleString()})</span>}</span>
                       <span className="eat-card__price">{v.price_range || ''}</span>
                     </div>
                   </div>
-                </article>
+                </Link>
               ))}
             </div>
           ) : (

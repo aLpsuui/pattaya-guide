@@ -12,23 +12,33 @@ export default function EatFilters() {
     const cards: HTMLElement[] = grid ? Array.from(grid.querySelectorAll('.eat-card')) : []
     const countEl = document.getElementById('resultCount')
     const emptyEl = document.getElementById('eatEmpty')
+    const loadMoreBtn = document.getElementById('loadMore')
+    const unit = (grid?.getAttribute('data-unit') || 'places')
 
+    const STEP = 18
     let activeFilter = 'all'
+    let limit = STEP
 
     function render(query = '') {
       const q = query.trim().toLowerCase()
-      let shown = 0
+      let matched = 0, shown = 0
       cards.forEach(card => {
         const cats = (card.getAttribute('data-cat') || '').split(/\s+/)
         const matchCat = activeFilter === 'all' || cats.indexOf(activeFilter) !== -1
         const hay = (card.getAttribute('data-name') || '').toLowerCase()
         const matchQ = q === '' || hay.indexOf(q) !== -1
-        const show = matchCat && matchQ
-        card.classList.toggle('is-hidden', !show)
-        if (show) shown++
+        if (matchCat && matchQ) {
+          matched++
+          const show = matched <= limit
+          card.classList.toggle('is-hidden', !show)
+          if (show) shown++
+        } else {
+          card.classList.add('is-hidden')
+        }
       })
-      if (countEl) countEl.textContent = shown + (shown === 1 ? ' place' : ' places')
-      if (emptyEl) emptyEl.classList.toggle('on', shown === 0)
+      if (countEl) countEl.textContent = matched + ' ' + (matched === 1 ? unit.replace(/s$/, '') : unit)
+      if (emptyEl) emptyEl.classList.toggle('on', matched === 0)
+      if (loadMoreBtn) loadMoreBtn.style.display = matched > shown ? '' : 'none'
     }
 
     function onFilterClick(e: Event) {
@@ -37,9 +47,13 @@ export default function EatFilters() {
       filterBar.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', 'false'))
       btn.setAttribute('aria-pressed', 'true')
       activeFilter = btn.getAttribute('data-filter') || 'all'
-      render()
+      limit = STEP
+      render(searchInput?.value || '')
     }
     if (filterBar) filterBar.addEventListener('click', onFilterClick)
+
+    function onLoadMore() { limit += STEP; render(searchInput?.value || '') }
+    if (loadMoreBtn) loadMoreBtn.addEventListener('click', onLoadMore)
 
     // Hero search
     const searchInput = document.getElementById('eatSearch') as HTMLInputElement | null
@@ -51,11 +65,12 @@ export default function EatFilters() {
         filterBar.querySelector('[data-filter="all"]')?.setAttribute('aria-pressed', 'true')
         activeFilter = 'all'
       }
+      limit = STEP
       render(searchInput.value)
       if (searchInput.value.trim() !== '' && grid) grid.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
     function onSubmit(e: Event) { e.preventDefault(); onSearch() }
-    function onInput() { if (searchInput && searchInput.value === '') render() }
+    function onInput() { if (searchInput && searchInput.value === '') { limit = STEP; render() } }
     if (searchForm) searchForm.addEventListener('submit', onSubmit)
     if (searchInput) searchInput.addEventListener('input', onInput)
 
@@ -78,8 +93,12 @@ export default function EatFilters() {
     }
     carBtns.forEach(b => b.addEventListener('click', onCar))
 
+    // Apply the initial page size (show first STEP cards, hide the rest).
+    render()
+
     return () => {
       if (filterBar) filterBar.removeEventListener('click', onFilterClick)
+      if (loadMoreBtn) loadMoreBtn.removeEventListener('click', onLoadMore)
       if (searchForm) searchForm.removeEventListener('submit', onSubmit)
       if (searchInput) searchInput.removeEventListener('input', onInput)
       saveBtns.forEach(b => b.removeEventListener('click', onSave))
