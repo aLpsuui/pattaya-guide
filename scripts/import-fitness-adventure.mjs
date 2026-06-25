@@ -11,12 +11,15 @@ const DRY = process.argv.includes('--dry')
 const ROOT = 'C:\\Users\\DELL5280 Touch\\Desktop\\Go To Pattaya - Final'
 const CDN = 'https://cdn.gotopattaya.com/Venues/'
 const TTD = '6653922a-531d-491e-8a37-91b821118741' // Things To Do
+const EAT = '7829fe06-7c18-487a-9df7-0c2442043ce5' // Eat & Drinks
 const SOURCES = [
   { dir: 'gyms', category_id: '6ca72f37-8334-41a2-8a79-118ae0f85925' },       // Yoga & Fitness
   { dir: 'adrenaline', category_id: TTD },
   { dir: 'tours', category_id: TTD },
   { dir: 'diving-snorkeling', category_id: TTD },
   { dir: 'rentals', category_id: TTD },
+  { dir: 'restaurants', category_id: EAT },
+  { dir: 'cafes', category_id: EAT },
 ]
 
 const ENT = { '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'", '&nbsp;': ' ', '&middot;': '·', '&rsquo;': '’', '&ldquo;': '“', '&rdquo;': '”', '&hellip;': '…', '&deg;': '°' }
