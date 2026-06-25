@@ -28,7 +28,16 @@ function rewrite(html) {
   let out = html
   // images (always carry the ../ prefix)
   out = out.replace(/\.\.\/images\/Venues\//g, CDN + 'Venues/')
-  out = out.replace(/\.\.\/images\/([^"')]+?)\.(webp|png|jpg|jpeg)/g, (_m, name) => `${ASSETS}${name}.webp`)
+  // A few editorial images were never uploaded to the CDN — swap to a themed
+  // image that exists so the guides never show a broken picture.
+  const FALLBACK = {
+    'beachfront-areas-pattaya-1': 'pattaya-city-beach-1',
+    'beachfront-areas-pattaya-3': 'pattaya-city-beach-2',
+    'best-beaches-pattaya-2': 'best-island-pattaya',
+    'sanctuary-of-truth-pattaya': 'pattaya-buddhist-pagoda-golden',
+    'walking-street-night-pattaya': 'pattaya-night-clubs-1',
+  }
+  out = out.replace(/\.\.\/images\/([^"')]+?)\.(webp|png|jpg|jpeg)/g, (_m, name) => `${ASSETS}${FALLBACK[name] || name}.webp`)
   // internal links — the ../ prefix is inconsistent in the source, so make it optional
   out = out.replace(/href="(?:\.\.\/)?detail-areas-([a-z-]+)\.html"/g, 'href="/areas/$1"')
   out = out.replace(/href="(?:\.\.\/)?([^"/]+\.html)"/g, (_m, file) => {
