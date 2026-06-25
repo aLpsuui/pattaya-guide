@@ -18,6 +18,7 @@ const SOURCES = [
   { dir: 'tours', category_id: TTD },
   { dir: 'diving-snorkeling', category_id: TTD },
   { dir: 'rentals', category_id: TTD },
+  { dir: 'temples-culture', category_id: TTD },
   { dir: 'restaurants', category_id: EAT },
   { dir: 'cafes', category_id: EAT },
 ]
