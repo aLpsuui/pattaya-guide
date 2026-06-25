@@ -136,7 +136,7 @@ export default function Navbar({ mega = {} }: { mega?: MegaData }) {
                       <div className="bento">
                         {(mega[item.slug]?.venues?.length ?? 0) > 0 ? (
                           mega[item.slug]!.venues.map((v, i) => (
-                            <Link key={v.slug} href={`/venues/${v.slug}`} onClick={() => setOpenMega(null)}>
+                            <Link key={v.slug} href={v.href} onClick={() => setOpenMega(null)}>
                               {v.image_url && <img src={v.image_url} alt={v.name} loading="lazy" />}
                               {i === 0 && <span className="badge">Editor&apos;s pick</span>}
                               {v.rating != null && <span className="rate-chip"><StarSvg />{v.rating.toFixed(1)}</span>}

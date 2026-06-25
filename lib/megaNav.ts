@@ -1,5 +1,8 @@
 import { supabase } from '@/lib/supabase'
 import { unstable_cache } from 'next/cache'
+import { AREAS } from '@/lib/areas'
+
+const ASSETS = 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets'
 
 // Per nav category: top active venues (with an image) + the latest published
 // guide for that pillar. Cached and revalidated so it doesn't run per request.
@@ -7,7 +10,7 @@ import { unstable_cache } from 'next/cache'
 export type MegaVenue = {
   slug: string; name: string; image_url: string | null; rating: number | null
   review_count: number | null; price_from: number | null; neighborhood: string | null
-  categories: { slug: string; name_en: string } | null
+  categories: { slug: string; name_en: string } | null; href: string
 }
 export type MegaGuide = { slug: string; title: string; description: string | null; read_time: number | null; author: string | null; hero_image: string | null }
 export type MegaEntry = { venues: MegaVenue[]; guide: MegaGuide | null }
@@ -44,10 +47,18 @@ export const getMegaData = unstable_cache(
           .limit(1)
           .maybeSingle(),
       ])
-      out[n.slug] = { venues: (venues || []) as unknown as MegaVenue[], guide: (guide || null) as MegaGuide | null }
+      // Areas has no DB venues — show the curated area cards in the bento instead.
+      const list: MegaVenue[] = n.slug === 'areas'
+        ? AREAS.filter((a) => a.slug !== 'islands').slice(0, 6).map((a) => ({
+            slug: a.slug, name: a.name, image_url: `${ASSETS}/${a.image}`, rating: null,
+            review_count: null, price_from: null, neighborhood: a.vibes.join(' · '),
+            categories: { slug: 'areas', name_en: 'Area' }, href: `/areas/${a.slug}`,
+          }))
+        : ((venues || []) as unknown as Omit<MegaVenue, 'href'>[]).map((v) => ({ ...v, href: `/venues/${v.slug}` }))
+      out[n.slug] = { venues: list, guide: (guide || null) as MegaGuide | null }
     }
     return out
   },
-  ['mega-nav-v2'],
+  ['mega-nav-v3'],
   { revalidate: 600, tags: ['mega-nav'] },
 )

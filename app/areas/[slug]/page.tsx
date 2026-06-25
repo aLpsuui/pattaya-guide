@@ -7,9 +7,31 @@ import Link from 'next/link'
 import Icon from '@/app/components/Icon'
 import { AREAS, areaBySlug } from '@/lib/areas'
 import { SITE_URL } from '@/lib/site'
+import BlogScript from '@/app/components/BlogScript'
 import guidesData from './area-guides.json'
 
 export const revalidate = 300
+
+// FAQ accordions + in-page smooth scroll for the bespoke .det-area guides
+// (the source page's inline script lived outside <main>, so it was dropped).
+const AREA_GUIDE_SCRIPT = String.raw`
+(function () {
+  document.querySelectorAll('.det-area .acc .q').forEach(function (q) {
+    q.addEventListener('click', function () {
+      var acc = q.closest('.acc');
+      var open = acc.classList.toggle('open');
+      q.setAttribute('aria-expanded', String(open));
+    });
+  });
+  document.querySelectorAll('.det-area a[href^="#"]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      var id = a.getAttribute('href'); if (id === '#') return;
+      var t = document.querySelector(id); if (!t) return;
+      e.preventDefault(); t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+})();
+`
 
 const ASSETS = 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/assets'
 const guides = guidesData as Record<string, { name: string; html: string }>
@@ -71,8 +93,12 @@ export default async function AreaDetailPage({ params }: { params: Promise<{ slu
   return (
     <div className="adx">
       {guide ? (
-        // Rich editorial area guide (bespoke .det-area design)
-        <div dangerouslySetInnerHTML={{ __html: guide.html }} />
+        // Rich editorial area guide (bespoke .det-area design). translate="no"
+        // keeps Google Translate from breaking the CSS grids (e.g. quick numbers).
+        <>
+          <div translate="no" dangerouslySetInnerHTML={{ __html: guide.html }} />
+          <BlogScript script={AREA_GUIDE_SCRIPT} />
+        </>
       ) : (
         // Fallback hero for areas without a guide (e.g. the islands)
         <section className="adx-hero">
