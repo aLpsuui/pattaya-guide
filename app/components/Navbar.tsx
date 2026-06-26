@@ -86,11 +86,6 @@ export default function Navbar({ mega = {} }: { mega?: MegaData }) {
             </Link>
             <HeroSearch variant="header" />
             <div className="tier1-actions">
-              <button className="lang-chip" aria-label="Language">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="15" height="15"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.5 4 5.7 4 9s-1.4 6.5-4 9c-2.6-2.5-4-5.7-4-9s1.4-6.5 4-9z"/></svg>
-                EN
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" className="cv" width="11" height="11"><path d="m6 9 6 6 6-6"/></svg>
-              </button>
               <Link href="/plan-my-trip" className="btn btn-primary btn-sm">Plan my trip</Link>
               <button className="burger" onClick={() => setDrawerOpen(true)} aria-label="Open menu" aria-expanded={drawerOpen}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" width="22" height="22"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
