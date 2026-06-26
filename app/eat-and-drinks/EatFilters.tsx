@@ -23,6 +23,7 @@ export default function EatFilters() {
     const searchInput = document.getElementById('eatSearch') as HTMLInputElement | null
     const searchForm = searchInput?.closest('form') || null
     const unit = grid.getAttribute('data-unit') || 'places'
+    const unitSingular = grid.getAttribute('data-unit-singular') || unit.replace(/s$/, '')
 
     const STEP = 18
     const state = { primary: 'all', sort: 'editor', q: '', areas: new Set<string>(), limit: STEP }
@@ -103,7 +104,7 @@ export default function EatFilters() {
         if (show) visible++
       })
       cards.forEach((c) => { if (!matchCard(c)) c.classList.add('is-hidden') })
-      if (countEl) countEl.innerHTML = '<b>' + shown.length + '</b> ' + (shown.length === 1 ? unit.replace(/s$/, '') : unit)
+      if (countEl) countEl.innerHTML = '<b>' + shown.length + '</b> ' + (shown.length === 1 ? unitSingular : unit)
       if (emptyEl) emptyEl.classList.toggle('on', shown.length === 0)
       if (loadMoreBtn) loadMoreBtn.style.display = shown.length > visible ? '' : 'none'
       renderChips()

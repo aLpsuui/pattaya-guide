@@ -72,6 +72,7 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
   const venues = (data || []) as unknown as Venue[]
   const total = venues.length
   const unit = cfg.unit || 'places'
+  const unitSingular = unit.endsWith('ies') ? unit.slice(0, -3) + 'y' : unit.replace(/s$/, '')
   const typeLabel = cfg.typeLabel || 'Type'
   const typeIcon = cfg.typeIcon || 'filter'
 
@@ -206,7 +207,7 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
           <div className="eat-head">
             <div className="titles">
               <p className="kicker">The full list</p>
-              <h2 id="dir-h">Every {unit.replace(/s$/, '')} <span>worth your time</span></h2>
+              <h2 id="dir-h">Every {unitSingular} <span>worth your time</span></h2>
               <p>Pick a {typeLabel.toLowerCase()}, stack areas, then sort. Search filters by name too.</p>
             </div>
           </div>
@@ -280,7 +281,7 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
 
               <div className="eat-active" id="eatActive" aria-live="polite"></div>
 
-              <div className="eat-grid" id="eatGrid" data-unit={unit}>
+              <div className="eat-grid" id="eatGrid" data-unit={unit} data-unit-singular={unitSingular}>
                 {venues.map((v, i) => Card(v, i))}
               </div>
 
