@@ -1192,7 +1192,8 @@ a.eat-card:hover h3{color:var(--ocean)}
    ============================================================ */
 .eat-dir{display:grid;grid-template-columns:288px 1fr;gap:var(--s5);align-items:start}
 .eat-results{min-width:0}
-.eat-results .eat-grid{grid-template-columns:repeat(2,1fr)}
+.eat-results .eat-grid{grid-template-columns:repeat(3,1fr)}
+@media(max-width:1180px){.eat-results .eat-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:680px){.eat-results .eat-grid{grid-template-columns:1fr}}
 
 /* left rail */
