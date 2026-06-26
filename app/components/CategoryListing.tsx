@@ -10,10 +10,17 @@ interface Venue {
   venue_type: string | null; price_range: string | null; address: string | null; neighborhood: string | null; image_url: string | null
 }
 
+export interface PrimaryGroup {
+  slug: string          // family key used in data-cat + the type button
+  label: string
+  icon: string          // Icon name
+  match: string[]        // lower-case keywords matched against venue_type
+}
+
 export interface CatConfig {
   slug: string          // DB category slug
   kicker: string
-  h1: string            // may contain a single <em>…</em> emphasis via {em}
+  h1: string
   em?: string           // emphasised word inside the h1 (rendered with <span>)
   lead: string
   heroImg: string       // asset filename or absolute URL
@@ -21,10 +28,38 @@ export interface CatConfig {
   badge?: string
   searchPlaceholder: string
   unit?: string         // "places" | "venues" | "activities"
+  typeLabel?: string    // rail "Type" group heading (default "Type")
+  typeIcon?: string     // Icon for the rail head + "All" button (default "filter")
+  // Optional grouped primary types (e.g. Restaurants / Cafés / Bars). When
+  // omitted, the rail is built from the raw venue_type values.
+  primaryGroups?: PrimaryGroup[]
 }
 
 const img = (s: string) => (s.startsWith('http') ? s : `${ASSETS}/${s}`)
-const typeSlug = (t: string | null) => (t || 'other').toLowerCase().replace(/&/g, ' ').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'other'
+const slugify = (t: string | null) => (t || 'other').toLowerCase().replace(/&/g, ' ').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'other'
+
+// Canonical Pattaya area buckets from a messy neighborhood string.
+function areaOf(nb: string | null): { slug: string; label: string } | null {
+  if (!nb) return null
+  const t = nb.toLowerCase()
+  const map: [string, string, string][] = [
+    ['central', 'central', 'Central Pattaya'],
+    ['naklua', 'naklua', 'Naklua'],
+    ['north', 'north', 'North Pattaya'],
+    ['jomtien', 'jomtien', 'Jomtien'],
+    ['pratumnak', 'pratumnak', 'Pratumnak Hill'],
+    ['phra tamnak', 'pratumnak', 'Pratumnak Hill'],
+    ['wong amat', 'wongamat', 'Wong Amat'],
+    ['walking', 'walkingstreet', 'Walking Street'],
+    ['south', 'southpattaya', 'South Pattaya'],
+    ['bang lamung', 'banglamung', 'Bang Lamung'],
+    ['sattahip', 'sattahip', 'Sattahip'],
+    ['chon buri', 'chonburi', 'Chon Buri'],
+    ['chonburi', 'chonburi', 'Chon Buri'],
+  ]
+  for (const [kw, slug, label] of map) if (t.includes(kw)) return { slug, label }
+  return { slug: slugify(nb), label: nb.trim() }
+}
 
 export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
   const { data } = await supabase
@@ -37,20 +72,79 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
   const venues = (data || []) as unknown as Venue[]
   const total = venues.length
   const unit = cfg.unit || 'places'
+  const typeLabel = cfg.typeLabel || 'Type'
+  const typeIcon = cfg.typeIcon || 'filter'
 
-  // Auto filter chips from the most common venue_types.
-  const counts = new Map<string, { label: string; n: number }>()
-  for (const v of venues) {
-    const key = typeSlug(v.venue_type)
-    const label = (v.venue_type || 'Other').trim()
-    const e = counts.get(key) || { label, n: 0 }
-    e.n++; counts.set(key, e)
+  // ---- primary TYPE rail (single select) -------------------------------
+  const familyOf = (v: Venue): string => {
+    if (cfg.primaryGroups) {
+      const t = (v.venue_type || '').toLowerCase()
+      for (const g of cfg.primaryGroups) if (g.match.some((m) => t.includes(m))) return g.slug
+      return 'other'
+    }
+    return slugify(v.venue_type)
   }
-  const chips = [...counts.entries()].sort((a, b) => b[1].n - a[1].n).slice(0, 7)
+
+  let primaries: { slug: string; label: string; icon?: string; n: number }[]
+  if (cfg.primaryGroups) {
+    primaries = cfg.primaryGroups
+      .map((g) => ({ slug: g.slug, label: g.label, icon: g.icon, n: venues.filter((v) => familyOf(v) === g.slug).length }))
+      .filter((p) => p.n > 0)
+  } else {
+    const counts = new Map<string, { label: string; n: number }>()
+    for (const v of venues) {
+      const k = slugify(v.venue_type)
+      const e = counts.get(k) || { label: (v.venue_type || 'Other').trim(), n: 0 }
+      e.n++; counts.set(k, e)
+    }
+    primaries = [...counts.entries()].sort((a, b) => b[1].n - a[1].n).slice(0, 10)
+      .map(([slug, e]) => ({ slug, label: e.label, n: e.n }))
+  }
+
+  // ---- AREA facet (multi select) ---------------------------------------
+  const areaCounts = new Map<string, { label: string; n: number }>()
+  for (const v of venues) {
+    const a = areaOf(v.neighborhood)
+    if (!a) continue
+    const e = areaCounts.get(a.slug) || { label: a.label, n: 0 }
+    e.n++; areaCounts.set(a.slug, e)
+  }
+  const areas = [...areaCounts.entries()].sort((a, b) => b[1].n - a[1].n).slice(0, 12)
+    .map(([slug, e]) => ({ slug, label: e.label, n: e.n }))
 
   const rated = venues.filter((v) => typeof v.rating === 'number')
   const avg = rated.length ? (rated.reduce((s, v) => s + (v.rating || 0), 0) / rated.length).toFixed(1) : '—'
-  const topType = chips[0]?.[1]
+  const top = primaries[0]
+  const picks = venues.slice(0, 3)
+
+  const Card = (v: Venue, i: number) => (
+    <Link
+      key={v.id}
+      href={`/venues/${v.slug}`}
+      className="eat-card"
+      data-cat={familyOf(v)}
+      data-area={areaOf(v.neighborhood)?.slug || ''}
+      data-name={`${v.name} ${v.venue_type || ''} ${v.neighborhood || ''}`.toLowerCase()}
+      data-rating={v.rating ?? 0}
+      data-reviews={v.review_count ?? 0}
+      data-order={i}
+      data-sortname={v.name.toLowerCase()}
+    >
+      <div className="eat-card__media">
+        {v.image_url && <img src={v.image_url} alt={v.name} loading={i < 6 ? 'eager' : 'lazy'} fetchPriority={i < 6 ? 'high' : undefined} />}
+        <span className="eat-card__tag">{v.venue_type || 'Place'}</span>
+      </div>
+      <div className="eat-card__body">
+        {v.venue_type && <div className="eat-card__cuisine">{v.venue_type}</div>}
+        <h3>{v.name}</h3>
+        {(v.address || v.neighborhood) && <div className="eat-card__loc"><Icon name="pin" size={16} className="ic" />{v.address || v.neighborhood}</div>}
+        <div className="eat-card__foot">
+          <span className="eat-card__rate"><span className="star">★</span> {v.rating?.toFixed(1) ?? '—'} {v.review_count != null && <span className="count">({v.review_count.toLocaleString()})</span>}</span>
+          <span className="eat-card__price">{v.price_range || ''}</span>
+        </div>
+      </div>
+    </Link>
+  )
 
   return (
     <div className="eat-page">
@@ -75,9 +169,9 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
 
             <div className="eat-hero__stats" role="list" aria-label="Section overview">
               <div className="st" role="listitem"><b>{total || '—'}</b><span>Verified {unit}</span></div>
-              {topType && <div className="st" role="listitem"><b>{topType.n}</b><span>{topType.label}</span></div>}
+              {top && <div className="st" role="listitem"><b>{top.n}</b><span>{top.label}</span></div>}
               <div className="st" role="listitem"><b>{avg}★</b><span>Avg. rating</span></div>
-              <div className="st" role="listitem"><b>{chips.length}</b><span>Categories</span></div>
+              {areas.length > 0 && <div className="st" role="listitem"><b>{areas.length}</b><span>Areas</span></div>}
             </div>
           </div>
 
@@ -89,60 +183,153 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
         </div>
       </section>
 
-      {/* FILTER CHIPS */}
-      <nav className="eat-subnav" aria-label="Filter by type">
-        <div className="container">
-          <div className="filterbar" id="catFilter" role="group" aria-label="Type filters">
-            <button className="chip" data-filter="all" aria-pressed="true"><Icon name="filter" size={16} /> All</button>
-            {chips.map(([key, e]) => (
-              <button key={key} className="chip" data-filter={key} aria-pressed="false">{e.label} <span className="count">({e.n})</span></button>
-            ))}
+      {/* EDITOR'S PICKS */}
+      {picks.length === 3 && (
+        <section className="sec sec--alt" aria-labelledby="picks-h">
+          <div className="container">
+            <div className="eat-head">
+              <div className="titles">
+                <p className="kicker">Editor&apos;s picks</p>
+                <h2 id="picks-h">The ones we keep <span>coming back</span> to</h2>
+                <p>Top-rated and locally verified — a quick three before you dive into the full list.</p>
+              </div>
+              <a href="#dir-h" className="eat-viewall">Browse all {total} <Icon name="arrow-right" size={16} /></a>
+            </div>
+            <div className="eat-grid">{picks.map((v, i) => Card(v, i))}</div>
           </div>
-        </div>
-      </nav>
+        </section>
+      )}
 
-      {/* GRID */}
-      <section className="sec" aria-labelledby="all-h">
+      {/* DIRECTORY — left rail + results */}
+      <section className="sec" aria-labelledby="dir-h">
         <div className="container">
           <div className="eat-head">
             <div className="titles">
               <p className="kicker">The full list</p>
-              <h2 id="all-h">Every {unit.replace(/s$/, '')} <span>worth your time</span></h2>
-              <p>Filter by type above, or search — the list updates instantly.</p>
+              <h2 id="dir-h">Every {unit.replace(/s$/, '')} <span>worth your time</span></h2>
+              <p>Pick a {typeLabel.toLowerCase()}, stack areas, then sort. Search filters by name too.</p>
             </div>
-            <span className="pill pill--navy" id="resultCount" aria-live="polite">{total} {unit}</span>
           </div>
 
-          <div className="eat-grid" id="eatGrid" data-unit={unit}>
-            {venues.map((v, i) => (
-              <Link key={v.id} href={`/venues/${v.slug}`} className="eat-card" data-cat={typeSlug(v.venue_type)} data-name={`${v.name} ${v.venue_type || ''} ${v.neighborhood || ''}`.toLowerCase()}>
-                <div className="eat-card__media">
-                  {v.image_url && <img src={v.image_url} alt={v.name} loading={i < 8 ? 'eager' : 'lazy'} fetchPriority={i < 8 ? 'high' : undefined} />}
-                  <span className="eat-card__tag">{v.venue_type || 'Place'}</span>
+          <div className="eat-dir" id="eatDir" data-primary="all">
+            <div className="eat-rail-backdrop" id="railBackdrop" aria-hidden="true"></div>
+
+            {/* LEFT FILTER RAIL */}
+            <aside className="eat-rail" id="eatRail" aria-label="Filter the directory">
+              <div className="eat-rail__inner">
+                <div className="eat-rail__head">
+                  <h2><Icon name={typeIcon} size={20} className="ic" />Filters</h2>
+                  <button type="button" className="eat-rail__clear" id="clearFilters">Clear all</button>
+                  <button type="button" className="eat-rail__close" id="railClose" aria-label="Close filters"><Icon name="close" size={20} /></button>
                 </div>
-                <div className="eat-card__body">
-                  {v.venue_type && <div className="eat-card__cuisine">{v.venue_type}</div>}
-                  <h3>{v.name}</h3>
-                  {(v.address || v.neighborhood) && <div className="eat-card__loc"><Icon name="pin" size={16} className="ic" />{v.address || v.neighborhood}</div>}
-                  <div className="eat-card__foot">
-                    <span className="eat-card__rate"><span className="star">★</span> {v.rating?.toFixed(1) ?? '—'} {v.review_count != null && <span className="count">({v.review_count.toLocaleString()})</span>}</span>
-                    <span className="eat-card__price">{v.price_range || ''}</span>
+
+                {/* primary TYPE (single) */}
+                <div className="fgroup">
+                  <p className="fgroup__t" aria-hidden="true">{typeLabel}</p>
+                  <div className="ftype" id="typeFilter" role="group" aria-label={`${typeLabel} (choose one)`}>
+                    <button type="button" data-type="all" data-label={`All ${unit}`} aria-pressed="true">
+                      <Icon name={typeIcon} size={16} className="ic" />All <span className="n">{total}</span>
+                    </button>
+                    {primaries.map((p) => (
+                      <button key={p.slug} type="button" data-type={p.slug} data-label={p.label} aria-pressed="false">
+                        {p.icon && <Icon name={p.icon} size={16} className="ic" />}{p.label} <span className="n">{p.n}</span>
+                      </button>
+                    ))}
                   </div>
                 </div>
-              </Link>
-            ))}
-          </div>
 
-          {total > 18 && (
-            <div className="load-more-wrap">
-              <button id="loadMore" type="button" className="load-more">Load more</button>
+                {/* AREA (multi) */}
+                {areas.length > 1 && (
+                  <div className="fgroup">
+                    <button type="button" className="fgroup__t" aria-expanded="true">Area <Icon name="chevron-right" size={16} className="ic x" /></button>
+                    <div className="fgroup__body">
+                      <div className="fopts">
+                        {areas.map((a) => (
+                          <label key={a.slug} className="fopt">
+                            <input type="checkbox" data-group="area" value={a.slug} data-label={a.label} />
+                            <span className="box"><Icon name="check" size={12} className="ic" /></span>
+                            <span className="lbl">{a.label}</span><span className="n">{a.n}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </aside>
+
+            {/* RIGHT RESULTS */}
+            <div className="eat-results">
+              <div className="eat-toolbar">
+                <div className="eat-toolbar__left">
+                  <button type="button" className="eat-filter-toggle" id="railToggle" aria-controls="eatRail">
+                    <Icon name="filter" size={16} />Filters<span className="pill" id="filterBadge" hidden>0</span>
+                  </button>
+                  <span className="eat-toolbar__count" id="resultCount" aria-live="polite"><b>{total}</b> {unit}</span>
+                </div>
+                <div className="eat-sort">
+                  <label htmlFor="sortSel">Sort</label>
+                  <select id="sortSel">
+                    <option value="editor">Top rated</option>
+                    <option value="rating">Highest rated</option>
+                    <option value="reviews">Most reviewed</option>
+                    <option value="az">A–Z</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="eat-active" id="eatActive" aria-live="polite"></div>
+
+              <div className="eat-grid" id="eatGrid" data-unit={unit}>
+                {venues.map((v, i) => Card(v, i))}
+              </div>
+
+              {total > 18 && (
+                <div className="load-more-wrap">
+                  <button id="loadMore" type="button" className="load-more">Load more</button>
+                </div>
+              )}
+
+              <p className={`eat-empty${total === 0 ? ' on' : ''}`} id="eatEmpty" role="status">
+                <Icon name="search" size={32} style={{ color: 'var(--text-faint)' }} /><br />
+                {total === 0 ? `No ${unit} published yet in this category.` : `No ${unit} match. Try removing a filter.`}
+              </p>
             </div>
-          )}
+          </div>
+        </div>
+      </section>
 
-          <p className={`eat-empty${total === 0 ? ' on' : ''}`} id="eatEmpty" role="status">
-            <Icon name="search" size={32} style={{ color: 'var(--text-faint)' }} /><br />
-            {total === 0 ? `No ${unit} published yet in this category.` : `No ${unit} match. Try another filter.`}
-          </p>
+      {/* HOW WE RANK — trust */}
+      <section className="sec sec--alt sec--tight" aria-labelledby="rank-h">
+        <div className="container">
+          <div className="trust-grid">
+            <div>
+              <p className="kicker">How we rank</p>
+              <h2 id="rank-h">No <span>pay-to-play</span>. Ever.</h2>
+              <p style={{ color: 'var(--text-muted)', fontSize: 18, maxWidth: '52ch' }}>
+                Venues can&apos;t buy a higher spot on this page. Our ordering blends real visit notes, fresh review trends and local reporting — then we re-check the list every week.
+              </p>
+              <ul className="trust-list">
+                <li><Icon name="check" size={24} className="ic" /><span><b>We pay our own way.</b> Editors visit anonymously; no freebies influence a ranking.</span></li>
+                <li><Icon name="check" size={24} className="ic" /><span><b>Reviews are weighted, not counted.</b> We discount suspicious spikes and reward consistency over time.</span></li>
+                <li><Icon name="check" size={24} className="ic" /><span><b>Listings ≠ rankings.</b> A venue paying for a listing never moves up the order.</span></li>
+              </ul>
+            </div>
+            <div className="trust-aside">
+              <div className="alert alert--info">
+                <Icon name="info" size={24} />
+                <div><b>Spotted something off?</b><br />Hours change, places close, owners move on. If a detail here is stale, flag it from any venue page and a local editor will verify it.</div>
+              </div>
+              <div className="author">
+                <span className="ava" aria-hidden="true">PG</span>
+                <div className="who">
+                  <b>The Go To Pattaya local desk</b>
+                  <span className="role"><Icon name="local-verified" size={16} style={{ verticalAlign: '-3px' }} /> Locally verified</span>
+                  <p>On-the-ground in Pattaya since 2019 — visiting, checking and double-checking so the list stays honest.</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
