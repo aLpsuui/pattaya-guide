@@ -147,7 +147,7 @@ export default function HeroSearch({ variant = 'hero' }: { variant?: 'hero' | 'h
         <div className="hero-search" role="search">
           <label className="hsr" htmlFor="heroInput">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
-            <input id="heroInput" placeholder="Search places, areas, or guides..." {...inputCommon} />
+            <input id="heroInput" aria-label="Search places, areas and guides" placeholder="Search places, areas, or guides..." {...inputCommon} />
           </label>
           <button type="button" className="go" aria-label="Search"
             onClick={() => { if (flat[0]) go(flat[0].href) }}>

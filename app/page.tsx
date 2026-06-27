@@ -125,6 +125,9 @@ export default async function Home() {
 
   return (
     <>
+      {/* Preload the LCP hero background (a CSS background-image the browser
+          would otherwise only discover after CSS parses). */}
+      <link rel="preload" as="image" href={`${ASSETS}/pattaya-city-beach-1.webp`} fetchPriority="high" />
       {/* HERO */}
       <section className="hero">
         <div className="hero-media">

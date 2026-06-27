@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import Icon from '@/app/components/Icon'
 import EatFilters from '@/app/eat-and-drinks/EatFilters'
+import { SITE_URL } from '@/lib/site'
 
 const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 
@@ -118,6 +119,32 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
   const top = primaries[0]
   const picks = venues.slice(0, 3)
 
+  // ---- structured data: breadcrumb + listing ---------------------------
+  const catName = cfg.kicker.split('·')[0].trim() || cfg.h1
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+          { '@type': 'ListItem', position: 2, name: catName, item: `${SITE_URL}/${cfg.slug}` },
+        ],
+      },
+      {
+        '@type': 'ItemList',
+        name: `${catName} in Pattaya`,
+        numberOfItems: total,
+        itemListElement: venues.slice(0, 25).map((v, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          url: `${SITE_URL}/venues/${v.slug}`,
+          name: v.name,
+        })),
+      },
+    ],
+  }
+
   const Card = (v: Venue, i: number) => (
     <Link
       key={v.id}
@@ -149,6 +176,8 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
 
   return (
     <div className="eat-page">
+      <link rel="preload" as="image" href={img(cfg.heroImg)} fetchPriority="high" />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {/* HERO */}
       <section className="eat-hero">
         <div className="container eat-hero__inner">

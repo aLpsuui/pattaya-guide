@@ -9,8 +9,9 @@ export default function RootChrome({ navbar, footer, children }: { navbar: React
   if (pathname === '/admin' || pathname.startsWith('/admin/')) return <>{children}</>
   return (
     <>
+      <a href="#main" className="skip-link">Skip to content</a>
       {navbar}
-      <main>{children}</main>
+      <main id="main">{children}</main>
       {footer}
     </>
   )
