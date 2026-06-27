@@ -333,6 +333,39 @@
 .pg-admin .login-wrap{min-height:100dvh;display:flex;align-items:center;justify-content:center;background:var(--grad-sidebar);padding:24px}
 .pg-admin .login-card{width:100%;max-width:380px;background:var(--bg-surface);border-radius:var(--r-lg);padding:32px;box-shadow:var(--shadow-3)}
 .pg-admin .login-card .sb-logo{margin-bottom:16px}
+
+/* ============================================================
+   CATEGORY MAP — main → sub-type diagram (ER-table styled)
+   ============================================================ */
+.pg-admin .cat-diagram{display:flex;flex-direction:column;align-items:center}
+.pg-admin .cat-root{display:inline-flex;align-items:center;gap:12px;background:var(--bg-surface);border:1.5px solid var(--border);border-radius:var(--r-pill);padding:12px 22px;box-shadow:var(--shadow-1)}
+.pg-admin .cat-root__dot{width:10px;height:10px;border-radius:50%;background:var(--ocean);box-shadow:0 0 0 4px color-mix(in srgb,var(--ocean) 20%,transparent)}
+.pg-admin .cat-root__txt b{font-family:var(--font-display);font-size:15px;color:var(--text-strong);display:block;line-height:1.1}
+.pg-admin .cat-root__txt span{font-size:12px;color:var(--text-faint)}
+.pg-admin .cat-trunk{width:2px;height:28px;background:var(--border)}
+.pg-admin .cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;width:100%;position:relative;padding-top:14px}
+/* a connector tick rising from each table to the trunk row */
+.pg-admin .cat-grid::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--border)}
+
+.pg-admin .cat-table{position:relative;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-1);align-self:start}
+.pg-admin .cat-table::before{content:"";position:absolute;top:-14px;left:50%;width:2px;height:14px;background:var(--border)}
+.pg-admin .cat-table__h{display:flex;align-items:center;gap:9px;padding:13px 16px;background:color-mix(in srgb,var(--cc) 12%,var(--bg-surface));border-bottom:2px solid var(--cc)}
+.pg-admin .cat-table__dot{width:9px;height:9px;border-radius:3px;background:var(--cc);flex-shrink:0}
+.pg-admin .cat-table__name{font-family:var(--font-display);font-weight:800;font-size:15px;color:var(--text-strong);flex:1;letter-spacing:-.01em}
+.pg-admin .cat-table__count{font-family:var(--font-display);font-weight:800;font-size:13px;color:#fff;background:var(--cc);border-radius:var(--r-pill);padding:2px 11px;font-variant-numeric:tabular-nums}
+.pg-admin .cat-table__b{padding:6px 8px 10px}
+.pg-admin .cat-row{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;position:relative}
+.pg-admin .cat-row:hover{background:var(--bg-sunken)}
+.pg-admin .cat-row__tick{width:14px;height:14px;flex-shrink:0;position:relative}
+.pg-admin .cat-row__tick::before{content:"";position:absolute;left:6px;top:-7px;bottom:50%;width:1.5px;background:var(--border)}
+.pg-admin .cat-row__tick[data-last]::before{bottom:50%}
+.pg-admin .cat-row__tick::after{content:"";position:absolute;left:6px;top:50%;width:7px;height:1.5px;background:var(--border)}
+.pg-admin .cat-row__label{flex:1;font-size:13.5px;color:var(--text-body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pg-admin .cat-row__n{font-family:var(--font-mono);font-size:12px;color:var(--text-faint);font-variant-numeric:tabular-nums;flex-shrink:0}
+.pg-admin .cat-row--empty{color:var(--text-faint);font-size:13px;font-style:italic;padding-left:10px}
+@media(max-width:540px){
+  .pg-admin .cat-grid{grid-template-columns:1fr}
+}
 .pg-admin .login-card h1{font-size:22px;margin-bottom:4px}
 .pg-admin .login-card p{font-size:14px;color:var(--text-muted);margin-bottom:22px}
 .pg-admin .login-card .field{margin-bottom:16px}

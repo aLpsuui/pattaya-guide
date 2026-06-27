@@ -3,15 +3,16 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import { logout } from '@/app/admin/_actions/auth'
 import {
-  IconPin, IconDoc, IconImage, IconDash, IconSearch, IconSun, IconMoon, IconBurger, IconLogout, IconMail,
+  IconPin, IconDoc, IconImage, IconDash, IconSearch, IconSun, IconMoon, IconBurger, IconLogout, IconMail, IconTree,
 } from './icons'
 
-type Active = 'dashboard' | 'places' | 'blog' | 'media' | 'seo' | 'messages'
+type Active = 'dashboard' | 'places' | 'categories' | 'blog' | 'media' | 'seo' | 'messages'
 
 const NAV: { key: Active; href: string; label: string; icon: ReactNode; group: string }[] = [
   { key: 'dashboard', href: '/admin', label: 'Dashboard', icon: <IconDash />, group: 'Overview' },
   { key: 'messages', href: '/admin/messages', label: 'Messages', icon: <IconMail />, group: 'Overview' },
   { key: 'places', href: '/admin/places', label: 'Places', icon: <IconPin />, group: 'Content' },
+  { key: 'categories', href: '/admin/categories', label: 'Categories', icon: <IconTree />, group: 'Content' },
   { key: 'blog', href: '/admin/blog', label: 'Blog & Guides', icon: <IconDoc />, group: 'Content' },
   { key: 'media', href: '/admin/media', label: 'Media', icon: <IconImage />, group: 'Content' },
   { key: 'seo', href: '/admin/seo', label: 'SEO Health', icon: <IconSearch />, group: 'Growth' },
