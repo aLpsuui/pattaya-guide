@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import Icon from '@/app/components/Icon'
-import EatFilters from '@/app/eat-and-drinks/EatFilters'
+import CategoryDirectory, { VItem } from '@/app/components/CategoryDirectory'
 import { SITE_URL } from '@/lib/site'
 
 const ASSETS = 'https://cdn.gotopattaya.com/Assets'
@@ -118,6 +118,14 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
   const avg = rated.length ? (rated.reduce((s, v) => s + (v.rating || 0), 0) / rated.length).toFixed(1) : '—'
   const top = primaries[0]
   const picks = venues.slice(0, 3)
+
+  // Compact payload for the client directory (incremental render keeps the
+  // initial DOM light while filtering stays instant).
+  const items: VItem[] = venues.map((v, i) => ({
+    id: v.id, slug: v.slug, name: v.name, rating: v.rating, review_count: v.review_count,
+    venue_type: v.venue_type, loc: v.address || v.neighborhood || null, image_url: v.image_url,
+    cat: familyOf(v), area: areaOf(v.neighborhood)?.slug || '', order: i,
+  }))
 
   // ---- structured data: breadcrumb + listing ---------------------------
   const catName = cfg.kicker.split('·')[0].trim() || cfg.h1
@@ -241,91 +249,23 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
             </div>
           </div>
 
-          <div className="eat-dir" id="eatDir" data-primary="all">
-            <div className="eat-rail-backdrop" id="railBackdrop" aria-hidden="true"></div>
-
-            {/* LEFT FILTER RAIL */}
-            <aside className="eat-rail" id="eatRail" aria-label="Filter the directory">
-              <div className="eat-rail__inner">
-                <div className="eat-rail__head">
-                  <h2><Icon name={typeIcon} size={20} className="ic" />Filters</h2>
-                  <button type="button" className="eat-rail__clear" id="clearFilters">Clear all</button>
-                  <button type="button" className="eat-rail__close" id="railClose" aria-label="Close filters"><Icon name="close" size={20} /></button>
-                </div>
-
-                {/* primary TYPE (single) */}
-                <div className="fgroup">
-                  <p className="fgroup__t" aria-hidden="true">{typeLabel}</p>
-                  <div className="ftype" id="typeFilter" role="group" aria-label={`${typeLabel} (choose one)`}>
-                    <button type="button" data-type="all" data-label={`All ${unit}`} aria-pressed="true">
-                      <Icon name={typeIcon} size={16} className="ic" />All <span className="n">{total}</span>
-                    </button>
-                    {primaries.map((p) => (
-                      <button key={p.slug} type="button" data-type={p.slug} data-label={p.label} aria-pressed="false">
-                        {p.icon && <Icon name={p.icon} size={16} className="ic" />}{p.label} <span className="n">{p.n}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* AREA (multi) */}
-                {areas.length > 1 && (
-                  <div className="fgroup">
-                    <button type="button" className="fgroup__t" aria-expanded="true">Area <Icon name="chevron-right" size={16} className="ic x" /></button>
-                    <div className="fgroup__body">
-                      <div className="fopts">
-                        {areas.map((a) => (
-                          <label key={a.slug} className="fopt">
-                            <input type="checkbox" data-group="area" value={a.slug} data-label={a.label} />
-                            <span className="box"><Icon name="check" size={12} className="ic" /></span>
-                            <span className="lbl">{a.label}</span><span className="n">{a.n}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </aside>
-
-            {/* RIGHT RESULTS */}
-            <div className="eat-results">
-              <div className="eat-toolbar">
-                <div className="eat-toolbar__left">
-                  <button type="button" className="eat-filter-toggle" id="railToggle" aria-controls="eatRail">
-                    <Icon name="filter" size={16} />Filters<span className="pill" id="filterBadge" hidden>0</span>
-                  </button>
-                  <span className="eat-toolbar__count" id="resultCount" aria-live="polite"><b>{total}</b> {unit}</span>
-                </div>
-                <div className="eat-sort">
-                  <label htmlFor="sortSel">Sort</label>
-                  <select id="sortSel">
-                    <option value="editor">Top rated</option>
-                    <option value="rating">Highest rated</option>
-                    <option value="reviews">Most reviewed</option>
-                    <option value="az">A–Z</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="eat-active" id="eatActive" aria-live="polite"></div>
-
-              <div className="eat-grid" id="eatGrid" data-unit={unit} data-unit-singular={unitSingular}>
-                {venues.map((v, i) => Card(v, i))}
-              </div>
-
-              {total > 18 && (
-                <div className="load-more-wrap">
-                  <button id="loadMore" type="button" className="load-more">Load more</button>
-                </div>
-              )}
-
-              <p className={`eat-empty${total === 0 ? ' on' : ''}`} id="eatEmpty" role="status">
-                <Icon name="search" size={32} style={{ color: 'var(--text-faint)' }} /><br />
-                {total === 0 ? `No ${unit} published yet in this category.` : `No ${unit} match. Try removing a filter.`}
-              </p>
-            </div>
-          </div>
+          {total === 0 ? (
+            <p className="eat-empty on" role="status">
+              <Icon name="search" size={32} style={{ color: 'var(--text-faint)' }} /><br />
+              No {unit} published yet in this category.
+            </p>
+          ) : (
+            <CategoryDirectory
+              venues={items}
+              primaries={primaries}
+              areas={areas}
+              typeLabel={typeLabel}
+              typeIcon={typeIcon}
+              unit={unit}
+              unitSingular={unitSingular}
+              total={total}
+            />
+          )}
         </div>
       </section>
 
@@ -362,8 +302,6 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
           </div>
         </div>
       </section>
-
-      <EatFilters />
     </div>
   )
 }
