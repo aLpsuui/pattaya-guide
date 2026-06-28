@@ -26,3 +26,6 @@ export const IconCross = (p: SVGProps<SVGSVGElement>) => (<svg {...S({ strokeWid
 export const IconEye = (p: SVGProps<SVGSVGElement>) => (<svg {...S(p)}><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>)
 export const IconMail = (p: SVGProps<SVGSVGElement>) => (<svg {...S(p)}><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg>)
 export const IconTree = (p: SVGProps<SVGSVGElement>) => (<svg {...S(p)}><rect x="9" y="3" width="6" height="5" rx="1" /><rect x="3" y="16" width="6" height="5" rx="1" /><rect x="15" y="16" width="6" height="5" rx="1" /><path d="M12 8v3M6 16v-2.5h12V16" /></svg>)
+export const IconChart = (p: SVGProps<SVGSVGElement>) => (<svg {...S(p)}><path d="M3 3v18h18" /><path d="m7 14 3-4 3 3 5-7" /></svg>)
+export const IconUp = (p: SVGProps<SVGSVGElement>) => (<svg {...S({ strokeWidth: 2.4, ...p })}><path d="M5 15l7-7 7 7" /></svg>)
+export const IconDown = (p: SVGProps<SVGSVGElement>) => (<svg {...S({ strokeWidth: 2.4, ...p })}><path d="M5 9l7 7 7-7" /></svg>)

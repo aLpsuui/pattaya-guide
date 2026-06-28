@@ -3,10 +3,10 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import { logout } from '@/app/admin/_actions/auth'
 import {
-  IconPin, IconDoc, IconImage, IconDash, IconSearch, IconSun, IconMoon, IconBurger, IconLogout, IconMail, IconTree,
+  IconPin, IconDoc, IconImage, IconDash, IconSearch, IconSun, IconMoon, IconBurger, IconLogout, IconMail, IconTree, IconChart,
 } from './icons'
 
-type Active = 'dashboard' | 'places' | 'categories' | 'blog' | 'media' | 'seo' | 'messages'
+type Active = 'dashboard' | 'places' | 'categories' | 'blog' | 'media' | 'seo' | 'analytics' | 'messages'
 
 const NAV: { key: Active; href: string; label: string; icon: ReactNode; group: string }[] = [
   { key: 'dashboard', href: '/admin', label: 'Dashboard', icon: <IconDash />, group: 'Overview' },
@@ -15,6 +15,7 @@ const NAV: { key: Active; href: string; label: string; icon: ReactNode; group: s
   { key: 'categories', href: '/admin/categories', label: 'Categories', icon: <IconTree />, group: 'Content' },
   { key: 'blog', href: '/admin/blog', label: 'Blog & Guides', icon: <IconDoc />, group: 'Content' },
   { key: 'media', href: '/admin/media', label: 'Media', icon: <IconImage />, group: 'Content' },
+  { key: 'analytics', href: '/admin/analytics', label: 'Analytics', icon: <IconChart />, group: 'Growth' },
   { key: 'seo', href: '/admin/seo', label: 'SEO Health', icon: <IconSearch />, group: 'Growth' },
 ]
 const GROUPS = ['Overview', 'Content', 'Growth']
