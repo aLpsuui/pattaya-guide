@@ -5,7 +5,8 @@ import RowDelete from '@/app/admin/_components/RowDelete'
 import { deletePlace } from '@/app/admin/_actions/places'
 import { statusPill } from '@/lib/admin/options'
 import { venueChecks, scoreOf } from '@/lib/admin/seo'
-import { IconChevR, IconPlus, IconPin, IconStar, IconEdit, IconEye } from '@/app/admin/_components/icons'
+import { IconChevR, IconPlus, IconPin, IconStar, IconEdit, IconEye, IconSearch } from '@/app/admin/_components/icons'
+import PlacesFilter from './PlacesFilter'
 
 export const dynamic = 'force-dynamic'
 
@@ -22,6 +23,7 @@ export default async function PlacesPage() {
     .order('name', { ascending: true })
     .limit(200)
   const rows = (data || []) as unknown as Row[]
+  const catNames = [...new Set(rows.map((r) => r.categories?.name_en).filter(Boolean))].sort() as string[]
 
   return (
     <Shell active="places" crumb={<>Content <IconChevR /> Places</>} title="Places" search
@@ -32,6 +34,23 @@ export default async function PlacesPage() {
       </div>
 
       <section className="panel">
+        <div className="toolbar">
+          <div className="search-mini">
+            <IconSearch />
+            <input id="placeSearch" type="search" placeholder="Search venues…" aria-label="Search venues" />
+          </div>
+          <select id="placeCat" className="selectish selectish--native" aria-label="Filter by category">
+            <option value="all">All categories</option>
+            {catNames.map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
+          <div className="tb-spacer" />
+          <div id="placeChips" style={{ display: 'flex', gap: 8 }}>
+            <button type="button" className="chip active" data-status="all">All</button>
+            <button type="button" className="chip hide-xs" data-status="published">Published</button>
+            <button type="button" className="chip hide-xs" data-status="draft">Draft</button>
+          </div>
+        </div>
+
         <div className="table-scroll">
           <table className="data">
             <thead>
@@ -46,7 +65,7 @@ export default async function PlacesPage() {
                 const band = sc >= 75 ? 'good' : sc >= 50 ? 'mid' : 'low'
                 const st = (r.status || (r.is_active ? 'published' : 'draft')).toLowerCase()
                 return (
-                  <tr key={r.id}>
+                  <tr key={r.id} data-name={r.name.toLowerCase()} data-cat={r.categories?.name_en || ''} data-status={r.is_active ? 'published' : 'draft'}>
                     <td>
                       <Link href={`/admin/places/${r.id}`}>
                         <div className="cell-place">
@@ -71,11 +90,13 @@ export default async function PlacesPage() {
                 )
               })}
               {rows.length === 0 && <tr><td colSpan={7}><div className="empty"><b>No venues yet</b><span>Add your first place to get started.</span></div></td></tr>}
+              <tr id="placeEmpty" style={{ display: 'none' }}><td colSpan={7}><div className="empty"><b>No matches</b><span>Try another search, category or status.</span></div></td></tr>
             </tbody>
           </table>
         </div>
-        <div className="table-foot"><div className="info">Showing <b>{rows.length}</b> venues</div></div>
+        <div className="table-foot"><div className="info">Showing <b id="placeCount">{rows.length}</b> of {rows.length} venues</div></div>
       </section>
+      <PlacesFilter />
     </Shell>
   )
 }
