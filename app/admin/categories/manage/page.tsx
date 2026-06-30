@@ -2,7 +2,7 @@ import { db } from '@/lib/admin/db'
 import Link from 'next/link'
 import Shell from '@/app/admin/_components/Shell'
 import RowDelete from '@/app/admin/_components/RowDelete'
-import { IconChevR, IconPlus, IconTrash, IconTree } from '@/app/admin/_components/icons'
+import { IconChevR, IconPlus, IconTrash, IconTree, IconCheck } from '@/app/admin/_components/icons'
 import { createCategory, updateCategory, deleteCategory } from '@/app/admin/_actions/categories'
 
 export const dynamic = 'force-dynamic'
@@ -40,40 +40,40 @@ export default async function ManageCategoriesPage() {
         <p className="cmf-hint">Slug, URL'de kullanılır (ör. <code>/eat-and-drinks</code>). Boş bırakırsan addan otomatik üretilir.</p>
       </section>
 
-      {/* list */}
-      <div className="cmf-list">
-        {categories.map((c) => {
-          const n = count(c.id)
-          return (
-            <section className="panel cmf-item" key={c.id}>
-              <div className="cmf-head">
-                <div className="cmf-meta">
-                  <b>{c.name_en}</b>
-                  <span><code>{c.slug}</code> · {n} venue{n === 1 ? '' : 's'} · icon: {c.icon || '—'}</span>
-                </div>
-                <div className="row-act">
-                  {n > 0 ? (
-                    <button className="act-btn" disabled title={`${n} venue bağlı — silmeden önce taşı/kaldır`} style={{ opacity: 0.4, cursor: 'not-allowed' }}><IconTrash /></button>
-                  ) : (
-                    <RowDelete action={deleteCategory} id={c.id} name={c.name_en} />
-                  )}
-                </div>
-              </div>
-
-              <details className="cmf-edit">
-                <summary>Edit</summary>
-                <form action={updateCategory} className="cmf-row">
-                  <input type="hidden" name="id" value={c.id} />
-                  <input name="name_en" className="cmf-input" defaultValue={c.name_en} placeholder="Name" required />
-                  <input name="slug" className="cmf-input" defaultValue={c.slug} placeholder="slug" />
-                  <input name="icon" className="cmf-input cmf-input--sm" defaultValue={c.icon || ''} placeholder="icon" />
-                  <button type="submit" className="btn btn--primary btn--sm">Save</button>
-                </form>
-              </details>
-            </section>
-          )
-        })}
-      </div>
+      {/* list — editable table */}
+      <section className="panel" style={{ overflowX: 'auto' }}>
+        <table className="data cmf-table">
+          <thead>
+            <tr><th>Name</th><th>Slug</th><th style={{ textAlign: 'right' }}>Venues</th><th>Icon</th><th aria-label="Actions"></th></tr>
+          </thead>
+          <tbody>
+            {categories.map((c) => {
+              const n = count(c.id)
+              const fid = `catf-${c.id}`
+              return (
+                <tr key={c.id}>
+                  <td><input className="cmf-cell" name="name_en" defaultValue={c.name_en} form={fid} required aria-label="Name" /></td>
+                  <td><input className="cmf-cell cmf-cell--mono" name="slug" defaultValue={c.slug} form={fid} aria-label="Slug" /></td>
+                  <td className="cmf-num">{n}</td>
+                  <td><input className="cmf-cell cmf-cell--sm" name="icon" defaultValue={c.icon || ''} form={fid} placeholder="—" aria-label="Icon" /></td>
+                  <td className="row-act" style={{ whiteSpace: 'nowrap' }}>
+                    <button type="submit" form={fid} className="act-btn" title="Save changes" aria-label="Save"><IconCheck /></button>
+                    {n > 0 ? (
+                      <button className="act-btn" disabled title={`${n} venue bağlı — silmeden önce taşı/kaldır`} style={{ opacity: 0.4, cursor: 'not-allowed' }}><IconTrash /></button>
+                    ) : (
+                      <RowDelete action={deleteCategory} id={c.id} name={c.name_en} />
+                    )}
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+        {/* hidden update forms — cells reference these via the form="" attribute */}
+        {categories.map((c) => (
+          <form key={'f' + c.id} id={`catf-${c.id}`} action={updateCategory} hidden><input type="hidden" name="id" value={c.id} /></form>
+        ))}
+      </section>
     </Shell>
   )
 }
