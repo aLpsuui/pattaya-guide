@@ -16,21 +16,64 @@ type Row = {
   seo_title: string | null; description: string | null; focus_keyword: string | null; categories: { name_en: string } | null
 }
 
-export default async function PlacesPage() {
-  const { data } = await db
-    .from('venues')
-    .select('id,name,slug,neighborhood,rating,review_count,image_url,status,is_active,seo_title,description,focus_keyword,categories(name_en)')
-    .order('name', { ascending: true })
-    .limit(200)
+const PER_PAGE = 100
+
+// Windowed page list with ellipses (e.g. 1 … 3 4 5 … 12).
+function pageList(cur: number, total: number): (number | '…')[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1)
+  const want = new Set([1, 2, total - 1, total, cur - 1, cur, cur + 1])
+  const arr = [...want].filter((p) => p >= 1 && p <= total).sort((a, b) => a - b)
+  const out: (number | '…')[] = []
+  let prev = 0
+  for (const p of arr) { if (p - prev > 1) out.push('…'); out.push(p); prev = p }
+  return out
+}
+
+function Pager({ page, totalPages }: { page: number; totalPages: number }) {
+  if (totalPages <= 1) return null
+  const href = (p: number) => `/admin/places?page=${p}`
+  const Prev = page > 1
+    ? <Link className="pg-btn" href={href(page - 1)} aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg></Link>
+    : <button className="pg-btn" disabled aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg></button>
+  const Next = page < totalPages
+    ? <Link className="pg-btn" href={href(page + 1)} aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg></Link>
+    : <button className="pg-btn" disabled aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg></button>
+  return (
+    <nav className="pager" aria-label="Pagination">
+      {Prev}
+      {pageList(page, totalPages).map((p, i) => p === '…'
+        ? <span key={'e' + i} className="pg-ell">…</span>
+        : <Link key={p} className={`pg-btn${p === page ? ' on' : ''}`} href={href(p)}>{p}</Link>)}
+      {Next}
+    </nav>
+  )
+}
+
+export default async function PlacesPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
+  const sp = await searchParams
+  const cols = 'id,name,slug,neighborhood,rating,review_count,image_url,status,is_active,seo_title,description,focus_keyword,categories(name_en)'
+  // First fetch the total to compute pages, then clamp + fetch the page slice.
+  const { count } = await db.from('venues').select('id', { count: 'exact', head: true })
+  const total = count || 0
+  const totalPages = Math.max(1, Math.ceil(total / PER_PAGE))
+  const page = Math.min(Math.max(1, parseInt(sp.page || '1', 10) || 1), totalPages)
+  const from = (page - 1) * PER_PAGE
+  const { data } = await db.from('venues').select(cols).order('name', { ascending: true }).range(from, from + PER_PAGE - 1)
   const rows = (data || []) as unknown as Row[]
-  const catNames = [...new Set(rows.map((r) => r.categories?.name_en).filter(Boolean))].sort() as string[]
+  const { data: catRows } = await db.from('categories').select('name_en').order('name_en', { ascending: true })
+  const catNames = (catRows || []).map((c) => (c as { name_en: string }).name_en).filter(Boolean)
+  const firstIdx = total === 0 ? 0 : from + 1
+  const lastIdx = from + rows.length
 
   return (
     <Shell active="places" crumb={<>Content <IconChevR /> Places</>} title="Places" search
       actions={<Link className="btn btn--primary btn--sm" href="/admin/places/new"><IconPlus />Add Place</Link>}>
       <div className="page-head">
-        <div className="ph-l"><h2>Places</h2><p>{rows.length} venues · manage status &amp; visibility</p></div>
-        <div className="ph-r"><Link className="btn btn--primary btn--sm" href="/admin/places/new"><IconPlus />Add Place</Link></div>
+        <div className="ph-l"><h2>Places</h2><p>{total} venues · page {page} of {totalPages}</p></div>
+        <div className="ph-r">
+          <Pager page={page} totalPages={totalPages} />
+          <Link className="btn btn--primary btn--sm" href="/admin/places/new"><IconPlus />Add Place</Link>
+        </div>
       </div>
 
       <section className="panel">
@@ -94,7 +137,10 @@ export default async function PlacesPage() {
             </tbody>
           </table>
         </div>
-        <div className="table-foot"><div className="info">Showing <b id="placeCount">{rows.length}</b> of {rows.length} venues</div></div>
+        <div className="table-foot">
+          <div className="info"><b id="placeCount">{rows.length}</b> on this page · {firstIdx}–{lastIdx} of {total} venues</div>
+          <div style={{ marginLeft: 'auto' }}><Pager page={page} totalPages={totalPages} /></div>
+        </div>
       </section>
       <PlacesFilter />
     </Shell>

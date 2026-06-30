@@ -433,6 +433,15 @@
 .pg-admin .drag-grip svg{width:18px;height:18px}
 .pg-admin tr.is-dragging{opacity:.55;background:var(--bg-sunken)}
 
+/* pager (places pagination) */
+.pg-admin .pager{display:flex;align-items:center;gap:5px}
+.pg-admin .pg-btn{min-width:34px;height:34px;border-radius:9px;font-family:var(--font-display);font-weight:600;font-size:13.5px;color:var(--text-body);display:inline-flex;align-items:center;justify-content:center;transition:var(--dur);border:1px solid transparent;padding:0 8px;background:none}
+.pg-admin .pg-btn:hover{background:var(--bg-sunken);color:var(--ocean)}
+.pg-admin .pg-btn.on{background:var(--ocean);color:#fff}
+.pg-admin .pg-btn svg{width:16px;height:16px}
+.pg-admin .pg-btn:disabled{opacity:.4;pointer-events:none}
+.pg-admin .pg-ell{padding:0 3px;color:var(--text-faint)}
+
 /* native <select> styled like .selectish */
 .pg-admin select.selectish--native{appearance:none;-webkit-appearance:none;padding-right:34px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235f6b75' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer}
 
