@@ -5,6 +5,14 @@ import { SITE_URL } from '@/lib/site'
 import { BLOG_TEMPLATE_SCRIPT } from './blogTemplate'
 import './blog-template.css'
 
+// ISR + pre-render all published posts at build so blog pages serve from the
+// edge cache (HIT) rather than being dynamically rendered each request.
+export const revalidate = 3600
+export async function generateStaticParams() {
+  const { data } = await supabase.from('blog_posts').select('slug').eq('is_published', true).limit(2000)
+  return (data || []).map((p: { slug: string }) => ({ slug: p.slug }))
+}
+
 interface BlogPost {
   id: string
   slug: string

@@ -10,6 +10,14 @@ import VenueIcons from './VenueIcons'
 // venue and its child rows go live without a full rebuild.
 export const revalidate = 60
 
+// Pre-render every active venue at build (SSG) so detail pages are served from
+// the edge cache (HIT) instead of dynamically rendered on each request. New
+// venues added later are generated on-demand + cached (dynamicParams default).
+export async function generateStaticParams() {
+  const { data } = await supabase.from('venues').select('slug').eq('is_active', true).limit(2000)
+  return (data || []).map((v: { slug: string }) => ({ slug: v.slug }))
+}
+
 interface Photo { url: string; alt: string | null; caption: string | null; sort_order: number }
 interface MenuItem { section: string | null; name: string; detail: string | null; duration: string | null; price: string | null; is_featured: boolean; sort_order: number }
 interface Facility { icon: string; label: string; sort_order: number }
