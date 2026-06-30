@@ -1,5 +1,4 @@
 import { supabase } from '@/lib/supabase'
-import Link from 'next/link'
 import Icon from '@/app/components/Icon'
 import CategoryDirectory, { VItem } from '@/app/components/CategoryDirectory'
 import { SITE_URL } from '@/lib/site'
@@ -121,7 +120,6 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
   const rated = venues.filter((v) => typeof v.rating === 'number')
   const avg = rated.length ? (rated.reduce((s, v) => s + (v.rating || 0), 0) / rated.length).toFixed(1) : '—'
   const top = primaries[0]
-  const picks = venues.slice(0, 3)
 
   // Compact payload for the client directory (incremental render keeps the
   // initial DOM light while filtering stays instant).
@@ -156,37 +154,6 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
       },
     ],
   }
-
-  const Card = (v: Venue, i: number) => (
-    <Link
-      key={v.id}
-      href={`/venues/${v.slug}`}
-      className="eat-card"
-      data-cat={familyOf(v)}
-      data-area={areaOf(v.neighborhood)?.slug || ''}
-      data-name={`${v.name} ${v.venue_type || ''} ${v.neighborhood || ''}`.toLowerCase()}
-      data-rating={v.rating ?? 0}
-      data-reviews={v.review_count ?? 0}
-      data-order={i}
-      data-sortname={v.name.toLowerCase()}
-    >
-      <div className="eat-card__media">
-        {v.image_url
-          ? <img src={v.image_url} alt={v.name} loading={i < 6 ? 'eager' : 'lazy'} fetchPriority={i < 6 ? 'high' : undefined} />
-          : <div className="eat-card__ph" aria-hidden="true"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="m4 17 4.5-4.5 3.5 3.5 3.5-3.5L20 16" /></svg></div>}
-        <span className="eat-card__tag">{v.venue_type || 'Place'}</span>
-      </div>
-      <div className="eat-card__body">
-        {v.venue_type && <div className="eat-card__cuisine">{v.venue_type}</div>}
-        <h3>{v.name}</h3>
-        {(v.address || v.neighborhood) && <div className="eat-card__loc"><Icon name="pin" size={16} className="ic" />{v.address || v.neighborhood}</div>}
-        <div className="eat-card__foot">
-          <span className="eat-card__rate"><span className="star">★</span> {v.rating?.toFixed(1) ?? '—'} {v.review_count != null && <span className="count">({v.review_count.toLocaleString()})</span>}</span>
-          <span className="eat-card__price">{v.price_range || ''}</span>
-        </div>
-      </div>
-    </Link>
-  )
 
   return (
     <div className="eat-page">
@@ -226,23 +193,6 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
           </div>
         </div>
       </section>
-
-      {/* EDITOR'S PICKS */}
-      {picks.length === 3 && (
-        <section className="sec sec--alt" aria-labelledby="picks-h">
-          <div className="container">
-            <div className="eat-head">
-              <div className="titles">
-                <p className="kicker">Editor&apos;s picks</p>
-                <h2 id="picks-h">The ones we keep <span>coming back</span> to</h2>
-                <p>Top-rated and locally verified — a quick three before you dive into the full list.</p>
-              </div>
-              <a href="#dir-h" className="eat-viewall">Browse all {total} <Icon name="arrow-right" size={16} /></a>
-            </div>
-            <div className="eat-grid">{picks.map((v, i) => Card(v, i))}</div>
-          </div>
-        </section>
-      )}
 
       {/* DIRECTORY — left rail + results */}
       <section className="sec" aria-labelledby="dir-h">
