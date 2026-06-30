@@ -1,6 +1,7 @@
 import { db } from '@/lib/admin/db'
+import Link from 'next/link'
 import Shell from '@/app/admin/_components/Shell'
-import { IconChevR } from '@/app/admin/_components/icons'
+import { IconChevR, IconEdit } from '@/app/admin/_components/icons'
 
 export const dynamic = 'force-dynamic'
 
@@ -33,7 +34,8 @@ export default async function CategoriesPage() {
   const totalSubs = nodes.reduce((s, n) => s + n.subs.length, 0)
 
   return (
-    <Shell active="categories" crumb={<>Content <IconChevR /> Categories</>} title="Categories">
+    <Shell active="categories" crumb={<>Content <IconChevR /> Categories</>} title="Categories"
+      actions={<Link href="/admin/categories/manage" className="btn btn--primary btn--sm"><IconEdit /> Manage categories</Link>}>
       <div className="page-head">
         <div className="ph-l">
           <h2>Category map</h2>
