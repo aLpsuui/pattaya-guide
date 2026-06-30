@@ -7,7 +7,7 @@ const slugify = (s: string) =>
 
 function refresh() {
   revalidatePath('/admin/categories')
-  revalidatePath('/admin/categories/manage')
+  revalidatePath('/admin/categories/diagram')
 }
 
 export async function createCategory(fd: FormData) {
