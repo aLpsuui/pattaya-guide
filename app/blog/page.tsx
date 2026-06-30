@@ -41,12 +41,16 @@ function categoryToFilter(category: string): string {
 }
 
 async function getBlogPosts(): Promise<BlogPost[]> {
-  const { data } = await supabase
-    .from('blog_posts')
-    .select('id, slug, title, description, author, category, hero_image, read_time, published_at')
-    .eq('is_published', true)
+  const cols = 'id, slug, title, description, author, category, hero_image, read_time, published_at'
+  // Honour the admin drag order (sort_order); fall back if the column is absent.
+  let res = await supabase.from('blog_posts').select(cols).eq('is_published', true)
+    .order('sort_order', { ascending: true, nullsFirst: false })
     .order('published_at', { ascending: false })
-  return (data as BlogPost[]) || []
+  if (res.error) {
+    res = await supabase.from('blog_posts').select(cols).eq('is_published', true)
+      .order('published_at', { ascending: false })
+  }
+  return (res.data as BlogPost[]) || []
 }
 
 export const metadata = {

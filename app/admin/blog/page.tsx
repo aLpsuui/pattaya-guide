@@ -1,10 +1,10 @@
 import Link from 'next/link'
 import { db } from '@/lib/admin/db'
 import Shell from '@/app/admin/_components/Shell'
-import RowDelete from '@/app/admin/_components/RowDelete'
 import { deleteBlog } from '@/app/admin/_actions/blog'
 import { statusPill } from '@/lib/admin/options'
-import { IconChevR, IconPlus, IconDoc, IconEdit } from '@/app/admin/_components/icons'
+import { IconChevR, IconPlus } from '@/app/admin/_components/icons'
+import BlogReorder, { type BlogRow } from './BlogReorder'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,12 +24,27 @@ function seoScore(r: Row) {
 }
 
 export default async function BlogPage() {
-  const { data } = await db
-    .from('blog_posts')
-    .select('id,title,slug,category,author,status,is_published,published_at,hero_image,seo_title,meta_description,description')
-    .order('published_at', { ascending: false, nullsFirst: false })
-    .limit(300)
-  const rows = (data || []) as Row[]
+  const cols = 'id,title,slug,category,author,status,is_published,published_at,hero_image,seo_title,meta_description,description'
+  // Order by the drag sort_order; fall back gracefully if the column hasn't
+  // been added yet (run supabase-blog-order.sql).
+  let res = await db.from('blog_posts').select(cols)
+    .order('sort_order', { ascending: true, nullsFirst: false })
+    .order('published_at', { ascending: false, nullsFirst: false }).limit(300)
+  if (res.error) {
+    res = await db.from('blog_posts').select(cols)
+      .order('published_at', { ascending: false, nullsFirst: false }).limit(300)
+  }
+  const rows = (res.data || []) as Row[]
+
+  const posts: BlogRow[] = rows.map((r) => {
+    const sc = seoScore(r)
+    const st = (r.status || (r.is_published ? 'published' : 'draft')).toLowerCase()
+    return {
+      id: r.id, title: r.title, slug: r.slug, category: r.category, author: r.author,
+      hero_image: r.hero_image, sc, band: sc >= 75 ? 'good' : sc >= 50 ? 'mid' : 'low',
+      st, stPill: statusPill[st] || 'pill--draft',
+    }
+  })
 
   return (
     <Shell active="blog" crumb={<>Content <IconChevR /> Blog &amp; Guides</>} title="Blog &amp; Guides" search
@@ -39,46 +54,7 @@ export default async function BlogPage() {
         <div className="ph-r"><Link className="btn btn--primary btn--sm" href="/admin/blog/new"><IconPlus />New post</Link></div>
       </div>
 
-      <section className="panel">
-        <div className="table-scroll">
-          <table className="data">
-            <thead>
-              <tr><th>Post</th><th className="hide-xs">Pillar</th><th className="hide-xs">Author</th><th>Status</th><th className="hide-xs">SEO</th><th style={{ textAlign: 'right' }}>Actions</th></tr>
-            </thead>
-            <tbody>
-              {rows.map((r) => {
-                const sc = seoScore(r)
-                const band = sc >= 75 ? 'good' : sc >= 50 ? 'mid' : 'low'
-                const st = (r.status || (r.is_published ? 'published' : 'draft')).toLowerCase()
-                return (
-                  <tr key={r.id}>
-                    <td>
-                      <Link href={`/admin/blog/${r.id}`}>
-                        <div className="cell-place">
-                          <div className="thumb" style={r.hero_image ? { backgroundImage: `url(${r.hero_image})` } : { background: 'linear-gradient(135deg,#9277d8,#6c4cc4)' }} />
-                          <div className="info"><b className="list-link">{r.title}</b><span><IconDoc />/blog/{r.slug}</span></div>
-                        </div>
-                      </Link>
-                    </td>
-                    <td className="hide-xs"><span className="pill pill--cat">{r.category || '—'}</span></td>
-                    <td className="hide-xs muted-cell">{r.author || '—'}</td>
-                    <td><span className={`pill ${statusPill[st] || 'pill--draft'}`}><span className="pdot" />{st.charAt(0).toUpperCase() + st.slice(1)}</span></td>
-                    <td className="hide-xs"><span className={`score-badge ${band}`}>{sc}<span className="bar"><i style={{ width: `${sc}%` }} /></span></span></td>
-                    <td>
-                      <div className="row-act">
-                        <Link className="act-btn" href={`/admin/blog/${r.id}`} aria-label="Edit"><IconEdit /></Link>
-                        <RowDelete action={deleteBlog} id={r.id} name={r.title} />
-                      </div>
-                    </td>
-                  </tr>
-                )
-              })}
-              {rows.length === 0 && <tr><td colSpan={6}><div className="empty"><b>No posts yet</b><span>Write your first guide.</span></div></td></tr>}
-            </tbody>
-          </table>
-        </div>
-        <div className="table-foot"><div className="info">Showing <b>{rows.length}</b> posts</div></div>
-      </section>
+      <BlogReorder posts={posts} deleteAction={deleteBlog} />
     </Shell>
   )
 }

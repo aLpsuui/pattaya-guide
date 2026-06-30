@@ -6,6 +6,14 @@ import { slugify } from '@/lib/admin/options'
 
 type State = { error: string }
 
+// Persist a new blog ordering (drag-and-drop). ids are in display order;
+// index 0 is shown first. Requires the sort_order column (supabase-blog-order.sql).
+export async function reorderPosts(ids: string[]) {
+  await Promise.all(ids.map((id, i) => db.from('blog_posts').update({ sort_order: i }).eq('id', id)))
+  revalidatePath('/admin/blog')
+  revalidatePath('/blog')
+}
+
 function str(fd: FormData, k: string): string | null {
   const v = fd.get(k)
   return v == null || String(v).trim() === '' ? null : String(v).trim()
