@@ -189,7 +189,9 @@ export default function CategoryDirectory({ venues, primaries, areas, typeLabel,
           {shown.map((v, i) => (
             <Link key={v.id} href={`/venues/${v.slug}`} className="eat-card">
               <div className="eat-card__media">
-                {v.image_url && <img src={v.image_url} alt={v.name} width={900} height={600} loading={i < 6 ? 'eager' : 'lazy'} fetchPriority={i < 6 ? 'high' : undefined} />}
+                {v.image_url
+                  ? <img src={v.image_url} alt={v.name} width={900} height={600} loading={i < 6 ? 'eager' : 'lazy'} fetchPriority={i < 6 ? 'high' : undefined} />
+                  : <div className="eat-card__ph" aria-hidden="true"><span>{v.name.charAt(0).toUpperCase()}</span></div>}
                 <span className="eat-card__tag">{v.venue_type || 'Place'}</span>
               </div>
               <div className="eat-card__body">

@@ -167,7 +167,9 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
       data-sortname={v.name.toLowerCase()}
     >
       <div className="eat-card__media">
-        {v.image_url && <img src={v.image_url} alt={v.name} loading={i < 6 ? 'eager' : 'lazy'} fetchPriority={i < 6 ? 'high' : undefined} />}
+        {v.image_url
+          ? <img src={v.image_url} alt={v.name} loading={i < 6 ? 'eager' : 'lazy'} fetchPriority={i < 6 ? 'high' : undefined} />
+          : <div className="eat-card__ph" aria-hidden="true"><span>{v.name.charAt(0).toUpperCase()}</span></div>}
         <span className="eat-card__tag">{v.venue_type || 'Place'}</span>
       </div>
       <div className="eat-card__body">

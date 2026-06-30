@@ -1159,6 +1159,8 @@ body.no-scroll{overflow:hidden;touch-action:none}
 .eat-card__rate .count{color:var(--text-faint);font-weight:500;font-family:var(--font-body);font-size:12px}
 .eat-card__price{font-family:var(--font-display);font-weight:700;color:var(--ocean);font-size:14px;letter-spacing:1px;white-space:nowrap}
 .eat-card.is-hidden{display:none}
+.eat-card__ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--grad-brand,linear-gradient(135deg,#034487,#0178b4))}
+.eat-card__ph span{font-family:var(--font-display);font-weight:800;font-size:46px;color:rgba(255,255,255,.86);letter-spacing:-.02em;line-height:1}
 a.eat-card{text-decoration:none;color:inherit}
 a.eat-card h3{transition:color var(--dur)}
 a.eat-card:hover h3{color:var(--ocean)}
