@@ -41,16 +41,20 @@ export default function CategoryDirectory({ venues, primaries, areas, typeLabel,
   // Bridge the server-rendered hero search box into this component.
   useEffect(() => {
     const input = document.getElementById('eatSearch') as HTMLInputElement | null
-    const form = input?.closest('form') || null
     if (!input) return
+    const scrollToResults = () => document.getElementById('eatDir')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     const onInput = () => { setQ(input.value.trim().toLowerCase()); setLimit(STEP) }
-    const onSubmit = (e: Event) => {
-      e.preventDefault(); setQ(input.value.trim().toLowerCase()); setLimit(STEP)
-      document.getElementById('eatDir')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Enter') { e.preventDefault(); scrollToResults() } }
+    const goBtn = input.closest('.search')?.querySelector('.go') as HTMLElement | null
+    const onGo = (e: Event) => { e.preventDefault(); scrollToResults() }
     input.addEventListener('input', onInput)
-    if (form) form.addEventListener('submit', onSubmit)
-    return () => { input.removeEventListener('input', onInput); if (form) form.removeEventListener('submit', onSubmit) }
+    input.addEventListener('keydown', onKey)
+    goBtn?.addEventListener('click', onGo)
+    return () => {
+      input.removeEventListener('input', onInput)
+      input.removeEventListener('keydown', onKey)
+      goBtn?.removeEventListener('click', onGo)
+    }
   }, [])
 
   // Toggle the mobile drawer body class.
@@ -169,9 +173,14 @@ export default function CategoryDirectory({ venues, primaries, areas, typeLabel,
           </div>
         </div>
 
-        {activeCount > 0 && (
+        {(activeCount > 0 || q) && (
           <div className="eat-active">
-            <span className="lbl">{activeCount} {activeCount === 1 ? 'filter' : 'filters'}</span>
+            <span className="lbl">{activeCount + (q ? 1 : 0)} {activeCount + (q ? 1 : 0) === 1 ? 'filter' : 'filters'}</span>
+            {q && (
+              <span className="achip">“{q}”
+                <button type="button" aria-label="Clear search" onClick={() => { setQ(''); setLimit(STEP); const el = document.getElementById('eatSearch') as HTMLInputElement | null; if (el) el.value = '' }}><Icon name="close" size={11} /></button>
+              </span>
+            )}
             {primary !== 'all' && (
               <span className="achip">{primaryLabel(primary)}
                 <button type="button" aria-label={`Remove ${primaryLabel(primary)}`} onClick={() => pickPrimary('all')}><Icon name="close" size={11} /></button>

@@ -205,11 +205,11 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
             <h1>{cfg.em ? <>{cfg.h1.split(cfg.em)[0]}<span>{cfg.em}</span>{cfg.h1.split(cfg.em)[1]}</> : cfg.h1}</h1>
             <p className="eat-hero__lead">{cfg.lead}</p>
 
-            <form className="search" role="search">
+            <div className="search" role="search">
               <Icon name="search" size={20} style={{ color: 'var(--text-faint)' }} />
               <input type="search" id="eatSearch" placeholder={cfg.searchPlaceholder} aria-label={cfg.searchPlaceholder} autoComplete="off" />
-              <button type="submit" className="go" aria-label="Search"><Icon name="arrow-right" size={20} /></button>
-            </form>
+              <button type="button" className="go" aria-label="Search"><Icon name="arrow-right" size={20} /></button>
+            </div>
 
             <div className="eat-hero__stats" role="list" aria-label="Section overview">
               <div className="st" role="listitem"><b>{total || '—'}</b><span>Verified {unit}</span></div>
