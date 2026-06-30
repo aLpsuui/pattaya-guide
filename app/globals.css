@@ -273,6 +273,7 @@ h4{font-weight:700;font-size:17px;line-height:1.3}
 .exm-chip .ct{font-size:11px;opacity:.7}
 .exm-chip--area.on{background:#e0911a;border-color:#e0911a}
 .exm-chip--ven.on{background:#16a06a;border-color:#16a06a}
+.exm-cdot{width:9px;height:9px;border-radius:50%;flex-shrink:0;box-shadow:0 0 0 2px rgba(255,255,255,.6)}
 .exmap-body{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:14px;height:72vh;min-height:460px}
 .exmap-canvas{position:relative;z-index:0;isolation:isolate;border:1px solid #e3eaf1;border-radius:16px;overflow:hidden;box-shadow:var(--sh-md,0 8px 24px rgba(3,68,135,.08))}
 .exmap-canvas .leaflet-container{height:100%;width:100%;font:inherit}
