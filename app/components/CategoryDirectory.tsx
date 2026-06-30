@@ -161,7 +161,7 @@ export default function CategoryDirectory({ venues, primaries, areas, typeLabel,
           <div className="eat-sort">
             <label htmlFor="sortSel">Sort</label>
             <select id="sortSel" value={sort} onChange={(e) => setSort(e.target.value)}>
-              <option value="editor">Top rated</option>
+              <option value="editor">Featured</option>
               <option value="rating">Highest rated</option>
               <option value="reviews">Most reviewed</option>
               <option value="az">A–Z</option>
@@ -191,7 +191,7 @@ export default function CategoryDirectory({ venues, primaries, areas, typeLabel,
               <div className="eat-card__media">
                 {v.image_url
                   ? <img src={v.image_url} alt={v.name} width={900} height={600} loading={i < 6 ? 'eager' : 'lazy'} fetchPriority={i < 6 ? 'high' : undefined} />
-                  : <div className="eat-card__ph" aria-hidden="true"><span>{v.name.charAt(0).toUpperCase()}</span></div>}
+                  : <div className="eat-card__ph" aria-hidden="true"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="m4 17 4.5-4.5 3.5 3.5 3.5-3.5L20 16" /></svg></div>}
                 <span className="eat-card__tag">{v.venue_type || 'Place'}</span>
               </div>
               <div className="eat-card__body">

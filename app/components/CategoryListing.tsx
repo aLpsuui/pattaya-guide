@@ -71,6 +71,10 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
     .order('rating', { ascending: false, nullsFirst: false })
     .order('review_count', { ascending: false, nullsFirst: false })
   const venues = (data || []) as unknown as Venue[]
+  // Lead with photographed venues (stable — keeps the rating order within each
+  // group) so the grid + editor's picks look image-rich; photo-less ones fall
+  // to the end rather than being hidden.
+  venues.sort((a, b) => (a.image_url ? 0 : 1) - (b.image_url ? 0 : 1))
   const total = venues.length
   const unit = cfg.unit || 'places'
   const unitSingular = unit.endsWith('ies') ? unit.slice(0, -3) + 'y' : unit.replace(/s$/, '')
@@ -169,7 +173,7 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
       <div className="eat-card__media">
         {v.image_url
           ? <img src={v.image_url} alt={v.name} loading={i < 6 ? 'eager' : 'lazy'} fetchPriority={i < 6 ? 'high' : undefined} />
-          : <div className="eat-card__ph" aria-hidden="true"><span>{v.name.charAt(0).toUpperCase()}</span></div>}
+          : <div className="eat-card__ph" aria-hidden="true"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="m4 17 4.5-4.5 3.5 3.5 3.5-3.5L20 16" /></svg></div>}
         <span className="eat-card__tag">{v.venue_type || 'Place'}</span>
       </div>
       <div className="eat-card__body">
