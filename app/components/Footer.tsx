@@ -1,7 +1,6 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
-import Icon from '@/app/components/Icon'
 
 // Brand logo — same mark as the navbar, used white-on-dark in the footer.
 const LogoSVG = ({ size = 42 }: { size?: number }) => (
@@ -69,11 +68,10 @@ const cols = [
 // Social links — add a real URL to a platform's `href` and its icon appears.
 // Empty href => not rendered (no dead links).
 const SOCIALS: { label: string; href: string; stroke?: boolean; svg: string }[] = [
-  { label: 'Instagram', href: '', stroke: true, svg: '<rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" />' },
-  { label: 'TikTok', href: '', svg: '<path d="M19.5 7.5a5.5 5.5 0 0 1-4.5-2.4V16a5 5 0 1 1-5-5v3a2 2 0 1 0 2 2V2h3a5.5 5.5 0 0 0 4.5 5.5Z" />' },
-  { label: 'YouTube', href: '', svg: '<path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4a2.5 2.5 0 0 0-1.8 1.8A26 26 0 0 0 2 12a26 26 0 0 0 .4 4.8 2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8A26 26 0 0 0 22 12a26 26 0 0 0-.4-4.8ZM10 15V9l5 3-5 3Z" />' },
-  { label: 'Facebook', href: '', svg: '<path d="M14 13.5h2.5l1-4H14v-2c0-1 .5-2 2-2h1.5V2.1S16.1 2 14.7 2C11.9 2 10 3.7 10 6.9V9.5H7v4h3V22h4v-8.5Z" />' },
-  { label: 'WeChat', href: '', svg: '<path d="M8.5 4C4.4 4 1 6.9 1 10.5c0 2 1 3.8 2.7 5L3 18l2.7-1.4c.5.1 1 .2 1.5.2-.1-.4-.2-.9-.2-1.3 0-3.2 3.1-5.8 7-5.8.3 0 .6 0 .9.1C14.3 7.1 11.7 4 8.5 4Z" />' },
+  { label: 'Instagram', href: 'https://www.instagram.com/gotopattayacom', stroke: true, svg: '<rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" />' },
+  { label: 'Facebook', href: 'https://www.facebook.com/profile.php?id=61591161493028', svg: '<path d="M14 13.5h2.5l1-4H14v-2c0-1 .5-2 2-2h1.5V2.1S16.1 2 14.7 2C11.9 2 10 3.7 10 6.9V9.5H7v4h3V22h4v-8.5Z" />' },
+  { label: 'X', href: 'https://x.com/gotopattayacom', svg: '<path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24H16.17l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25H8.08l4.71 6.23 5.45-6.23Zm-1.16 17.52h1.83L7.01 4.13H5.05L17.08 19.77Z" />' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/company/go-to-pattaya', svg: '<path d="M6.94 5a1.94 1.94 0 1 1-3.88 0 1.94 1.94 0 0 1 3.88 0zM3.5 8.5h3v12h-3v-12zm5 0h2.9v1.6h.04c.4-.76 1.4-1.6 2.9-1.6 3.1 0 3.67 2 3.67 4.7v7.3h-3v-6.5c0-1.55-.03-3.55-2.16-3.55-2.16 0-2.5 1.7-2.5 3.44v6.6h-3v-12z" />' },
 ]
 
 function FooterCol({ title, links }: { title: string; links: { label: string; href: string; all?: boolean }[] }) {
@@ -111,11 +109,6 @@ export default function Footer() {
               <div className="wm"><i>Go To&nbsp;</i><u>Pattaya</u></div>
             </Link>
             <p>The honest local guide to Pattaya. Real photos, real prices, verified by people who actually live here.</p>
-            <div className="f-trust">
-              <div className="f-trust-item"><Icon name="check" size={14} style={{ color: 'var(--lagoon)' }} /> Verified by 800+ residents</div>
-              <div className="f-trust-item"><Icon name="check" size={14} style={{ color: 'var(--lagoon)' }} /> Updated weekly · No paid placements</div>
-              <div className="f-trust-item"><Icon name="check" size={14} style={{ color: 'var(--lagoon)' }} /> 500+ places · 100+ guides · locally verified</div>
-            </div>
             {SOCIALS.some((s) => s.href) && (
               <div className="socials">
                 {SOCIALS.filter((s) => s.href).map((s) => (

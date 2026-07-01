@@ -33,7 +33,7 @@ export default function CategoryDirectory({ venues, primaries, areas, typeLabel,
   const [primary, setPrimary] = useState('all')
   const [areaSet, setAreaSet] = useState<Set<string>>(new Set())
   const [q, setQ] = useState('')
-  const [sort, setSort] = useState('editor')
+  const [sort, setSort] = useState('reviews')
   const [limit, setLimit] = useState(STEP)
   const [railOpen, setRailOpen] = useState(false)
   const [areaCollapsed, setAreaCollapsed] = useState(false)
@@ -96,7 +96,7 @@ export default function CategoryDirectory({ venues, primaries, areas, typeLabel,
   }
   const pickPrimary = (slug: string) => { setPrimary(slug); setLimit(STEP) }
   const clearAll = () => {
-    setPrimary('all'); setAreaSet(new Set()); setQ(''); setSort('editor'); setLimit(STEP)
+    setPrimary('all'); setAreaSet(new Set()); setQ(''); setSort('reviews'); setLimit(STEP)
     const input = document.getElementById('eatSearch') as HTMLInputElement | null
     if (input) input.value = ''
   }
@@ -165,9 +165,9 @@ export default function CategoryDirectory({ venues, primaries, areas, typeLabel,
           <div className="eat-sort">
             <label htmlFor="sortSel">Sort</label>
             <select id="sortSel" value={sort} onChange={(e) => setSort(e.target.value)}>
-              <option value="editor">Featured</option>
-              <option value="rating">Highest rated</option>
               <option value="reviews">Most reviewed</option>
+              <option value="rating">Highest rated</option>
+              <option value="editor">Featured</option>
               <option value="az">A–Z</option>
             </select>
           </div>

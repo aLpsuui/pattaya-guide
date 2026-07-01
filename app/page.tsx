@@ -61,14 +61,26 @@ async function getAdventureVenues(): Promise<Venue[]> {
   return (data || []) as unknown as Venue[]
 }
 
+// Curated homepage blog strip — 6 posts across the funnel (decide → plan →
+// do → stay → eat → culture), in this exact order.
+const HOMEPAGE_BLOG_SLUGS = [
+  'is-pattaya-worth-visiting',
+  'first-time-pattaya',
+  'things-to-do-pattaya',
+  'where-to-stay-in-pattaya',
+  'best-restaurants-pattaya',
+  'sanctuary-of-truth-pattaya',
+]
+
 async function getBlogPosts(): Promise<BlogPost[]> {
   const { data } = await supabase
     .from('blog_posts')
     .select('id, slug, title, description, author, published_at, category, hero_image, read_time')
+    .in('slug', HOMEPAGE_BLOG_SLUGS)
     .eq('is_published', true)
-    .order('published_at', { ascending: false })
-    .limit(6)
-  return (data || []) as BlogPost[]
+  const rows = (data || []) as BlogPost[]
+  // Keep the curated order (the `.in` query returns them unordered).
+  return HOMEPAGE_BLOG_SLUGS.map((s) => rows.find((r) => r.slug === s)).filter(Boolean) as BlogPost[]
 }
 
 const categories = [
