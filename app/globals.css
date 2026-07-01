@@ -104,7 +104,10 @@
 .pg-icon.is-ocean{color:var(--ocean)}.pg-icon.is-steel{color:var(--steel)}.pg-icon.is-lagoon{color:var(--lagoon)}
 .pg-icon.is-muted{color:var(--text-muted)}.pg-icon.is-live{color:var(--live-500)}.pg-icon.is-open{color:var(--green-500)}.pg-icon.is-rating{color:var(--sun-500)}
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
+/* NOTE: keep this 'auto' — global smooth scroll-behavior breaks Next App
+   Router's scroll-to-top on navigation (pages open scrolled/header cut off).
+   In-page anchor scrolls use scrollIntoView({behavior:'smooth'}) in JS. */
+html{scroll-behavior:auto}
 body{font-family:var(--body);color:var(--ink-700);background:var(--white);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:clip;text-rendering:optimizeLegibility}
 img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
