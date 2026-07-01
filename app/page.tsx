@@ -81,10 +81,10 @@ const categories = [
 ]
 
 const planCards = [
-  { img: 'Koh-Sak.webp', pill: 'When to visit', href: '/blog', title: 'Best months for Pattaya', text: "Weather, crowds, prices — month by month, with the months we'd actually go.", arrow: 'Read the guide' },
-  { img: 'pattaya-city-beach-1.webp', pill: 'Getting there', href: '/blog', title: 'Bangkok → Pattaya', text: 'Bus, taxi, train or private transfer — real prices, real travel times, no markup tricks.', arrow: 'Compare options' },
+  { img: 'Koh-Sak.webp', pill: 'When to visit', href: '/blog/best-time-to-visit-pattaya', title: 'Best months for Pattaya', text: "Weather, crowds, prices — month by month, with the months we'd actually go.", arrow: 'Read the guide' },
+  { img: 'pattaya-city-beach-1.webp', pill: 'Getting there', href: '/blog/bangkok-to-pattaya', title: 'Bangkok → Pattaya', text: 'Bus, taxi, train or private transfer — real prices, real travel times, no markup tricks.', arrow: 'Compare options' },
   { img: 'coral-island-pattaya-2.webp', pill: 'Where to stay', href: '/areas', title: 'Pick the right district', text: 'Central, Jomtien, Pratumnak, Naklua — choose your area before you book. Includes streets to avoid.', arrow: 'Compare districts' },
-  { img: 'pattaya-floating-market.webp', pill: 'First-time tips', href: '/blog', title: '8 mistakes to skip', text: 'From baht-bus etiquette to which beach to avoid — the things first-timers always regret.', arrow: 'Read the guide' },
+  { img: 'pattaya-floating-market.webp', pill: 'First-time tips', href: '/blog/first-time-pattaya-mistakes', title: '8 mistakes to skip', text: 'From baht-bus etiquette to which beach to avoid — the things first-timers always regret.', arrow: 'Read the guide' },
 ]
 
 const districts = [
