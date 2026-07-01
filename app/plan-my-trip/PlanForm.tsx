@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Icon from '@/app/components/Icon'
+import { submitPlan } from './actions'
 
 const interests = [
   'Eat & Coffee', 'Beaches & Islands', 'Tours & Activities', 'Wellness & Spa',
@@ -10,8 +11,10 @@ const interests = [
 export default function PlanForm() {
   const [errors, setErrors] = useState<Record<string, boolean>>({})
   const [sent, setSent] = useState(false)
+  const [pending, setPending] = useState(false)
+  const [serverErr, setServerErr] = useState<string | null>(null)
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const form = e.currentTarget
     const data = new FormData(form)
@@ -21,10 +24,14 @@ export default function PlanForm() {
     const email = String(data.get('email') || '')
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) next.email = true
     setErrors(next)
-    if (Object.keys(next).length === 0) {
-      setSent(true)
-      form.reset()
-    }
+    if (Object.keys(next).length > 0) return
+
+    setServerErr(null)
+    setPending(true)
+    const res = await submitPlan(data)
+    setPending(false)
+    if (res.ok) { setSent(true); form.reset() }
+    else setServerErr(res.error || 'Something went wrong — please try again.')
   }
 
   return (
@@ -95,9 +102,10 @@ export default function PlanForm() {
         <span className="hint">We&apos;ll send the plan and nothing else. Unsubscribe anytime.</span>
       </div>
 
-      <button className="btn btn-primary btn-lg" type="submit" style={{ width: '100%' }}>
-        <Icon name="calendar" size={20} /> Build my itinerary
+      <button className="btn btn-primary btn-lg" type="submit" style={{ width: '100%' }} disabled={pending}>
+        <Icon name="calendar" size={20} /> {pending ? 'Sending…' : 'Build my itinerary'}
       </button>
+      {serverErr && <p className="err" style={{ display: 'block', marginTop: 'var(--s2)' }}>{serverErr}</p>}
       <p className="form-note">By submitting you agree to our privacy policy. We never sell your data.</p>
 
       {sent && (
