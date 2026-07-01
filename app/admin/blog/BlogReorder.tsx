@@ -3,7 +3,7 @@ import { useRef, useState } from 'react'
 import Link from 'next/link'
 import RowDelete from '@/app/admin/_components/RowDelete'
 import { reorderPosts } from '@/app/admin/_actions/blog'
-import { IconDoc, IconEdit, IconGrip } from '@/app/admin/_components/icons'
+import { IconDoc, IconEdit, IconGrip, IconEye } from '@/app/admin/_components/icons'
 
 export interface BlogRow {
   id: string; title: string; slug: string; category: string | null; author: string | null
@@ -78,6 +78,7 @@ export default function BlogReorder({ posts, deleteAction }: { posts: BlogRow[];
                 <td className="hide-xs"><span className={`score-badge ${r.band}`}>{r.sc}<span className="bar"><i style={{ width: `${r.sc}%` }} /></span></span></td>
                 <td>
                   <div className="row-act">
+                    <a className="act-btn" href={`/blog/${r.slug}`} target="_blank" rel="noreferrer" aria-label="View post" title="Open blog page" draggable={false}><IconEye /></a>
                     <Link className="act-btn" href={`/admin/blog/${r.id}`} aria-label="Edit" draggable={false}><IconEdit /></Link>
                     <RowDelete action={deleteAction} id={r.id} name={r.title} />
                   </div>
