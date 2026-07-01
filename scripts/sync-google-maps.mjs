@@ -71,38 +71,40 @@ const csv = rows.filter((r) => r[iName]).map((r) => ({
 }))
 console.log(`CSV rows: ${csv.length}`)
 
-// ---- load venues ----
-const { data: venues, error } = await db.from('venues').select('id, name, slug, rating, review_count, latitude, longitude').limit(2000)
+// ---- detect google_place_id column, then load venues ----
+const probe = await db.from('venues').select('google_place_id').limit(1)
+const hasPid = !probe.error
+console.log(`google_place_id column: ${hasPid ? 'yes (Place ID matching enabled)' : 'no (rating/reviews/coords only)'}`)
+
+const cols = 'id, name, slug, rating, review_count, latitude, longitude' + (hasPid ? ', google_place_id' : '')
+const { data: venues, error } = await db.from('venues').select(cols).limit(2000)
 if (error) { console.error(error); process.exit(1) }
 console.log(`Venues in DB: ${venues.length}`)
 
-// detect google_place_id column
-let hasPid = false
-{
-  const probe = await db.from('venues').select('google_place_id').limit(1)
-  hasPid = !probe.error
-}
-console.log(`google_place_id column: ${hasPid ? 'yes' : 'no (rating/reviews/coords only)'}`)
-
-// ---- build lookup (normalised name -> venue). Skip ambiguous duplicate keys. ----
+// ---- build lookups: google_place_id (exact, preferred) + normalised name ----
+const byPid = new Map()
+if (hasPid) for (const v of venues) { if (v.google_place_id) byPid.set(v.google_place_id, v) }
 const byKey = new Map(); const dupe = new Set()
 for (const v of venues) {
   const k = norm(v.name)
   if (byKey.has(k)) dupe.add(k); else byKey.set(k, v)
 }
 
-let matched = 0, updated = 0, unmatched = []
+let matched = 0, updated = 0, unmatched = [], byPidHits = 0
 const sample = []
 for (const c of csv) {
-  const v = byKey.get(c.key)
-  if (!v || dupe.has(c.key)) { unmatched.push(c.name); continue }
+  // Prefer an exact Place ID match; fall back to normalised name.
+  let v = c.place_id ? byPid.get(c.place_id) : null
+  if (v) byPidHits++
+  if (!v) { if (dupe.has(c.key)) { unmatched.push(c.name); continue } v = byKey.get(c.key) }
+  if (!v) { unmatched.push(c.name); continue }
   matched++
   const patch = {}
   if (c.rating != null && c.rating !== v.rating) patch.rating = c.rating
   if (c.review_count != null && c.review_count !== v.review_count) patch.review_count = c.review_count
   if (c.latitude != null && c.latitude !== v.latitude) patch.latitude = c.latitude
   if (c.longitude != null && c.longitude !== v.longitude) patch.longitude = c.longitude
-  if (hasPid && c.place_id) patch.google_place_id = c.place_id
+  if (hasPid && c.place_id && c.place_id !== v.google_place_id) patch.google_place_id = c.place_id
   if (Object.keys(patch).length === 0) continue
   if (sample.length < 12) sample.push(`  ${v.slug}: ${JSON.stringify(patch)}`)
   if (!DRY) {
@@ -112,7 +114,7 @@ for (const c of csv) {
   updated++
 }
 
-console.log(`\nMatched venues: ${matched} / ${csv.length} CSV rows`)
+console.log(`\nMatched venues: ${matched} / ${csv.length} CSV rows (by Place ID: ${byPidHits}, by name: ${matched - byPidHits})`)
 console.log(`${DRY ? 'Would update' : 'Updated'}: ${updated}`)
 console.log('Sample changes:'); console.log(sample.join('\n'))
 console.log(`\nUnmatched CSV rows: ${unmatched.length}`)
