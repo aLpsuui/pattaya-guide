@@ -302,6 +302,24 @@
 .pg-admin .media-meta b{font-family:var(--font-display);font-size:13px;font-weight:600;color:var(--text-strong);display:block;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
 .pg-admin .media-meta span{font-size:11.5px;color:var(--text-faint)}
 
+/* media picker modal (blog cover image) */
+.pg-admin .mp-backdrop{position:fixed;inset:0;background:rgba(2,46,92,.55);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
+.pg-admin .mp-panel{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--r-lg);width:min(920px,100%);max-height:86vh;display:flex;flex-direction:column;box-shadow:var(--shadow-3);overflow:hidden}
+.pg-admin .mp-head{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border-soft)}
+.pg-admin .mp-head b{font-family:var(--font-display);font-size:15px;color:var(--text-strong);white-space:nowrap}
+.pg-admin .mp-search{flex:1;height:38px}
+.pg-admin .mp-close{width:34px;height:34px;border-radius:9px;color:var(--text-muted);font-size:16px;flex-shrink:0}
+.pg-admin .mp-close:hover{background:var(--bg-sunken);color:var(--ocean)}
+.pg-admin .mp-body{flex:1;overflow-y:auto;padding:16px}
+.pg-admin .mp-note{padding:40px;text-align:center;color:var(--text-muted)}
+.pg-admin .mp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.pg-admin .mp-item{position:relative;aspect-ratio:4/3;border-radius:10px;overflow:hidden;border:2px solid transparent;background:var(--thumb-shade);cursor:pointer;padding:0}
+.pg-admin .mp-item img{width:100%;height:100%;object-fit:cover;display:block}
+.pg-admin .mp-item:hover{border-color:var(--ocean)}
+.pg-admin .mp-item.on{border-color:var(--ocean);box-shadow:var(--focus-ring)}
+.pg-admin .mp-item .mp-tag{position:absolute;top:6px;left:6px;background:rgba(2,46,92,.7);color:#fff;font-size:9.5px;font-weight:700;font-family:var(--font-display);padding:2px 7px;border-radius:var(--r-pill)}
+.pg-admin .mp-foot{padding:10px 18px;border-top:1px solid var(--border-soft);font-size:12.5px;color:var(--text-faint)}
+
 .pg-admin .empty{text-align:center;padding:44px 20px;color:var(--text-muted)}
 .pg-admin .empty .e-ic{width:56px;height:56px;border-radius:16px;background:var(--bg-sunken);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;color:var(--text-faint)}
 .pg-admin .empty .e-ic svg{width:26px;height:26px}
