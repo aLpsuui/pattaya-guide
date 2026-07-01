@@ -37,29 +37,45 @@ interface BlogPost {
   read_time: number
 }
 
-async function getTopVenues(): Promise<Venue[]> {
-  const { data } = await supabase
-    .from('venues')
-    .select('id, slug, name, rating, review_count, venue_type, price_range, price_from, address, image_url, categories(name_en, slug)')
-    .eq('is_active', true)
-    .not('rating', 'is', null)
-    .order('rating', { ascending: false })
-    .order('review_count', { ascending: false })
-    .limit(8)
-  return (data || []) as unknown as Venue[]
+const VCARD_COLS = 'id, slug, name, rating, review_count, venue_type, price_range, price_from, address, image_url, categories(name_en, slug)'
+
+// Return the curated venues in the given slug order (filters out any missing).
+async function bySlugs(slugs: string[]): Promise<Venue[]> {
+  const { data } = await supabase.from('venues').select(VCARD_COLS).in('slug', slugs).eq('is_active', true)
+  const rows = (data || []) as unknown as Venue[]
+  return slugs.map((s) => rows.find((r) => r.slug === s)).filter(Boolean) as Venue[]
 }
 
-async function getAdventureVenues(): Promise<Venue[]> {
-  const { data } = await supabase
-    .from('venues')
-    .select('id, slug, name, rating, review_count, venue_type, price_range, price_from, address, image_url, categories!inner(name_en, slug)')
-    .eq('is_active', true)
-    .not('rating', 'is', null)
-    .or('slug.eq.skydiving,slug.eq.tours,slug.eq.thinks-to-do', { referencedTable: 'categories' })
-    .order('rating', { ascending: false })
-    .limit(6)
-  return (data || []) as unknown as Venue[]
-}
+// Editor's Picks — "The best places in Pattaya", curated order (iconic
+// landmarks first, then category best-of).
+const EDITOR_PICKS_SLUGS = [
+  'sanctuary-of-truth',
+  'nong-nooch-tropical-garden',
+  'pattaya-coral-island-sea-tours',
+  'ramayana-water-park',
+  'big-buddha-hill-wat-phra-yai',
+  'khao-chi-chan-buddha-mountain',
+  'living-green-elephant-sanctuary',
+  'art-in-paradise-pattaya',
+  'frost-magical-ice-of-siam',
+  'tiffanys-show-pattaya',
+]
+async function getTopVenues() { return bySlugs(EDITOR_PICKS_SLUGS) }
+
+// Adrenaline & adventure — curated air/land/water mix.
+const ADVENTURE_SLUGS = [
+  'thai-sky-adventures',
+  'skydive-pattaya',
+  'u-fly-vertical-wind-tunnel',
+  'xbungy-pattaya-bungy-jump',
+  'enduro-madness-pattaya',
+  'flight-of-the-gibbon-chonburi',
+  'pattaya-skyride',
+  'parasailing-koh-larn',
+  'pattaya-kart-speedway',
+  'ramayana-water-park',
+]
+async function getAdventureVenues() { return bySlugs(ADVENTURE_SLUGS) }
 
 // Curated homepage blog strip — 6 posts across the funnel (decide → plan →
 // do → stay → eat → culture), in this exact order.
