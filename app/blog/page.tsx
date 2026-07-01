@@ -59,9 +59,49 @@ export const metadata = {
   alternates: { canonical: '/blog' },
 }
 
-export default async function BlogPage() {
-  const posts = await getBlogPosts()
-  const [featured, ...rest] = posts
+const PER_PAGE = 20
+const TOPICS = [
+  { key: 'all', label: 'All' },
+  { key: 'eat', label: 'Eat & Drink' },
+  { key: 'things', label: 'Things to Do' },
+  { key: 'wellness', label: 'Wellness' },
+  { key: 'nightlife', label: 'Nightlife' },
+  { key: 'areas', label: 'Areas' },
+  { key: 'travel', label: 'Travel Tips' },
+]
+
+export default async function BlogPage({ searchParams }: { searchParams: Promise<{ page?: string; topic?: string }> }) {
+  const sp = await searchParams
+  const topic = TOPICS.some((t) => t.key === sp.topic) ? sp.topic! : 'all'
+  const all = await getBlogPosts()
+  const filtered = topic === 'all' ? all : all.filter((p) => categoryToFilter(p.category) === topic)
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE))
+  const page = Math.min(Math.max(1, parseInt(sp.page || '1', 10) || 1), totalPages)
+  const slice = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE)
+  const showFeatured = page === 1 && slice.length > 0
+  const featured = showFeatured ? slice[0] : null
+  const rest = showFeatured ? slice.slice(1) : slice
+
+  const topicHref = (t: string) => (t === 'all' ? '/blog' : `/blog?topic=${t}`)
+  const pageHref = (p: number) => {
+    const params = new URLSearchParams()
+    if (topic !== 'all') params.set('topic', topic)
+    if (p > 1) params.set('page', String(p))
+    const qs = params.toString()
+    return qs ? `/blog?${qs}` : '/blog'
+  }
+
+  // windowed page numbers (1 … 3 4 5 … 6)
+  const pageNums: (number | '…')[] = (() => {
+    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1)
+    const want = new Set([1, 2, totalPages - 1, totalPages, page - 1, page, page + 1])
+    const arr = [...want].filter((p) => p >= 1 && p <= totalPages).sort((a, b) => a - b)
+    const out: (number | '…')[] = []
+    let prev = 0
+    for (const p of arr) { if (p - prev > 1) out.push('…'); out.push(p); prev = p }
+    return out
+  })()
 
   return (
     <main id="main">
@@ -82,14 +122,10 @@ export default async function BlogPage() {
       {/* FILTER RAIL */}
       <div className="filter-rail">
         <div className="container">
-          <div className="filterbar" role="group" aria-label="Filter by topic" data-filterbar="postGrid">
-            <button className="chip active" data-filter="all" aria-pressed="true">All</button>
-            <button className="chip" data-filter="eat" aria-pressed="false">Eat &amp; Drink</button>
-            <button className="chip" data-filter="things" aria-pressed="false">Things to Do</button>
-            <button className="chip" data-filter="wellness" aria-pressed="false">Wellness</button>
-            <button className="chip" data-filter="nightlife" aria-pressed="false">Nightlife</button>
-            <button className="chip" data-filter="areas" aria-pressed="false">Areas</button>
-            <button className="chip" data-filter="travel" aria-pressed="false">Travel Tips</button>
+          <div className="filterbar" role="group" aria-label="Filter by topic">
+            {TOPICS.map((t) => (
+              <Link key={t.key} href={topicHref(t.key)} className={`chip${topic === t.key ? ' active' : ''}`} aria-pressed={topic === t.key}>{t.label}</Link>
+            ))}
           </div>
         </div>
       </div>
@@ -155,13 +191,30 @@ export default async function BlogPage() {
           </div>
 
           {/* EMPTY STATE */}
-          <div className="empty" data-filter-empty style={{display:'none'}}>
-            <div className="eic">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>
+          {filtered.length === 0 && (
+            <div className="empty">
+              <div className="eic">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>
+              </div>
+              <h3>No articles in this topic yet</h3>
+              <p>We&apos;re writing more every week. Try another topic or subscribe below.</p>
             </div>
-            <h3>No articles in this topic yet</h3>
-            <p>We're writing more every week. Try another topic or subscribe below.</p>
-          </div>
+          )}
+
+          {/* PAGINATION */}
+          {totalPages > 1 && (
+            <nav className="blog-pager" aria-label="Blog pages">
+              {page > 1
+                ? <Link className="bp-btn" href={pageHref(page - 1)} aria-label="Previous"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg></Link>
+                : <span className="bp-btn is-disabled" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg></span>}
+              {pageNums.map((p, i) => p === '…'
+                ? <span key={'e' + i} className="bp-ell">…</span>
+                : <Link key={p} className={`bp-btn${p === page ? ' on' : ''}`} href={pageHref(p)}>{p}</Link>)}
+              {page < totalPages
+                ? <Link className="bp-btn" href={pageHref(page + 1)} aria-label="Next"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg></Link>
+                : <span className="bp-btn is-disabled" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>}
+            </nav>
+          )}
 
         </div>
       </section>

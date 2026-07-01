@@ -1160,6 +1160,14 @@ body.no-scroll{overflow:hidden;touch-action:none}
 .eat-card__price{font-family:var(--font-display);font-weight:700;color:var(--ocean);font-size:14px;letter-spacing:1px;white-space:nowrap}
 .eat-card.is-hidden{display:none}
 .eat-card__ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--grad-brand,linear-gradient(135deg,#034487,#0178b4));color:rgba(255,255,255,.8)}
+
+/* blog list pagination */
+.blog-pager{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:40px}
+.blog-pager .bp-btn{min-width:40px;height:40px;padding:0 10px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-family:var(--font-display,inherit);font-weight:700;font-size:14px;color:var(--ink-700,#33414e);border:1px solid var(--line,#e4ebf1);background:#fff;transition:.15s}
+.blog-pager .bp-btn:hover{border-color:var(--ocean,#0178b4);color:var(--ocean,#0178b4)}
+.blog-pager .bp-btn.on{background:var(--ocean,#0178b4);border-color:var(--ocean,#0178b4);color:#fff}
+.blog-pager .bp-btn.is-disabled{opacity:.4;pointer-events:none}
+.blog-pager .bp-ell{padding:0 4px;color:var(--ink-400,#8995a0)}
 a.eat-card{text-decoration:none;color:inherit}
 a.eat-card h3{transition:color var(--dur)}
 a.eat-card:hover h3{color:var(--ocean)}
