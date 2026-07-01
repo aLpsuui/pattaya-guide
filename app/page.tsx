@@ -233,10 +233,10 @@ export default async function Home() {
           <div className="sec-head">
             <div className="titles">
               <div className="kicker">Editor&apos;s picks</div>
-              <h2>The 30 best places in Pattaya</h2>
+              <h2>The 10 best places in Pattaya</h2>
               <p>Hand-picked by our editorial team. Every place visited in person, photographed by us, re-checked weekly.</p>
             </div>
-            <a href="/map" className="viewall">View all 30 <Arrow /></a>
+            <a href="/map" className="viewall">View all places <Arrow /></a>
           </div>
           <div className="carousel-wrap">
             <CarButton target="topCar" dir={-1} label="Previous" />
