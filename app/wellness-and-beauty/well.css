@@ -1,0 +1,259 @@
+/* ========= WELLNESS & BEAUTY PILLAR — serene spa, strong-fitness counterpoint ========= */
+.well-page{background:var(--bg-surface)}
+.well-page section{position:relative}
+.well-wrap{max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad)}
+
+/* --- 1 · CALM HERO (split, no dark overlay) --- */
+.well-hero{
+  background:
+    radial-gradient(1100px 540px at 88% -10%, var(--blue-50) 0%, rgba(238,247,252,0) 60%),
+    linear-gradient(180deg, var(--paper) 0%, var(--white) 100%);
+  padding:var(--s7) 0 var(--s6);
+  overflow:hidden;
+}
+.well-hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s7);align-items:center}
+.well-hero-copy{max-width:30rem}
+.well-hero h1{
+  font-size:var(--text-display);
+  line-height:var(--leading-tight);
+  margin:var(--s2) 0 var(--s3);
+}
+.well-hero h1 .soft{
+  font-family:'Fraunces',Georgia,serif;
+  font-weight:500;font-style:italic;
+  letter-spacing:-.01em;
+  color:var(--ocean);
+  display:block;
+}
+.well-hero .lead{
+  font-size:var(--text-body-lg);
+  color:var(--text-muted);
+  line-height:var(--leading-normal);
+  margin-bottom:var(--s5);
+  max-width:34ch;
+}
+.well-hero .search{margin-bottom:var(--s4)}
+.well-hero-meta{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s4);align-items:center;font-size:var(--text-sm);color:var(--text-muted)}
+.well-hero-meta span{display:inline-flex;align-items:center;gap:7px}
+
+.well-hero-art{position:relative}
+.well-hero-art .frame{
+  border-radius:var(--r-xl);
+  overflow:hidden;
+  box-shadow:var(--elev-3);
+  aspect-ratio:5/6;
+  background:var(--blue-50);
+}
+.well-hero-art .frame img{width:100%;height:100%;object-fit:cover}
+.well-hero-art .float{
+  position:absolute;left:-18px;bottom:28px;
+  background:var(--white);
+  border-radius:var(--r-lg);
+  box-shadow:var(--elev-2);
+  padding:var(--s3) var(--s4);
+  display:flex;align-items:center;gap:var(--s3);
+  max-width:240px;
+}
+.well-hero-art .float .ic{
+  width:42px;height:42px;border-radius:var(--r-md);
+  background:var(--blue-50);display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.well-hero-art .float b{font-family:var(--font-display);font-size:15px;color:var(--text-strong);display:block;line-height:1.2}
+.well-hero-art .float span{font-size:12.5px;color:var(--text-faint)}
+
+/* --- generic section rhythm --- */
+.well-sec{padding:var(--s7) 0}
+.well-sec--tint{background:linear-gradient(180deg,var(--blue-50) 0%, var(--white) 100%)}
+.well-head{max-width:54ch;margin-bottom:var(--s5)}
+.well-head h2{margin:var(--s1) 0 var(--s2)}
+.well-head p{color:var(--text-muted);font-size:var(--text-body-lg)}
+
+/* --- 2 · CATEGORY TABS (soft segmented control) --- */
+.well-tabs{
+  display:flex;gap:var(--s1);
+  background:var(--bg-sunken);
+  padding:6px;border-radius:var(--r-pill);
+  overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+}
+.well-tabs::-webkit-scrollbar{display:none}
+.well-tab{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:11px 18px;min-height:44px;
+  border-radius:var(--r-pill);
+  font-family:var(--font-display);font-weight:600;font-size:14px;
+  color:var(--text-muted);white-space:nowrap;
+  transition:background var(--dur) var(--ease-out),color var(--dur),box-shadow var(--dur);
+  flex:0 0 auto;
+}
+.well-tab:hover{color:var(--ocean)}
+.well-tab .ct{font-weight:600;color:var(--text-faint);font-size:12.5px}
+.well-tab[aria-selected="true"]{
+  background:var(--white);color:var(--ocean);box-shadow:var(--shadow-1);
+}
+.well-tab[aria-selected="true"] .ct{color:var(--lagoon)}
+.well-tab[aria-selected="true"] .pg-icon{color:var(--ocean)}
+
+/* --- 3 · MOOD CHIPS --- */
+.well-mood{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s2);margin-top:var(--s4)}
+.well-mood .lbl{font-family:var(--font-display);font-weight:700;font-size:12px;letter-spacing:var(--tracking-kicker);text-transform:uppercase;color:var(--text-faint);margin-right:var(--s1)}
+.well-mood .chip{cursor:pointer}
+
+/* --- 4 · LISTING GRID + bespoke airy card --- */
+.well-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:var(--s5);
+  margin-top:var(--s6);
+}
+.well-panel[hidden]{display:none}
+
+.well-card{
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:var(--r-xl);
+  overflow:hidden;
+  display:flex;flex-direction:column;
+  transition:transform var(--dur) var(--ease-out),box-shadow var(--dur),border-color var(--dur);
+}
+.well-card:hover{transform:translateY(-4px);box-shadow:var(--elev-2);border-color:var(--border-strong)}
+.well-card.is-hidden{display:none}
+
+.well-card .ph{position:relative;aspect-ratio:4/3;background:var(--blue-50)}
+.well-card .ph img{width:100%;height:100%;object-fit:cover}
+.well-card .save{
+  position:absolute;top:12px;right:12px;
+  width:44px;height:44px;border-radius:50%;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text-muted);box-shadow:var(--shadow-1);
+  transition:color var(--dur),transform var(--dur);
+}
+.well-card .save:hover{transform:scale(1.06)}
+.well-card .save[aria-pressed="true"]{color:var(--color-danger)}
+.well-card .save[aria-pressed="true"] .pg-icon{fill:currentColor}
+.well-card .toptag{
+  position:absolute;left:12px;top:12px;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(4px);
+  color:var(--steel);font-family:var(--font-display);font-weight:700;font-size:12px;
+  padding:6px 12px;border-radius:var(--r-pill);box-shadow:var(--shadow-1);
+  display:inline-flex;align-items:center;gap:6px;
+}
+
+.well-card .body{padding:var(--s4);display:flex;flex-direction:column;gap:var(--s2);flex:1}
+.well-card .types{display:flex;flex-wrap:wrap;gap:6px}
+.well-card .type{
+  font-family:var(--font-display);font-weight:600;font-size:11.5px;letter-spacing:.02em;
+  color:var(--ocean);background:var(--blue-50);
+  padding:4px 10px;border-radius:var(--r-pill);
+}
+.well-card h3{font-size:18px;line-height:1.25;margin-top:2px}
+.well-card .dur{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:var(--text-muted);font-weight:500}
+.well-card .amen{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.well-card .amen .pill{font-size:12px;padding:4px 11px}
+.well-card .foot{
+  margin-top:auto;padding-top:var(--s3);
+  border-top:1px solid var(--border);
+  display:flex;align-items:flex-end;justify-content:space-between;gap:var(--s2);
+}
+.well-card .loc{display:flex;flex-direction:column;gap:6px}
+.well-card .loc .nb{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text-faint)}
+.well-card .price{font-family:var(--font-display);font-weight:700;color:var(--steel);font-size:13px;margin-top:4px}
+.well-card .price b{font-size:17px}
+.well-card .view{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--font-display);font-weight:600;font-size:13px;
+  color:var(--ocean);background:var(--blue-50);
+  padding:10px 14px;min-height:44px;border-radius:var(--r-pill);
+  white-space:nowrap;transition:background var(--dur),color var(--dur);
+}
+.well-card .view:hover{background:var(--ocean);color:#fff}
+.well-card .view:hover .pg-icon{color:#fff}
+
+.well-empty{margin-top:var(--s6)}
+
+/* --- subtle cross-link to the Yoga & Fitness pillar --- */
+.well-crosslink{
+  margin-top:var(--s5);
+  font-size:var(--text-sm);color:var(--text-muted);
+  display:inline-flex;align-items:center;gap:7px;
+}
+.well-crosslink a{color:var(--ocean);font-weight:600;font-family:var(--font-display)}
+.well-crosslink a:hover{text-decoration:underline}
+
+/* --- 5 · FEATURED RETREAT (serene wide card) --- */
+.well-feature{
+  display:grid;grid-template-columns:1.15fr 1fr;
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:var(--r-xl);
+  overflow:hidden;
+  box-shadow:var(--elev-1);
+}
+.well-feature .pic{position:relative;min-height:380px;background:var(--blue-50)}
+.well-feature .pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.well-feature .pic .badge{
+  position:absolute;top:var(--s4);left:var(--s4);
+  background:rgba(255,255,255,.94);backdrop-filter:blur(4px);
+  color:var(--steel);font-family:var(--font-display);font-weight:700;font-size:12.5px;
+  padding:7px 14px;border-radius:var(--r-pill);
+  display:inline-flex;align-items:center;gap:7px;box-shadow:var(--shadow-1);
+}
+.well-feature .txt{padding:var(--s7) var(--s6);display:flex;flex-direction:column;gap:var(--s3);justify-content:center}
+.well-feature .txt h3{font-size:var(--text-h2);line-height:var(--leading-snug)}
+.well-feature .note{
+  font-family:'Fraunces',Georgia,serif;font-style:italic;font-weight:400;
+  font-size:18px;line-height:1.6;color:var(--text-body);
+  padding-left:var(--s3);border-left:3px solid var(--sky);
+}
+.well-feature .quick{display:flex;flex-wrap:wrap;gap:var(--s2)}
+.well-feature .acts{display:flex;flex-wrap:wrap;gap:var(--s2);margin-top:var(--s2)}
+
+/* --- 6 · WELLNESS TIP --- */
+.well-tip{padding:var(--s6) 0 var(--s8)}
+.well-tip .alert{border-radius:var(--r-xl);padding:var(--s4) var(--s5);gap:var(--s3);box-shadow:var(--shadow-1)}
+.well-tip .alert .ic{flex-shrink:0;margin-top:2px}
+.well-tip .alert h3{font-size:17px;color:var(--steel);margin-bottom:6px}
+.well-tip .alert p{font-size:14.5px;line-height:1.65;color:var(--steel)}
+.well-tip .verline{
+  display:flex;align-items:center;gap:9px;margin-top:var(--s3);
+  font-size:13.5px;color:var(--steel);font-weight:600;font-family:var(--font-display);
+}
+
+/* shared rate spacing */
+.well-card .rate{font-size:13px}
+
+/* ===================== RESPONSIVE ===================== */
+@media(max-width:1240px){
+  .well-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:980px){
+  .well-hero-grid{grid-template-columns:1fr;gap:var(--s5)}
+  .well-hero-art{order:-1}
+  .well-hero-art .frame{aspect-ratio:16/10;max-height:340px}
+  .well-hero-copy{max-width:none}
+  .well-grid{grid-template-columns:repeat(2,1fr)}
+  .well-feature{grid-template-columns:1fr}
+  .well-feature .pic{min-height:260px;aspect-ratio:16/9}
+  .well-feature .txt{padding:var(--s6) var(--s5)}
+}
+@media(max-width:768px){
+  .well-hero{padding:var(--s6) 0 var(--s5)}
+  .well-sec{padding:var(--s6) 0}
+  .well-grid{grid-template-columns:1fr;gap:var(--s4)}
+}
+@media(max-width:480px){
+  .well-hero h1{font-size:clamp(32px,9vw,40px)}
+  .well-hero-art .float{left:8px;right:8px;max-width:none;bottom:-20px}
+  .well-card .foot{flex-direction:column;align-items:flex-start}
+  .well-card .view{width:100%;justify-content:center}
+  .well-feature .acts .btn{flex:1;justify-content:center}
+}
+
+/* focus + motion */
+.well-page a:focus-visible,
+.well-page button:focus-visible,
+.well-page input:focus-visible,
+.well-page [tabindex]:focus-visible{outline:none;box-shadow:var(--focus-ring);border-radius:var(--r-sm)}
+@media(prefers-reduced-motion:reduce){
+  .well-page *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;scroll-behavior:auto !important}
+}

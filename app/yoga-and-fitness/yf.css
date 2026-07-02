@@ -1,0 +1,229 @@
+/* ============================================================================
+   YOGA & FITNESS PILLAR — kinetic / athletic. Three discipline LANES.
+   Reuses components.css; this block is only the unique movement-catalog parts.
+   Every value references a token. Scoped under .yf-page.
+   ============================================================================ */
+.yf-page{display:block;background:var(--bg-surface);overflow-x:hidden}
+.yf-page section{scroll-margin-top:var(--s4)}
+.yf-wrap{max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad)}
+
+/* —— shared section header —————————————————————————————————————————————————— */
+.yf-head{max-width:60ch;margin-bottom:var(--s5)}
+.yf-head .kicker{display:inline-flex;align-items:center;gap:8px}
+.yf-head h2{margin:var(--s1) 0 var(--s2)}
+.yf-head p{color:var(--text-muted);font-size:var(--text-body-lg)}
+
+/* ===========================================================================
+   1 · KINETIC HERO — athletic photo, brand-night overlay, motion-forward
+   =========================================================================== */
+.yf-hero{position:relative;min-height:min(88vh,660px);display:flex;align-items:flex-end;
+  overflow:hidden;background:var(--blue-900);isolation:isolate}
+.yf-hero__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 35%}
+.yf-hero__scrim{position:absolute;inset:0;
+  background:linear-gradient(105deg,rgba(2,46,92,.92) 0%,rgba(3,68,135,.55) 48%,rgba(2,46,92,.18) 100%),
+             var(--grad-night)}
+/* diagonal "speed" band — the signature kinetic accent */
+.yf-hero__streak{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;opacity:.5;
+  background:repeating-linear-gradient(115deg,transparent 0 44px,rgba(47,189,220,.12) 44px 46px)}
+.yf-hero__inner{position:relative;z-index:1;width:100%;padding-top:var(--s8);padding-bottom:var(--s7)}
+.yf-hero .kicker{color:var(--lagoon)}
+.yf-hero h1{color:#fff;font-size:var(--text-display);max-width:15ch;margin-top:var(--s2);
+  letter-spacing:var(--tracking-tight);text-transform:uppercase;line-height:1.02}
+.yf-hero h1 em{font-style:normal;color:var(--lagoon);position:relative}
+.yf-hero__lead{color:rgba(255,255,255,.85);font-size:var(--text-body-lg);max-width:50ch;margin-top:var(--s3)}
+.yf-hero .search{margin-top:var(--s4)}
+.yf-hero__stats{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s2) var(--s5);margin-top:var(--s5)}
+.yf-hero__stat{display:flex;flex-direction:column}
+.yf-hero__stat b{font-family:var(--font-display);font-size:28px;font-weight:800;color:#fff;
+  letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums}
+.yf-hero__stat span{font-size:var(--text-sm);color:rgba(255,255,255,.66);margin-top:4px}
+.yf-hero__div{width:1px;height:34px;background:rgba(255,255,255,.18)}
+@media(max-width:768px){
+  .yf-hero{min-height:auto}
+  .yf-hero__inner{padding-top:var(--s7);padding-bottom:var(--s6)}
+  .yf-hero__stat b{font-size:22px}
+  .yf-hero__div{display:none}
+}
+
+/* ===========================================================================
+   2 · DISCIPLINE SWITCHER — three big lane tiles (Flow / Lift / Fight)
+   =========================================================================== */
+.yf-switch{padding:var(--s7) 0 var(--s6)}
+.yf-lanes{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s4)}
+.yf-lanetile{position:relative;display:flex;flex-direction:column;gap:var(--s3);
+  padding:var(--s5);border-radius:var(--r-xl);border:1px solid var(--border);
+  background:var(--bg-surface);overflow:hidden;text-align:left;width:100%;
+  transition:transform var(--dur) var(--ease-out),box-shadow var(--dur),border-color var(--dur)}
+.yf-lanetile::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px}
+.yf-lanetile:hover{transform:translateY(-5px);box-shadow:var(--shadow-3)}
+.yf-lanetile:focus-visible{outline:none;box-shadow:var(--focus-ring)}
+.yf-lanetile__med{width:64px;height:64px;border-radius:var(--r-lg);display:flex;align-items:center;
+  justify-content:center;color:#fff;box-shadow:var(--shadow-2)}
+.yf-lanetile__vibe{position:absolute;top:var(--s4);right:var(--s4);
+  font-family:var(--font-display);font-weight:800;font-size:13px;letter-spacing:.18em;
+  text-transform:uppercase}
+.yf-lanetile h3{font-size:var(--text-h3)}
+.yf-lanetile p{font-size:var(--text-sm);color:var(--text-muted);line-height:var(--leading-snug)}
+.yf-lanetile__foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;
+  padding-top:var(--s3);border-top:1px solid var(--border)}
+.yf-lanetile__count{font-family:var(--font-display);font-weight:700;font-size:var(--text-sm);
+  color:var(--text-faint);font-variant-numeric:tabular-nums}
+.yf-lanetile__go{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-display);
+  font-weight:700;font-size:var(--text-sm)}
+/* per-lane accents */
+.yf-lanetile--yoga::before{background:var(--lagoon)}
+.yf-lanetile--yoga{background:linear-gradient(180deg,var(--blue-50) 0%,var(--white) 60%)}
+.yf-lanetile--yoga .yf-lanetile__med{background:linear-gradient(135deg,var(--sky) 0%,var(--lagoon) 100%);color:var(--steel)}
+.yf-lanetile--yoga .yf-lanetile__vibe,.yf-lanetile--yoga .yf-lanetile__go{color:var(--blue-500)}
+.yf-lanetile--gym::before{background:var(--ocean)}
+.yf-lanetile--gym .yf-lanetile__med{background:linear-gradient(135deg,var(--ocean) 0%,var(--lagoon) 110%)}
+.yf-lanetile--gym .yf-lanetile__vibe,.yf-lanetile--gym .yf-lanetile__go{color:var(--ocean)}
+.yf-lanetile--muay::before{background:var(--steel)}
+.yf-lanetile--muay .yf-lanetile__med{background:linear-gradient(135deg,var(--deep-ocean) 0%,var(--steel) 100%)}
+.yf-lanetile--muay .yf-lanetile__vibe,.yf-lanetile--muay .yf-lanetile__go{color:var(--steel)}
+@media(max-width:768px){.yf-lanes{grid-template-columns:1fr}}
+
+/* ===========================================================================
+   3 · FIND YOUR DISCIPLINE — soft goal-chip selector → reveal
+   =========================================================================== */
+.yf-find{padding:var(--s6) 0;background:var(--bg-sunken)}
+.yf-find__chips{display:flex;flex-wrap:wrap;gap:var(--s2);margin-top:var(--s3)}
+.yf-goal{cursor:pointer}
+.yf-goal .pg-icon{color:var(--ocean)}
+.yf-goal[aria-pressed="true"] .pg-icon{color:#fff}
+.yf-reveal{margin-top:var(--s4);display:none;align-items:center;gap:var(--s3);
+  padding:var(--s4);border-radius:var(--r-lg);background:var(--bg-surface);
+  border:1px solid var(--border-strong);box-shadow:var(--shadow-1);max-width:640px}
+.yf-reveal.show{display:flex}
+.yf-reveal__med{width:48px;height:48px;border-radius:var(--r-md);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;color:#fff;background:var(--grad-brand)}
+.yf-reveal b{font-family:var(--font-display);color:var(--text-strong);display:block;font-size:15px}
+.yf-reveal span{font-size:var(--text-sm);color:var(--text-muted)}
+.yf-reveal a{margin-left:auto;flex-shrink:0}
+@media(max-width:480px){.yf-reveal{flex-wrap:wrap}.yf-reveal a{margin-left:0;width:100%}}
+
+/* ===========================================================================
+   4–6 · LANE SECTIONS (banded, each its own micro-treatment)
+   =========================================================================== */
+.yf-lane{padding:var(--s7) 0;border-top:1px solid var(--border)}
+.yf-lane__top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;
+  gap:var(--s4);margin-bottom:var(--s4)}
+.yf-lane__title{display:flex;align-items:center;gap:var(--s3)}
+.yf-lane__badge{width:52px;height:52px;border-radius:var(--r-md);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;color:#fff}
+.yf-lane__title h2{font-size:var(--text-h2)}
+.yf-lane__title .kicker{margin-bottom:2px}
+.yf-lane__blurb{max-width:46ch;color:var(--text-muted);font-size:var(--text-base)}
+.yf-lane__count{font-family:var(--font-display);font-weight:800;font-size:var(--text-h3);
+  color:var(--text-faint);font-variant-numeric:tabular-nums;white-space:nowrap}
+.yf-lane .filterbar{margin-bottom:var(--s5)}
+.yf-lane__filterlbl{font-family:var(--font-display);font-weight:700;font-size:var(--text-2xs);
+  text-transform:uppercase;letter-spacing:.1em;color:var(--text-faint);
+  display:inline-flex;align-items:center;gap:6px;flex-shrink:0;align-self:center;padding-right:4px}
+
+/* lane band tints + accents (CSS custom prop drives card accent per lane) */
+.yf-lane--yoga{--lane-accent:var(--lagoon);--lane-accent-strong:var(--blue-500);
+  background:linear-gradient(180deg,var(--blue-50) 0%,var(--white) 70%)}
+.yf-lane--yoga .yf-lane__badge{background:linear-gradient(135deg,var(--sky),var(--lagoon));color:var(--steel)}
+.yf-lane--gym{--lane-accent:var(--ocean);--lane-accent-strong:var(--ocean);background:var(--white)}
+.yf-lane--gym .yf-lane__badge{background:linear-gradient(135deg,var(--ocean),var(--lagoon))}
+.yf-lane--muay{--lane-accent:var(--steel);--lane-accent-strong:var(--deep-ocean);
+  background:linear-gradient(180deg,#eef3f9 0%,var(--white) 70%)}
+.yf-lane--muay .yf-lane__badge{background:linear-gradient(135deg,var(--deep-ocean),var(--steel))}
+
+/* lane active chip uses the lane accent (still readable, not color-only) */
+.yf-lane--yoga .chip[aria-pressed="true"]{background:var(--lane-accent);border-color:var(--lane-accent);color:var(--steel)}
+.yf-lane--gym .chip[aria-pressed="true"]{background:var(--lane-accent);border-color:var(--lane-accent);color:#fff}
+.yf-lane--muay .chip[aria-pressed="true"]{background:var(--lane-accent);border-color:var(--lane-accent);color:#fff}
+
+/* —— card grid —————————————————————————————————————————————————————————————— */
+.yf-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s4)}
+@media(max-width:980px){.yf-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.yf-grid{grid-template-columns:1fr}}
+
+/* —— bespoke card (consistent shape, accent varies via --lane-accent) —————— */
+.yf-card{display:flex;flex-direction:column;background:var(--card-bg);
+  border:1px solid var(--card-border);border-radius:var(--card-radius);overflow:hidden;
+  transition:transform var(--dur) var(--ease-out),box-shadow var(--dur),border-color var(--dur)}
+.yf-card:hover{transform:translateY(-4px);box-shadow:var(--card-shadow-hover);
+  border-color:var(--lane-accent-strong)}
+.yf-card.is-hidden{display:none}
+.yf-card__media{position:relative;aspect-ratio:4/3;background:var(--bg-sunken)}
+.yf-card__media img{width:100%;height:100%;object-fit:cover}
+.yf-card__lanetag{position:absolute;top:var(--s2);left:var(--s2);display:inline-flex;align-items:center;gap:6px;
+  background:rgba(2,46,92,.82);color:#fff;font-family:var(--font-display);font-size:11px;font-weight:700;
+  letter-spacing:.05em;text-transform:uppercase;padding:5px 11px;border-radius:var(--r-pill);backdrop-filter:blur(4px)}
+.yf-card__lanetag .pg-icon{color:var(--lagoon)}
+.yf-card__save{position:absolute;top:var(--s2);right:var(--s2);width:44px;height:44px;border-radius:50%;
+  background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;color:var(--text-muted);
+  transition:var(--dur);box-shadow:var(--shadow-1)}
+.yf-card__save:hover{color:var(--color-primary)}
+.yf-card__save[aria-pressed="true"]{color:var(--color-danger)}
+.yf-card__save[aria-pressed="true"] .pg-icon{fill:currentColor}
+.yf-card__body{display:flex;flex-direction:column;gap:var(--s2);padding:var(--s3) var(--s4) var(--s4);flex:1}
+.yf-card__row{display:flex;align-items:center;justify-content:space-between;gap:var(--s2)}
+.yf-card__body h3{font-size:var(--text-h4);font-weight:700;line-height:1.25}
+.yf-card__fac{display:flex;flex-wrap:wrap;gap:var(--s1) var(--s3);font-size:var(--text-xs);color:var(--text-faint)}
+.yf-card__fac span{display:inline-flex;align-items:center;gap:5px}
+.yf-card__fac .pg-icon{color:var(--text-muted)}
+.yf-card__loc{display:inline-flex;align-items:center;gap:6px;font-size:var(--text-sm);color:var(--text-muted)}
+.yf-card__loc .pg-icon{color:var(--lane-accent-strong)}
+.yf-card__price{font-family:var(--font-display);font-weight:800;color:var(--steel);font-size:var(--text-base);
+  font-variant-numeric:tabular-nums}
+.yf-card__price span{font-weight:500;color:var(--text-faint);font-size:var(--text-xs)}
+.yf-card__foot{display:flex;align-items:center;gap:var(--s2);margin-top:auto;padding-top:var(--s3);
+  border-top:1px solid var(--border)}
+.yf-card__foot .btn{flex:1}
+.yf-card__savebtn{flex:0 0 auto !important;width:48px;padding-left:0;padding-right:0}
+
+/* energetic gym treatment: bolder numeric prices */
+.yf-lane--gym .yf-card__price{font-size:var(--text-h4);color:var(--ocean)}
+/* boldest muay treatment: strong title + darker lanetag */
+.yf-lane--muay .yf-card__lanetag{background:rgba(3,68,135,.92)}
+.yf-lane--muay .yf-card__body h3{font-weight:800}
+
+/* ===========================================================================
+   7 · YOUR WEEKLY RHYTHM — 7-day sample training-week strip
+   =========================================================================== */
+.yf-week{padding:var(--s7) 0;background:var(--bg-inverse);color:#fff}
+.yf-week .kicker{color:var(--lagoon)}
+.yf-week h2{color:#fff;margin:var(--s1) 0 var(--s2)}
+.yf-week__sub{color:rgba(255,255,255,.7);font-size:var(--text-base);max-width:54ch;margin-bottom:var(--s5)}
+.yf-week__strip{display:grid;grid-template-columns:repeat(7,1fr);gap:var(--s2)}
+.yf-day{display:flex;flex-direction:column;gap:var(--s2);padding:var(--s3);border-radius:var(--r-md);
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12)}
+.yf-day__d{font-family:var(--font-display);font-weight:800;font-size:var(--text-2xs);letter-spacing:.12em;
+  text-transform:uppercase;color:rgba(255,255,255,.55)}
+.yf-day__ic{width:38px;height:38px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;
+  color:#fff;background:rgba(255,255,255,.1)}
+.yf-day--yoga .yf-day__ic{background:linear-gradient(135deg,var(--sky),var(--lagoon));color:var(--steel)}
+.yf-day--gym .yf-day__ic{background:linear-gradient(135deg,var(--ocean),var(--lagoon))}
+.yf-day--muay .yf-day__ic{background:linear-gradient(135deg,var(--deep-ocean),var(--steel))}
+.yf-day--rest .yf-day__ic{background:rgba(255,255,255,.08);color:rgba(255,255,255,.7)}
+.yf-day b{font-family:var(--font-display);font-size:var(--text-sm);color:#fff;line-height:1.2}
+.yf-day span{font-size:var(--text-xs);color:rgba(255,255,255,.6)}
+@media(max-width:768px){
+  .yf-week__strip{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;
+    gap:var(--s2);padding-bottom:var(--s2);scrollbar-width:none;
+    margin-left:calc(-1*var(--container-pad));margin-right:calc(-1*var(--container-pad));
+    padding-left:var(--container-pad);padding-right:var(--container-pad)}
+  .yf-week__strip::-webkit-scrollbar{display:none}
+  .yf-day{flex:0 0 132px;scroll-snap-align:start}
+}
+
+/* ===========================================================================
+   8 · LOCAL TIP
+   =========================================================================== */
+.yf-tip{padding:var(--s7) 0}
+.yf-tip .alert{align-items:flex-start;gap:var(--s3);font-size:var(--text-base)}
+.yf-tip .alert .pg-icon{flex-shrink:0}
+.yf-tip__verify{display:inline-flex;align-items:center;gap:8px;margin-top:var(--s3);
+  font-family:var(--font-display);font-weight:600;font-size:var(--text-sm);color:var(--ocean)}
+
+/* —— accessibility / motion —————————————————————————————————————————————————— */
+.yf-page :where(a,button,[tabindex]):focus-visible{outline:none;box-shadow:var(--focus-ring);border-radius:var(--r-sm)}
+@media(prefers-reduced-motion:reduce){
+  .yf-page *,.yf-page *::before,.yf-page *::after{
+    animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;scroll-behavior:auto !important}
+}
