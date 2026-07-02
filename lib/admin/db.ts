@@ -5,7 +5,11 @@ import { createClient } from '@supabase/supabase-js'
 // reads and writes. Never import from a Client Component — the key stays server-side.
 // Fall back to harmless placeholders so importing this module never throws at
 // build time when env isn't present yet. At runtime the real env is used.
-const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321'
+// The URL is public, so fall back to the production project. The service-role
+// key is a secret and must come from env (SUPABASE_SERVICE_ROLE_KEY) — without
+// it the admin panel can't read or write.
+const url =
+  process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://hjkcmxfmismliskipedz.supabase.co'
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'missing-service-role-key'
 
 export const db = createClient(url, serviceKey, {

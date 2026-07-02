@@ -66,9 +66,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <head>
         {/* Warm up the image hosts so the first venue/hero images start sooner. */}
         <link rel="preconnect" href="https://cdn.gotopattaya.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://jsxtfodewyvxnplbtfnv.supabase.co" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://hjkcmxfmismliskipedz.supabase.co" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://cdn.gotopattaya.com" />
-        <link rel="dns-prefetch" href="https://jsxtfodewyvxnplbtfnv.supabase.co" />
+        <link rel="dns-prefetch" href="https://hjkcmxfmismliskipedz.supabase.co" />
       </head>
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
