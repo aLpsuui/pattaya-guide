@@ -548,8 +548,13 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
               {relatedVenues.map(r => (
                 <Link key={r.id} className="det-yf__morecard" href={`/venues/${r.slug}`}>
                   <div className="det-yf__morecard__media">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={r.image_url || ''} alt={r.name} loading="lazy" width={560} height={420} />
+                    {r.image_url
+                      ? // eslint-disable-next-line @next/next/no-img-element
+                        <img src={r.image_url} alt={r.name} loading="lazy" width={560} height={420} />
+                      : <div className="det-yf__morecard__ph" aria-hidden="true"
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', background: 'var(--grad-brand, #e2e8f0)', color: '#fff' }}>
+                          <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="m4 17 4.5-4.5 3.5 3.5 3.5-3.5L20 16" /></svg>
+                        </div>}
                     <span className="det-yf__morecard__tag"><Icon id="pg-massage" /> {r.venue_type || 'Venue'}</span>
                   </div>
                   <div className="det-yf__morecard__body">
@@ -577,8 +582,9 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
         <button className="det-yf__lbnav det-yf__lbnav--prev" type="button" data-lb-prev aria-label="Previous photo">
           <Icon id="pg-arrow-left" size={24} /></button>
         <figure>
+          {/* src is set by the lightbox script on open; omitted here to avoid an empty-src warning */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img id="det-lb-img" src="" alt="" />
+          <img id="det-lb-img" alt="" />
           <figcaption id="det-lb-cap"></figcaption>
         </figure>
         <button className="det-yf__lbnav det-yf__lbnav--next" type="button" data-lb-next aria-label="Next photo">

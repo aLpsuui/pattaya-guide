@@ -66,7 +66,7 @@ export default async function PlacesPage({ searchParams }: { searchParams: Promi
   const lastIdx = from + rows.length
 
   return (
-    <Shell active="places" crumb={<>Content <IconChevR /> Places</>} title="Places" search
+    <Shell active="places" crumb={<>Content <IconChevR /> Places</>} title="Places"
       actions={<Link className="btn btn--primary btn--sm" href="/admin/places/new"><IconPlus />Add Place</Link>}>
       <div className="page-head">
         <div className="ph-l"><h2>Places</h2><p>{total} venues · page {page} of {totalPages}</p></div>

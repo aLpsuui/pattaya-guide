@@ -427,7 +427,7 @@ const HTML = String.raw`
     <button class="det-yf__lbnav det-yf__lbnav--prev" type="button" data-lb-prev aria-label="Previous photo">
       <svg class="pg-icon is-24" aria-hidden="true"><use href="#pg-arrow-left"></use></svg></button>
     <figure>
-      <img id="det-lb-img" src="" alt="">
+      <img id="det-lb-img" alt="">
       <figcaption id="det-lb-cap"></figcaption>
     </figure>
     <button class="det-yf__lbnav det-yf__lbnav--next" type="button" data-lb-next aria-label="Next photo">
