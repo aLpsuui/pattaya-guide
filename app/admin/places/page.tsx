@@ -72,7 +72,6 @@ export default async function PlacesPage({ searchParams }: { searchParams: Promi
         <div className="ph-l"><h2>Places</h2><p>{total} venues · page {page} of {totalPages}</p></div>
         <div className="ph-r">
           <Pager page={page} totalPages={totalPages} />
-          <Link className="btn btn--primary btn--sm" href="/admin/places/new"><IconPlus />Add Place</Link>
         </div>
       </div>
 
