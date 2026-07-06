@@ -19,6 +19,10 @@ const csp = [
 
 const securityHeaders = [
   { key: 'Content-Security-Policy', value: csp },
+  // 2-year HSTS with includeSubDomains + preload so browsers upgrade http→https
+  // for the apex on the very first visit (kills the http-apex extra redirect hop)
+  // and qualify for the HSTS preload list. Safe: every subdomain (www, cdn) is https.
+  { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
