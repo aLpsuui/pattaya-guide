@@ -1,7 +1,9 @@
-// Central site config. Set NEXT_PUBLIC_SITE_URL in Vercel to your production
-// domain (e.g. https://gotopattaya.com) to make the site indexable and to
-// emit correct canonical / OG / sitemap URLs. Until then it stays noindex.
-const RAW = process.env.NEXT_PUBLIC_SITE_URL || 'https://gotopattaya.com'
+// Central site config. Single source of truth for the canonical host — every
+// canonical tag, OG url, sitemap entry, robots host and JSON-LD id derives from
+// SITE_URL. The site is served on the www host (apex 308-redirects to www), so
+// the canonical host MUST be www to avoid "canonical says A, redirect says B".
+// Override in Vercel with NEXT_PUBLIC_SITE_URL=https://www.gotopattaya.com.
+const RAW = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.gotopattaya.com'
 export const SITE_URL = RAW.replace(/\/+$/, '')
 export const SITE_NAME = 'Go To Pattaya'
 export const SITE_DESCRIPTION =
