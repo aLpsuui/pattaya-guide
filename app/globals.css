@@ -1503,3 +1503,21 @@ a.eat-card:hover h3{color:var(--ocean)}
 .btn--lg{padding:16px 32px;font-size:16px;min-height:56px}
 .chip--sm{padding:6px 12px;font-size:12px}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Daily-deal popup ("venue of the day") */
+.ddp-scrim{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(4,18,34,.55);backdrop-filter:blur(3px);animation:ddp-fade .2s ease}
+.ddp-card{position:relative;width:100%;max-width:380px;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 30px 70px rgba(3,30,60,.42);animation:ddp-pop .28s cubic-bezier(.2,.9,.3,1.2)}
+.ddp-close{position:absolute;top:10px;right:10px;z-index:2;width:34px;height:34px;border-radius:50%;border:none;background:rgba(0,0,0,.42);color:#fff;font-size:22px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.ddp-close:hover{background:rgba(0,0,0,.66)}
+.ddp-media{position:relative;height:190px;background-size:cover;background-position:center;background-color:#0a2540}
+.ddp-badge{position:absolute;left:14px;bottom:14px;background:#ff5a3c;color:#fff;font-weight:800;font-size:14px;padding:8px 14px;border-radius:999px;box-shadow:0 6px 18px rgba(255,90,60,.45)}
+.ddp-body{padding:18px 20px 22px}
+.ddp-kicker{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ocean,#0178b4)}
+.ddp-name{margin:4px 0 8px;font-size:21px;line-height:1.2;color:#0a2540}
+.ddp-meta{display:flex;flex-wrap:wrap;gap:12px;align-items:center;font-size:13.5px;color:#5b7085;margin-bottom:16px}
+.ddp-rate{font-weight:700;color:#0a2540}
+.ddp-cta{display:block;text-align:center;background:var(--grad-brand,linear-gradient(135deg,#034487,#0178b4));color:#fff;font-weight:700;font-size:15px;padding:13px 20px;border-radius:12px;text-decoration:none;transition:transform .15s,box-shadow .15s;box-shadow:0 10px 24px rgba(3,68,135,.28)}
+.ddp-cta:hover{transform:translateY(-1px);box-shadow:0 14px 30px rgba(3,68,135,.38)}
+@keyframes ddp-fade{from{opacity:0}to{opacity:1}}
+@keyframes ddp-pop{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.ddp-scrim,.ddp-card{animation:none}}

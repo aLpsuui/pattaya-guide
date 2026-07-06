@@ -4,6 +4,7 @@ import Icon from '@/app/components/Icon'
 import CarButton from '@/app/components/CarButton'
 import HeroSearch from '@/app/components/HeroSearch'
 import ExploreMap from '@/app/components/ExploreMap'
+import DailyDealPopup, { type Deal } from '@/app/components/DailyDealPopup'
 
 const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 
@@ -44,6 +45,29 @@ async function bySlugs(slugs: string[]): Promise<Venue[]> {
   const { data } = await supabase.from('venues').select(VCARD_COLS).in('slug', slugs).eq('is_active', true)
   const rows = (data || []) as unknown as Venue[]
   return slugs.map((s) => rows.find((r) => r.slug === s)).filter(Boolean) as Venue[]
+}
+
+// Active "venue of the day" for the homepage popup. Returns null when there's no
+// active deal (or the table isn't set up yet), so the homepage never breaks.
+async function getDailyDeal(): Promise<Deal | null> {
+  const { data, error } = await supabase
+    .from('daily_deal')
+    .select('label, active, venue:venues(slug, name, image_url, rating, review_count, venue_type, categories(name_en))')
+    .eq('active', true)
+    .maybeSingle()
+  const v = (data as { label: string | null; venue: Record<string, unknown> | null } | null)?.venue
+  if (error || !data || !v) return null
+  const cats = v.categories as { name_en: string } | null
+  return {
+    slug: v.slug as string,
+    name: v.name as string,
+    image_url: (v.image_url as string) ?? null,
+    rating: (v.rating as number) ?? null,
+    review_count: (v.review_count as number) ?? null,
+    venue_type: (v.venue_type as string) ?? null,
+    category: cats?.name_en ?? null,
+    label: (data as { label: string | null }).label ?? null,
+  }
 }
 
 // Editor's Picks — "The best places in Pattaya", curated order (iconic
@@ -147,12 +171,13 @@ function VenueCard({ v, dark = false }: { v: Venue; dark?: boolean }) {
 }
 
 export default async function Home() {
-  const [topVenues, adventureVenues, blogPosts] = await Promise.all([
-    getTopVenues(), getAdventureVenues(), getBlogPosts(),
+  const [topVenues, adventureVenues, blogPosts, deal] = await Promise.all([
+    getTopVenues(), getAdventureVenues(), getBlogPosts(), getDailyDeal(),
   ])
 
   return (
     <>
+      {deal && <DailyDealPopup deal={deal} />}
       {/* Preload the LCP hero background (a CSS background-image the browser
           would otherwise only discover after CSS parses). */}
       <link rel="preload" as="image" href={`${ASSETS}/pattaya-city-beach-1.webp`} fetchPriority="high" />
