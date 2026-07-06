@@ -32,7 +32,7 @@ interface BlogPost {
 // The blog HTML is authored against the old static-site paths. Rewrite its
 // internal links to real Next routes and its image paths to the Supabase
 // `blog` storage bucket at render time.
-const IMG_BASE = 'https://jsxtfodewyvxnplbtfnv.supabase.co/storage/v1/object/public/blog'
+const IMG_BASE = 'https://hjkcmxfmismliskipedz.supabase.co/storage/v1/object/public/blog'
 const ROUTE_MAP: Record<string, string> = {
   '01-homepage-v5.html': '/',
   'blog.html': '/blog',
@@ -171,13 +171,24 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     ],
   }
 
+  // Always emit Article + BreadcrumbList. The authored schema_jsonld only carried
+  // the site-wide WebSite/Organization/City nodes (already emitted globally in the
+  // root layout), so we drop those but keep any FAQPage it defined.
+  const graph: unknown[] = [...jsonLd['@graph']]
+  if (post.schema_jsonld) {
+    try {
+      const stored = JSON.parse(rewriteSchema(post.schema_jsonld, post.author))
+      const nodes = Array.isArray(stored) ? stored : (stored['@graph'] || [stored])
+      for (const n of nodes) if (n && n['@type'] === 'FAQPage') graph.push(n)
+    } catch { /* ignore malformed stored schema */ }
+  }
+  const finalJsonLd = { '@context': 'https://schema.org', '@graph': graph }
+
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: post.schema_jsonld ? rewriteSchema(post.schema_jsonld, post.author) : JSON.stringify(jsonLd),
-        }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(finalJsonLd) }}
       />
       {post.page_html && <div dangerouslySetInnerHTML={{ __html: rewriteHtml(post.page_html, post.author) }} />}
       <BlogScript script={BLOG_TEMPLATE_SCRIPT} />
