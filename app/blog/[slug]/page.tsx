@@ -32,7 +32,7 @@ interface BlogPost {
 // The blog HTML is authored against the old static-site paths. Rewrite its
 // internal links to real Next routes and its image paths to the Supabase
 // `blog` storage bucket at render time.
-const IMG_BASE = 'https://hjkcmxfmismliskipedz.supabase.co/storage/v1/object/public/blog'
+const IMG_BASE = 'https://cdn.gotopattaya.com/Blogs'
 const ROUTE_MAP: Record<string, string> = {
   '01-homepage-v5.html': '/',
   'blog.html': '/blog',
