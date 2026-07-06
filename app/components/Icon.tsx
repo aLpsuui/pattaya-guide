@@ -1,4 +1,4 @@
-// Go To Pattaya Icon System — 99 icons, stroke-based, currentColor
+// Go To Pattaya Icon System - 99 icons, stroke-based, currentColor
 // Usage: <Icon name="search" size={20} className="text-blue-500" />
 
 interface IconProps {

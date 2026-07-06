@@ -9,7 +9,7 @@ import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, INDEXABLE } from '@/lib/site'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: 'Go To Pattaya — Your complete guide to Pattaya',
+  title: 'Go To Pattaya - Your complete guide to Pattaya',
   description: SITE_DESCRIPTION,
   applicationName: SITE_NAME,
   alternates: { canonical: '/' },
@@ -20,13 +20,13 @@ export const metadata: Metadata = {
     type: 'website',
     siteName: SITE_NAME,
     url: SITE_URL,
-    title: 'Go To Pattaya — Your complete guide to Pattaya',
+    title: 'Go To Pattaya - Your complete guide to Pattaya',
     description: SITE_DESCRIPTION,
     locale: 'en_US',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Go To Pattaya — Your complete guide to Pattaya',
+    title: 'Go To Pattaya - Your complete guide to Pattaya',
     description: SITE_DESCRIPTION,
   },
   icons: { icon: '/favicon.ico' },

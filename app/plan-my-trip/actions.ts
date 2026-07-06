@@ -17,12 +17,12 @@ export async function submitPlan(fd: FormData): Promise<PlanState> {
   const interests = fd.getAll('interests').map(String).join(', ')
 
   const message = [
-    `Arrival date: ${arrive || '—'}`,
-    `Nights: ${nights || '—'}`,
-    `Travelling as: ${travellers || '—'}`,
-    `Budget/day: ${budget || '—'}`,
-    `Pace: ${pace || '—'}`,
-    `Interested in: ${interests || '—'}`,
+    `Arrival date: ${arrive || '-'}`,
+    `Nights: ${nights || '-'}`,
+    `Travelling as: ${travellers || '-'}`,
+    `Budget/day: ${budget || '-'}`,
+    `Pace: ${pace || '-'}`,
+    `Interested in: ${interests || '-'}`,
   ].join('\n')
 
   const { error } = await db.from('contact_messages').insert({
@@ -31,6 +31,6 @@ export async function submitPlan(fd: FormData): Promise<PlanState> {
     subject: 'Plan my trip request',
     message,
   })
-  if (error) return { ok: false, error: 'Something went wrong — please try again.' }
+  if (error) return { ok: false, error: 'Something went wrong - please try again.' }
   return { ok: true }
 }

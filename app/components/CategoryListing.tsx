@@ -70,7 +70,7 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
     .order('rating', { ascending: false, nullsFirst: false })
     .order('review_count', { ascending: false, nullsFirst: false })
   const venues = (data || []) as unknown as Venue[]
-  // Lead with photographed venues (stable — keeps the rating order within each
+  // Lead with photographed venues (stable - keeps the rating order within each
   // group) so the grid + editor's picks look image-rich; photo-less ones fall
   // to the end rather than being hidden.
   venues.sort((a, b) => (a.image_url ? 0 : 1) - (b.image_url ? 0 : 1))
@@ -118,7 +118,7 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
     .map(([slug, e]) => ({ slug, label: e.label, n: e.n }))
 
   const rated = venues.filter((v) => typeof v.rating === 'number')
-  const avg = rated.length ? (rated.reduce((s, v) => s + (v.rating || 0), 0) / rated.length).toFixed(1) : '—'
+  const avg = rated.length ? (rated.reduce((s, v) => s + (v.rating || 0), 0) / rated.length).toFixed(1) : '-'
   const top = primaries[0]
 
   // Compact payload for the client directory (incremental render keeps the
@@ -164,7 +164,7 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
         <div className="container eat-hero__inner">
           <div className="eat-hero__copy">
             <div className="eat-hero__meta">
-              <span><b>{total || '—'}</b> {unit}</span><span className="dot" aria-hidden="true"></span>
+              <span><b>{total || '-'}</b> {unit}</span><span className="dot" aria-hidden="true"></span>
               <span>Updated <b>weekly</b></span><span className="dot" aria-hidden="true"></span>
               <span>Locally verified</span>
             </div>
@@ -179,7 +179,7 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
             </div>
 
             <div className="eat-hero__stats" role="list" aria-label="Section overview">
-              <div className="st" role="listitem"><b>{total || '—'}</b><span>Verified {unit}</span></div>
+              <div className="st" role="listitem"><b>{total || '-'}</b><span>Verified {unit}</span></div>
               {top && <div className="st" role="listitem"><b>{top.n}</b><span>{top.label}</span></div>}
               <div className="st" role="listitem"><b>{avg}★</b><span>Avg. rating</span></div>
               {areas.length > 0 && <div className="st" role="listitem"><b>{areas.length}</b><span>Areas</span></div>}
@@ -194,7 +194,7 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
         </div>
       </section>
 
-      {/* DIRECTORY — left rail + results */}
+      {/* DIRECTORY - left rail + results */}
       <section className="sec" aria-labelledby="dir-h">
         <div className="container">
           <div className="eat-head">
@@ -225,7 +225,7 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
         </div>
       </section>
 
-      {/* HOW WE RANK — trust */}
+      {/* HOW WE RANK - trust */}
       <section className="sec sec--alt sec--tight" aria-labelledby="rank-h">
         <div className="container">
           <div className="trust-grid">
@@ -233,7 +233,7 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
               <p className="kicker">How we rank</p>
               <h2 id="rank-h">No <span>pay-to-play</span>. Ever.</h2>
               <p style={{ color: 'var(--text-muted)', fontSize: 18, maxWidth: '52ch' }}>
-                Venues can&apos;t buy a higher spot on this page. Our ordering blends real visit notes, fresh review trends and local reporting — then we re-check the list every week.
+                Venues can&apos;t buy a higher spot on this page. Our ordering blends real visit notes, fresh review trends and local reporting - then we re-check the list every week.
               </p>
               <ul className="trust-list">
                 <li><Icon name="check" size={24} className="ic" /><span><b>We pay our own way.</b> Editors visit anonymously; no freebies influence a ranking.</span></li>
@@ -251,7 +251,7 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
                 <div className="who">
                   <b>The Go To Pattaya local desk</b>
                   <span className="role"><Icon name="local-verified" size={16} style={{ verticalAlign: '-3px' }} /> Locally verified</span>
-                  <p>On-the-ground in Pattaya since 2019 — visiting, checking and double-checking so the list stays honest.</p>
+                  <p>On-the-ground in Pattaya since 2019 - visiting, checking and double-checking so the list stays honest.</p>
                 </div>
               </div>
             </div>

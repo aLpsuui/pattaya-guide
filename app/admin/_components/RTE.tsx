@@ -58,7 +58,7 @@ export default function RTE({ initialHTML, onChange }: { initialHTML: string; on
         <button type="button" className={`rte-btn${source ? ' on' : ''}`} title="Edit HTML source" onClick={toggleSource}>HTML</button>
       </div>
       <div ref={areaRef} className="rte-area" contentEditable suppressContentEditableWarning
-        data-placeholder="Write the article here — format with the toolbar, or switch to HTML." onInput={sync} />
+        data-placeholder="Write the article here - format with the toolbar, or switch to HTML." onInput={sync} />
       <textarea className="rte-source" spellCheck={false} value={src}
         onChange={(e) => { setSrc(e.target.value); onChange(e.target.value) }} />
     </div>

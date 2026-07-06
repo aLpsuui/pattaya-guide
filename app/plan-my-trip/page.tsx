@@ -3,16 +3,16 @@ import Icon from '@/app/components/Icon'
 import PlanForm from './PlanForm'
 
 export const metadata = {
-  title: 'Plan My Trip to Pattaya — Build a Custom Itinerary | Go To Pattaya',
+  title: 'Plan My Trip to Pattaya - Build a Custom Itinerary | Go To Pattaya',
   description:
-    'Tell us your dates, interests and pace and get a custom Pattaya itinerary built from 600+ verified places — day by day, free and with no signup.',
+    'Tell us your dates, interests and pace and get a custom Pattaya itinerary built from 600+ verified places - day by day, free and with no signup.',
   alternates: { canonical: '/plan-my-trip' },
 }
 
 const perks = [
   { icon: 'verified', h: 'Verified places only', p: 'Every stop is a real, in-person-checked venue from our 600+ directory.' },
   { icon: 'route', h: 'Smart by area', p: "We group your days by district so you're not crossing the city twice." },
-  { icon: 'card', h: 'Matched to budget', p: 'From street-food days to premium nights — your plan respects your spend.' },
+  { icon: 'card', h: 'Matched to budget', p: 'From street-food days to premium nights - your plan respects your spend.' },
 ]
 
 const days = [
@@ -56,7 +56,7 @@ export default function PlanMyTripPage() {
           </nav>
           <div className="kicker" style={{ marginTop: 'var(--s3)' }}>Free trip planner</div>
           <h1>Build your perfect Pattaya itinerary</h1>
-          <p className="lead">Answer a few questions and we&apos;ll put together a day-by-day plan from verified places — matched to your dates, interests and pace. No signup, no spam.</p>
+          <p className="lead">Answer a few questions and we&apos;ll put together a day-by-day plan from verified places - matched to your dates, interests and pace. No signup, no spam.</p>
         </div>
       </section>
 
@@ -83,7 +83,7 @@ export default function PlanMyTripPage() {
             <div className="titles">
               <div className="kicker">Need inspiration?</div>
               <h2>A sample 3-day Pattaya plan</h2>
-              <p>Here&apos;s what a balanced first trip can look like — yours is tailored to your answers above.</p>
+              <p>Here&apos;s what a balanced first trip can look like - yours is tailored to your answers above.</p>
             </div>
           </div>
           <div className="grid g3">

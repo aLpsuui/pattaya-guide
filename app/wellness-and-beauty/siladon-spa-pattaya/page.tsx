@@ -2,9 +2,9 @@ import './venue.css'
 import BlogScript from '@/app/components/BlogScript'
 
 export const metadata = {
-  title: 'Siladon Spa Pattaya — Naklua Day Spa with Promo Packages | Go To Pattaya',
+  title: 'Siladon Spa Pattaya - Naklua Day Spa with Promo Packages | Go To Pattaya',
   description:
-    'Siladon Spa Pattaya in Naklua — a professional, couple- and family-friendly day spa using natural local products, with tiered 2–5 hour signature packages and big flash-sale promos. Menu and directions.',
+    'Siladon Spa Pattaya in Naklua - a professional, couple- and family-friendly day spa using natural local products, with tiered 2–5 hour signature packages and big flash-sale promos. Menu and directions.',
   alternates: { canonical: '/wellness-and-beauty/siladon-spa-pattaya' },
 }
 
@@ -53,7 +53,7 @@ const HTML = String.raw`
       <div class="det-yf__title">
         <h1 id="det-h1">Siladon Spa Pattaya</h1>
       </div>
-      <p class="det-yf__tagline">A professional Naklua day spa — clean, warm and couple- and family-friendly, using natural local Thai products, with tiered 2-to-5-hour packages currently at flash-sale prices.</p>
+      <p class="det-yf__tagline">A professional Naklua day spa - clean, warm and couple- and family-friendly, using natural local Thai products, with tiered 2-to-5-hour packages currently at flash-sale prices.</p>
 
       <div class="det-yf__meta">
         <span class="rate"><svg class="pg-icon is-16 is-rating" aria-hidden="true"><use href="#pg-star"></use></svg>4.9 <span class="count">· 902 reviews</span></span>
@@ -67,20 +67,20 @@ const HTML = String.raw`
   <!-- 3 · GALLERY -->
   <section class="det-yf__wrap" aria-label="Photo gallery">
     <div class="det-yf__gallery" id="det-gallery">
-      <button class="det-yf__gitem det-yf__gitem--hero" type="button" data-lb="0" aria-label="Open photo: Reception lounge at Siladon Spa Pattaya — a spa in Pattaya, Thailand.">
-        <img src="${A}pattaya-massage-4.webp" alt="Reception lounge at Siladon Spa Pattaya — a spa in Pattaya, Thailand." width="800" height="600">
+      <button class="det-yf__gitem det-yf__gitem--hero" type="button" data-lb="0" aria-label="Open photo: Reception lounge at Siladon Spa Pattaya - a spa in Pattaya, Thailand.">
+        <img src="${A}pattaya-massage-4.webp" alt="Reception lounge at Siladon Spa Pattaya - a spa in Pattaya, Thailand." width="800" height="600">
       </button>
-      <button class="det-yf__gitem" type="button" data-lb="1" aria-label="Open photo: Relaxation area at Siladon Spa Pattaya — a spa in Pattaya, Thailand.">
-        <img src="${A}pattaya-wellness-1.webp" alt="Relaxation area at Siladon Spa Pattaya — a spa in Pattaya, Thailand." loading="lazy" width="400" height="300">
+      <button class="det-yf__gitem" type="button" data-lb="1" aria-label="Open photo: Relaxation area at Siladon Spa Pattaya - a spa in Pattaya, Thailand.">
+        <img src="${A}pattaya-wellness-1.webp" alt="Relaxation area at Siladon Spa Pattaya - a spa in Pattaya, Thailand." loading="lazy" width="400" height="300">
       </button>
-      <button class="det-yf__gitem" type="button" data-lb="2" aria-label="Open photo: Spa reception at Siladon Spa Pattaya — a spa in Pattaya, Thailand.">
-        <img src="${A}pattaya-massage-2.webp" alt="Spa reception at Siladon Spa Pattaya — a spa in Pattaya, Thailand." loading="lazy" width="400" height="300">
+      <button class="det-yf__gitem" type="button" data-lb="2" aria-label="Open photo: Spa reception at Siladon Spa Pattaya - a spa in Pattaya, Thailand.">
+        <img src="${A}pattaya-massage-2.webp" alt="Spa reception at Siladon Spa Pattaya - a spa in Pattaya, Thailand." loading="lazy" width="400" height="300">
       </button>
-      <button class="det-yf__gitem" type="button" data-lb="3" aria-label="Open photo: Wellness lounge at Siladon Spa Pattaya — a spa in Pattaya, Thailand.">
-        <img src="${A}pattaya-wellnes-2.webp" alt="Wellness lounge at Siladon Spa Pattaya — a spa in Pattaya, Thailand." loading="lazy" width="400" height="300">
+      <button class="det-yf__gitem" type="button" data-lb="3" aria-label="Open photo: Wellness lounge at Siladon Spa Pattaya - a spa in Pattaya, Thailand.">
+        <img src="${A}pattaya-wellnes-2.webp" alt="Wellness lounge at Siladon Spa Pattaya - a spa in Pattaya, Thailand." loading="lazy" width="400" height="300">
       </button>
-      <button class="det-yf__gitem det-yf__gitem--hidemobile" type="button" data-lb="4" aria-label="Open photo: Aromatherapy treatment at Siladon Spa Pattaya — a spa in Pattaya, Thailand.">
-        <img src="${A}pattaya-massage-1.webp" alt="Aromatherapy treatment at Siladon Spa Pattaya — a spa in Pattaya, Thailand." loading="lazy" width="400" height="300">
+      <button class="det-yf__gitem det-yf__gitem--hidemobile" type="button" data-lb="4" aria-label="Open photo: Aromatherapy treatment at Siladon Spa Pattaya - a spa in Pattaya, Thailand.">
+        <img src="${A}pattaya-massage-1.webp" alt="Aromatherapy treatment at Siladon Spa Pattaya - a spa in Pattaya, Thailand." loading="lazy" width="400" height="300">
         <span class="det-yf__gmore" aria-hidden="true">+7 photos</span>
       </button>
     </div>
@@ -96,7 +96,7 @@ const HTML = String.raw`
         <div class="det-yf__sechead">
           <span class="kicker">At a glance</span>
           <h2 id="qf-h">Quick facts</h2>
-          <p>The essentials before you book — what Siladon offers and what it costs.</p>
+          <p>The essentials before you book - what Siladon offers and what it costs.</p>
         </div>
         <div class="det-yf__facts">
           <div class="det-yf__fact">
@@ -131,7 +131,7 @@ const HTML = String.raw`
         <div class="det-yf__sechead">
           <span class="kicker"><svg class="pg-icon is-16" aria-hidden="true"><use href="#pg-massage"></use></svg> Treatments</span>
           <h2 id="menu-h">À la carte &amp; packages</h2>
-          <p>Siladon is currently running an aggressive flash-sale promo across all services — promo prices shown below, with the normal rate in brackets. Promos apply to direct advance bookings.</p>
+          <p>Siladon is currently running an aggressive flash-sale promo across all services - promo prices shown below, with the normal rate in brackets. Promos apply to direct advance bookings.</p>
         </div>
         <div class="det-yf__tt-wrap">
           <table class="det-yf__tt">
@@ -147,16 +147,16 @@ const HTML = String.raw`
               <tr><td>Body Scrub</td><td class="dur">1 h</td><td class="price">฿700 (1,400)</td></tr>
               <tr><td>Spa Facial</td><td class="dur">1 h</td><td class="price">฿900 (2,000)</td></tr>
               <tr class="det-yf__cat"><td colspan="3">Packages · 2 hours</td></tr>
-              <tr><td><b>Siladon Harmony</b> — foot + aroma oil</td><td class="dur">2 h</td><td class="price">฿1,100 (2,300)</td></tr>
-              <tr><td><b>Siladon Unwind</b> — herbal ball + aroma oil</td><td class="dur">2 h</td><td class="price">฿1,200 (2,500)</td></tr>
-              <tr><td>Siladon Refresh — scrub + aroma oil</td><td class="dur">2 h</td><td class="price">฿1,300 (2,700)</td></tr>
+              <tr><td><b>Siladon Harmony</b> - foot + aroma oil</td><td class="dur">2 h</td><td class="price">฿1,100 (2,300)</td></tr>
+              <tr><td><b>Siladon Unwind</b> - herbal ball + aroma oil</td><td class="dur">2 h</td><td class="price">฿1,200 (2,500)</td></tr>
+              <tr><td>Siladon Refresh - scrub + aroma oil</td><td class="dur">2 h</td><td class="price">฿1,300 (2,700)</td></tr>
               <tr class="det-yf__cat"><td colspan="3">Packages · 3–4 hours</td></tr>
-              <tr><td><b>Siladon Indulge</b> — foot + herbal ball + aroma oil</td><td class="dur">3 h</td><td class="price">฿1,700 (3,300)</td></tr>
-              <tr><td>Siladon Revive — foot + scrub + aroma oil</td><td class="dur">3 h</td><td class="price">฿1,800 (3,500)</td></tr>
-              <tr><td>Siladon Voyage — foot + scrub + ball + oil</td><td class="dur">4 h</td><td class="price">฿2,200 (4,300)</td></tr>
-              <tr><td>Siladon Royal — foot + scrub + oil + facial</td><td class="dur">4 h</td><td class="price">฿2,400 (4,700)</td></tr>
+              <tr><td><b>Siladon Indulge</b> - foot + herbal ball + aroma oil</td><td class="dur">3 h</td><td class="price">฿1,700 (3,300)</td></tr>
+              <tr><td>Siladon Revive - foot + scrub + aroma oil</td><td class="dur">3 h</td><td class="price">฿1,800 (3,500)</td></tr>
+              <tr><td>Siladon Voyage - foot + scrub + ball + oil</td><td class="dur">4 h</td><td class="price">฿2,200 (4,300)</td></tr>
+              <tr><td>Siladon Royal - foot + scrub + oil + facial</td><td class="dur">4 h</td><td class="price">฿2,400 (4,700)</td></tr>
               <tr class="det-yf__cat"><td colspan="3">Package · 5 hours</td></tr>
-              <tr><td><b>Siladon Bliss</b> — foot + scrub + ball + oil + facial</td><td class="dur">5 h</td><td class="price">฿2,800 (5,500)</td></tr>
+              <tr><td><b>Siladon Bliss</b> - foot + scrub + ball + oil + facial</td><td class="dur">5 h</td><td class="price">฿2,800 (5,500)</td></tr>
             </tbody>
           </table>
         </div>
@@ -299,7 +299,7 @@ const HTML = String.raw`
           <div class="acc">
             <button class="q" type="button" aria-expanded="false">Is it suitable for couples and families?
               <svg class="pg-icon is-20 det-yf__pm" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path class="v" d="M12 5v14"/></svg></button>
-            <div class="a"><div class="a-in">Yes — there's a twin-bed couples room and child-friendly arrangements, in a clean, warm setting.</div></div>
+            <div class="a"><div class="a-in">Yes - there's a twin-bed couples room and child-friendly arrangements, in a clean, warm setting.</div></div>
           </div>
           <div class="acc">
             <button class="q" type="button" aria-expanded="false">Are the discounts real?
@@ -369,7 +369,7 @@ const HTML = String.raw`
 
         <a class="det-yf__morecard" href="/wellness-and-beauty/lets-relax-north-pattaya">
           <div class="det-yf__morecard__media">
-            <img src="${A}pattaya-massage-1.webp" alt="Tropical garden courtyard at Let's Relax Spa, Pattaya — a spa in Pattaya, Thailand." loading="lazy" width="560" height="420">
+            <img src="${A}pattaya-massage-1.webp" alt="Tropical garden courtyard at Let's Relax Spa, Pattaya - a spa in Pattaya, Thailand." loading="lazy" width="560" height="420">
             <span class="det-yf__morecard__tag"><svg class="pg-icon is-16" aria-hidden="true"><use href="#pg-massage"></use></svg> Spa</span>
           </div>
           <div class="det-yf__morecard__body">
@@ -381,7 +381,7 @@ const HTML = String.raw`
         </a>
         <a class="det-yf__morecard" href="/wellness-and-beauty/tea-tree-spa-pattaya">
           <div class="det-yf__morecard__media">
-            <img src="${A}best-island-pattaya.webp" alt="Ocean-view relaxation lounge at Tea Tree Spa Pattaya — a spa in Pattaya, Thailand." loading="lazy" width="560" height="420">
+            <img src="${A}best-island-pattaya.webp" alt="Ocean-view relaxation lounge at Tea Tree Spa Pattaya - a spa in Pattaya, Thailand." loading="lazy" width="560" height="420">
             <span class="det-yf__morecard__tag"><svg class="pg-icon is-16" aria-hidden="true"><use href="#pg-massage"></use></svg> Hotel spa</span>
           </div>
           <div class="det-yf__morecard__body">
@@ -393,7 +393,7 @@ const HTML = String.raw`
         </a>
         <a class="det-yf__morecard" href="/wellness-and-beauty/lets-relax-onsen-and-spa-pattaya">
           <div class="det-yf__morecard__media">
-            <img src="${A}pattaya-massage-2.webp" alt="Courtyard stone fountain at Let's Relax Onsen &amp; Spa Pattaya — a spa in Pattaya, Thailand." loading="lazy" width="560" height="420">
+            <img src="${A}pattaya-massage-2.webp" alt="Courtyard stone fountain at Let's Relax Onsen &amp; Spa Pattaya - a spa in Pattaya, Thailand." loading="lazy" width="560" height="420">
             <span class="det-yf__morecard__tag"><svg class="pg-icon is-16" aria-hidden="true"><use href="#pg-wellness"></use></svg> Onsen</span>
           </div>
           <div class="det-yf__morecard__body">
@@ -405,7 +405,7 @@ const HTML = String.raw`
         </a>
         <a class="det-yf__morecard" href="/wellness-and-beauty/rinn-spa-massage">
           <div class="det-yf__morecard__media">
-            <img src="${A}pattaya-wellnes-2.webp" alt="Thai massage room at RINN Spa &amp; Massage — a spa in Pattaya, Thailand." loading="lazy" width="560" height="420">
+            <img src="${A}pattaya-wellnes-2.webp" alt="Thai massage room at RINN Spa &amp; Massage - a spa in Pattaya, Thailand." loading="lazy" width="560" height="420">
             <span class="det-yf__morecard__tag"><svg class="pg-icon is-16" aria-hidden="true"><use href="#pg-massage"></use></svg> Massage</span>
           </div>
           <div class="det-yf__morecard__body">
@@ -443,13 +443,13 @@ const SCRIPT = String.raw`
   var root = document.querySelector('.det-yf');
   if(!root) return;
   var photos = [
-    {src:"${A}pattaya-massage-4.webp", cap:"Reception lounge at Siladon Spa Pattaya — a spa in Pattaya, Thailand."},
-    {src:"${A}pattaya-wellness-1.webp", cap:"Relaxation area at Siladon Spa Pattaya — a spa in Pattaya, Thailand."},
-    {src:"${A}pattaya-massage-2.webp", cap:"Spa reception at Siladon Spa Pattaya — a spa in Pattaya, Thailand."},
-    {src:"${A}pattaya-wellnes-2.webp", cap:"Wellness lounge at Siladon Spa Pattaya — a spa in Pattaya, Thailand."},
-    {src:"${A}pattaya-massage-1.webp", cap:"Aromatherapy treatment at Siladon Spa Pattaya — a spa in Pattaya, Thailand."},
-    {src:"${A}best-island-pattaya.webp", cap:"Spa interior at Siladon Spa Pattaya — a spa in Pattaya, Thailand."},
-    {src:"${A}pattaya-wellness-1.webp", cap:"Couples treatment room at Siladon Spa Pattaya — a spa in Pattaya, Thailand."}
+    {src:"${A}pattaya-massage-4.webp", cap:"Reception lounge at Siladon Spa Pattaya - a spa in Pattaya, Thailand."},
+    {src:"${A}pattaya-wellness-1.webp", cap:"Relaxation area at Siladon Spa Pattaya - a spa in Pattaya, Thailand."},
+    {src:"${A}pattaya-massage-2.webp", cap:"Spa reception at Siladon Spa Pattaya - a spa in Pattaya, Thailand."},
+    {src:"${A}pattaya-wellnes-2.webp", cap:"Wellness lounge at Siladon Spa Pattaya - a spa in Pattaya, Thailand."},
+    {src:"${A}pattaya-massage-1.webp", cap:"Aromatherapy treatment at Siladon Spa Pattaya - a spa in Pattaya, Thailand."},
+    {src:"${A}best-island-pattaya.webp", cap:"Spa interior at Siladon Spa Pattaya - a spa in Pattaya, Thailand."},
+    {src:"${A}pattaya-wellness-1.webp", cap:"Couples treatment room at Siladon Spa Pattaya - a spa in Pattaya, Thailand."}
   ];
   var lb = document.getElementById('det-lb');
   var lbImg = document.getElementById('det-lb-img');

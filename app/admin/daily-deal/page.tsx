@@ -20,7 +20,7 @@ export default async function DailyDealPage() {
       <div className="page-head">
         <div className="ph-l">
           <h2>Günün mekanı</h2>
-          <p>Anasayfada günde bir kez çıkan popup — mekanı ve indirimi buradan ayarla.</p>
+          <p>Anasayfada günde bir kez çıkan popup - mekanı ve indirimi buradan ayarla.</p>
         </div>
       </div>
 
@@ -29,7 +29,7 @@ export default async function DailyDealPage() {
           <label className="dd-field">
             <span>Mekan</span>
             <select name="venue_id" className="input" defaultValue={cur?.venue_id ?? ''}>
-              <option value="">— seç —</option>
+              <option value="">- seç -</option>
               {venues.map((v) => <option key={v.id} value={v.id}>{v.name}</option>)}
             </select>
           </label>

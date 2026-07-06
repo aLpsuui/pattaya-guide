@@ -47,7 +47,7 @@ export const getMegaData = unstable_cache(
           .limit(1)
           .maybeSingle(),
       ])
-      // Areas has no DB venues — show the curated area cards in the bento instead.
+      // Areas has no DB venues - show the curated area cards in the bento instead.
       const list: MegaVenue[] = n.slug === 'areas'
         ? AREAS.filter((a) => a.slug !== 'islands').slice(0, 6).map((a) => ({
             slug: a.slug, name: a.name, image_url: `${ASSETS}/${a.image}`, rating: null,

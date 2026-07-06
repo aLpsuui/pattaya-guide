@@ -3,8 +3,8 @@ import BlogScript from '@/app/components/BlogScript'
 import ExploreMap from '@/app/components/ExploreMap'
 
 export const metadata = {
-  title: 'Areas of Pattaya — Find Your Neighborhood | Go To Pattaya',
-  description: "An orientation guide to Pattaya's neighborhoods — Central, Jomtien, Naklua, Pratumnak Hill, Wong Amat, Walking Street and the offshore islands. Compare vibes, beaches and nightlife to decide where to base yourself.",
+  title: 'Areas of Pattaya - Find Your Neighborhood | Go To Pattaya',
+  description: "An orientation guide to Pattaya's neighborhoods - Central, Jomtien, Naklua, Pratumnak Hill, Wong Amat, Walking Street and the offshore islands. Compare vibes, beaches and nightlife to decide where to base yourself.",
   alternates: { canonical: '/areas' },
 }
 
@@ -58,7 +58,7 @@ const HTML = String.raw`
       <div class="container">
         <span class="kicker">Areas</span>
         <h1 id="ar-hero-title">Find Your Pattaya Neighborhood</h1>
-        <p class="ar-hero__lead">Pattaya is really six districts around one bay — plus the islands offshore. This is the map-first guide to where to base yourself, and what each place actually feels like.</p>
+        <p class="ar-hero__lead">Pattaya is really six districts around one bay - plus the islands offshore. This is the map-first guide to where to base yourself, and what each place actually feels like.</p>
         <nav class="ar-jump" aria-label="Jump to a district">
           <a class="chip" href="#central"><svg class="pg-icon is-16" aria-hidden="true"><use href="#pg-pin"></use></svg>Central</a>
           <a class="chip" href="#jomtien"><svg class="pg-icon is-16" aria-hidden="true"><use href="#pg-pin"></use></svg>Jomtien</a>
@@ -78,7 +78,7 @@ const HTML = String.raw`
       <div class="sec-head">
         <span class="kicker">Pattaya at a glance</span>
         <h2 id="glance-title">One bay, seven personalities</h2>
-        <p>South to north along the coast — and out to the islands offshore — here is how the districts line up, and the vibe each one is known for.</p>
+        <p>South to north along the coast - and out to the islands offshore - here is how the districts line up, and the vibe each one is known for.</p>
       </div>
 
       <div class="glance">
@@ -249,7 +249,7 @@ const HTML = String.raw`
       <div class="sec-head">
         <span class="kicker">The districts</span>
         <h2 id="districts-title">Seven neighborhoods, honestly compared</h2>
-        <p>An orientation card for each — who it suits, the numbers at a glance, and a few real spots to anchor your bearings.</p>
+        <p>An orientation card for each - who it suits, the numbers at a glance, and a few real spots to anchor your bearings.</p>
       </div>
 
       <div class="ar-districts">
@@ -275,7 +275,7 @@ const HTML = String.raw`
               <div class="ministat"><b>40+</b><span>things to do</span></div>
               <div class="ministat"><b>2 min</b><span>walk to beach</span></div>
             </div>
-            <p class="area-card__desc">The buzzy heart of the city: Central Festival mall, Beach Road, and a tangle of sois packed with restaurants and bars. It is the most convenient base if you want shopping, food and nightlife within a short walk — but expect traffic, crowds and noise that runs late.</p>
+            <p class="area-card__desc">The buzzy heart of the city: Central Festival mall, Beach Road, and a tangle of sois packed with restaurants and bars. It is the most convenient base if you want shopping, food and nightlife within a short walk - but expect traffic, crowds and noise that runs late.</p>
             <ul class="area-card__spots">
               <li class="lbl">Top spots here</li>
               <li class="spot">
@@ -363,7 +363,7 @@ const HTML = String.raw`
               <div class="ministat"><b>15+</b><span>things to do</span></div>
               <div class="ministat"><b>6 min</b><span>walk to beach</span></div>
             </div>
-            <p class="area-card__desc">Pattaya's old town to the north — a working fishing-port neighborhood with the wholesale seafood market, Thai-Chinese shophouses and the Sanctuary of Truth. Quieter and more authentic than the centre, with fewer tourist bars. Great value if you want a local rhythm and don't mind a short ride into the action.</p>
+            <p class="area-card__desc">Pattaya's old town to the north - a working fishing-port neighborhood with the wholesale seafood market, Thai-Chinese shophouses and the Sanctuary of Truth. Quieter and more authentic than the centre, with fewer tourist bars. Great value if you want a local rhythm and don't mind a short ride into the action.</p>
             <ul class="area-card__spots">
               <li class="lbl">Top spots here</li>
               <li class="spot">
@@ -407,7 +407,7 @@ const HTML = String.raw`
               <div class="ministat"><b>12+</b><span>things to do</span></div>
               <div class="ministat"><b>8 min</b><span>walk to beach</span></div>
             </div>
-            <p class="area-card__desc">"The hill" sits between Pattaya and Jomtien — leafy, residential and noticeably calmer, with the Big Buddha, Pattaya Viewpoint and small coves like Cosy Beach. A favourite of couples and repeat visitors who want hotels and condos with a bit of luxury and quiet, while staying minutes from both beaches by scooter.</p>
+            <p class="area-card__desc">"The hill" sits between Pattaya and Jomtien - leafy, residential and noticeably calmer, with the Big Buddha, Pattaya Viewpoint and small coves like Cosy Beach. A favourite of couples and repeat visitors who want hotels and condos with a bit of luxury and quiet, while staying minutes from both beaches by scooter.</p>
             <ul class="area-card__spots">
               <li class="lbl">Top spots here</li>
               <li class="spot">
@@ -451,7 +451,7 @@ const HTML = String.raw`
               <div class="ministat"><b>10+</b><span>things to do</span></div>
               <div class="ministat"><b>1 min</b><span>walk to beach</span></div>
             </div>
-            <p class="area-card__desc">A boutique stretch of beach at the northern end, lined with upscale resorts and condos. The water is cleaner and the sand quieter than the main bay — this is where you base yourself for a calmer, more polished trip and don't mind taking a baht-bus into town for the action.</p>
+            <p class="area-card__desc">A boutique stretch of beach at the northern end, lined with upscale resorts and condos. The water is cleaner and the sand quieter than the main bay - this is where you base yourself for a calmer, more polished trip and don't mind taking a baht-bus into town for the action.</p>
             <ul class="area-card__spots">
               <li class="lbl">Top spots here</li>
               <li class="spot">
@@ -494,7 +494,7 @@ const HTML = String.raw`
               <div class="ministat"><b>30+</b><span>things to do</span></div>
               <div class="ministat"><b>3 min</b><span>walk to beach</span></div>
             </div>
-            <p class="area-card__desc">The famous pedestrian strip at the south end of the bay — neon, clubs, live music and go-go bars from late evening until dawn. Electric to experience, but loud and pricey: most people visit Walking Street rather than sleep on it, and base themselves a few sois back for a quieter night.</p>
+            <p class="area-card__desc">The famous pedestrian strip at the south end of the bay - neon, clubs, live music and go-go bars from late evening until dawn. Electric to experience, but loud and pricey: most people visit Walking Street rather than sleep on it, and base themselves a few sois back for a quieter night.</p>
             <ul class="area-card__spots">
               <li class="lbl">Top spots here</li>
               <li class="spot">
@@ -538,7 +538,7 @@ const HTML = String.raw`
               <div class="ministat"><b>6+</b><span>beaches</span></div>
               <div class="ministat"><b>40 min</b><span>by ferry</span></div>
             </div>
-            <p class="area-card__desc">Just offshore lie Koh Larn (Coral Island) and its smaller neighbours Koh Sak and Koh Phai — the clearest water and best sand in the area. Ferries and speedboats run from Bali Hai Pier, making it the classic Pattaya day-trip for swimming, snorkelling and beach lunches. Most people go for the day, though Koh Larn has simple guesthouses if you want to stay over.</p>
+            <p class="area-card__desc">Just offshore lie Koh Larn (Coral Island) and its smaller neighbours Koh Sak and Koh Phai - the clearest water and best sand in the area. Ferries and speedboats run from Bali Hai Pier, making it the classic Pattaya day-trip for swimming, snorkelling and beach lunches. Most people go for the day, though Koh Larn has simple guesthouses if you want to stay over.</p>
             <ul class="area-card__spots">
               <li class="lbl">Top spots here</li>
               <li class="spot">
@@ -571,7 +571,7 @@ const HTML = String.raw`
       <div class="sec-head">
         <span class="kicker">At a glance</span>
         <h2 id="compare-title">Compare the seven districts</h2>
-        <p>Scan it side by side. Dots show relative strength for beach and nightlife — more filled, more of it.</p>
+        <p>Scan it side by side. Dots show relative strength for beach and nightlife - more filled, more of it.</p>
       </div>
 
       <div class="compare-wrap">
@@ -672,7 +672,7 @@ const HTML = String.raw`
           <span class="ic" aria-hidden="true"><svg class="pg-icon is-28 is-ocean" id="persona-ic"><use href="#pg-near-me"></use></svg></span>
           <div>
             <b id="persona-head">Base yourself in Central Pattaya</b>
-            <p id="persona-body">Everything — beach, malls, food and nightlife — is walkable, and it's the easiest place to find your feet. <a href="#central">See Central →</a></p>
+            <p id="persona-body">Everything - beach, malls, food and nightlife - is walkable, and it's the easiest place to find your feet. <a href="#central">See Central →</a></p>
           </div>
         </div>
       </div>
@@ -690,7 +690,7 @@ const HTML = String.raw`
         <div class="alert alert--info">
           <svg class="pg-icon is-24" aria-hidden="true" style="color:var(--steel)"><use href="#pg-songthaew"></use></svg>
           <div>
-            <b>The blue songthaews (baht-buses) are how locals move.</b> They loop a fixed route along Beach Road and Second Road for a flat 10–20 baht — just hop on, then press the buzzer to get off. Don't tell the driver a destination first or it becomes a private "taxi" charter at many times the price. To reach Jomtien or Naklua you usually change buses, or take a scooter for door-to-door.
+            <b>The blue songthaews (baht-buses) are how locals move.</b> They loop a fixed route along Beach Road and Second Road for a flat 10–20 baht - just hop on, then press the buzzer to get off. Don't tell the driver a destination first or it becomes a private "taxi" charter at many times the price. To reach Jomtien or Naklua you usually change buses, or take a scooter for door-to-door.
           </div>
         </div>
         <p class="ar-tip__local">
@@ -728,19 +728,19 @@ const SCRIPT = String.raw`
   /* ---- Persona quick-match: chip -> note reveal ---- */
   var DATA = {
     first: { ic: 'pg-near-me',  head: 'Base yourself in Central Pattaya',
-             body: "Everything — beach, malls, food and nightlife — is walkable, and it's the easiest place to find your feet. ",
+             body: "Everything - beach, malls, food and nightlife - is walkable, and it's the easiest place to find your feet. ",
              link: '#central', linkLabel: 'See Central →' },
     night: { ic: 'pg-nightlife', head: 'Stay near Walking Street (a few sois back)',
-             body: 'You want the strip on your doorstep — but sleep one street back so the music ends when you do. ',
+             body: 'You want the strip on your doorstep - but sleep one street back so the music ends when you do. ',
              link: '#walking-street', linkLabel: 'See Walking Street →' },
     family:{ ic: 'pg-family',   head: 'Jomtien is the family pick',
-             body: 'A long, calm beach, a wide promenade and a residential feel — easy days with kids, away from the bar scene. ',
+             body: 'A long, calm beach, a wide promenade and a residential feel - easy days with kids, away from the bar scene. ',
              link: '#jomtien', linkLabel: 'See Jomtien →' },
     nomad: { ic: 'pg-coffee',   head: 'Jomtien or Pratumnak suit nomads',
              body: 'Long-stay condos, cafés and gyms with sea air, while staying a short ride from the centre when you need it. ',
              link: '#jomtien', linkLabel: 'See Jomtien →' },
     quiet: { ic: 'pg-wellness', head: 'Go north to Wong Amat or up Pratumnak Hill',
-             body: 'Cleaner sand, upscale resorts and far less noise — the calmest bases in the bay. ',
+             body: 'Cleaner sand, upscale resorts and far less noise - the calmest bases in the bay. ',
              link: '#wong-amat', linkLabel: 'See Wong Amat →' }
   };
   var chips = document.querySelectorAll('.persona__chips .chip');

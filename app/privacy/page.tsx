@@ -32,7 +32,7 @@ export default function PrivacyPage() {
             <p>We do not require an account to browse. We collect information in three ways:</p>
             <ul>
               <li><strong>Messages you send us.</strong> If you use our contact form, we store the name, email address and message you provide so we can reply and keep a record of the request.</li>
-              <li><strong>Usage data.</strong> Like most websites, our hosting and analytics providers automatically receive standard technical data — IP address, browser type, device, pages visited and referring page — used in aggregate to understand traffic and improve the site.</li>
+              <li><strong>Usage data.</strong> Like most websites, our hosting and analytics providers automatically receive standard technical data - IP address, browser type, device, pages visited and referring page - used in aggregate to understand traffic and improve the site.</li>
               <li><strong>Cookies and local storage.</strong> Small files used for essential functionality and anonymous analytics (see <em>Cookies</em> below).</li>
             </ul>
 

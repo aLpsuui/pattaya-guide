@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 
-// Brand logo — same mark as the navbar, used white-on-dark in the footer.
+// Brand logo - same mark as the navbar, used white-on-dark in the footer.
 const LogoSVG = ({ size = 42 }: { size?: number }) => (
   <svg viewBox="0 0 220 240" xmlns="http://www.w3.org/2000/svg" style={{ width: size, height: 'auto', flexShrink: 0 }} aria-hidden="true">
     <defs><linearGradient id="fpb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#034487" /><stop offset="1" stopColor="#0178B4" /></linearGradient></defs>
@@ -65,7 +65,7 @@ const cols = [
   },
 ]
 
-// Social links — add a real URL to a platform's `href` and its icon appears.
+// Social links - add a real URL to a platform's `href` and its icon appears.
 // Empty href => not rendered (no dead links).
 const SOCIALS: { label: string; href: string; stroke?: boolean; svg: string }[] = [
   { label: 'Instagram', href: 'https://www.instagram.com/gotopattayacom', stroke: true, svg: '<rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" />' },

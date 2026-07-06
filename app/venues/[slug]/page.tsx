@@ -139,7 +139,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const canonical = `/venues/${v.slug}`
   const description = v.description || v.tagline || undefined
   return {
-    title: `${v.name} — ${v.neighborhood || 'Pattaya'} | Go To Pattaya`,
+    title: `${v.name} - ${v.neighborhood || 'Pattaya'} | Go To Pattaya`,
     description,
     alternates: { canonical },
     openGraph: {
@@ -159,7 +159,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 // Symbols defined in <VenueIcons/>. Imported venues use richer icon ids
-// (pg-music, pg-dumbbell…) that aren't in the sprite — fall back so no icon
+// (pg-music, pg-dumbbell…) that aren't in the sprite - fall back so no icon
 // box renders blank.
 const SPRITE = new Set([
   'pg-wellness', 'pg-massage', 'pg-star', 'pg-clock', 'pg-pin', 'pg-near-me', 'pg-directions',
@@ -322,7 +322,7 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
               <div className="det-yf__sechead">
                 <span className="kicker">At a glance</span>
                 <h2 id="qf-h">Quick facts</h2>
-                <p>The essentials before you go — what {v.name} offers and what it costs.</p>
+                <p>The essentials before you go - what {v.name} offers and what it costs.</p>
               </div>
               <div className="det-yf__facts">
                 {v.venue_quick_facts.map((f, i) => (

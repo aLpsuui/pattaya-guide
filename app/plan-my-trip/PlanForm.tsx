@@ -31,7 +31,7 @@ export default function PlanForm() {
     const res = await submitPlan(data)
     setPending(false)
     if (res.ok) { setSent(true); form.reset() }
-    else setServerErr(res.error || 'Something went wrong — please try again.')
+    else setServerErr(res.error || 'Something went wrong - please try again.')
   }
 
   return (
@@ -74,7 +74,7 @@ export default function PlanForm() {
       </div>
 
       <div className="field">
-        <label>What are you into? <span className="hint" style={{ display: 'inline' }}>— pick any</span></label>
+        <label>What are you into? <span className="hint" style={{ display: 'inline' }}>- pick any</span></label>
         <div className="opt-grid">
           {interests.map(i => (
             <label key={i} className="opt">
@@ -89,9 +89,9 @@ export default function PlanForm() {
       <div className="field">
         <label htmlFor="pace">Pace</label>
         <select className="select" id="pace" name="pace">
-          <option>Relaxed — 2–3 things a day</option>
-          <option>Balanced — a full but comfortable day</option>
-          <option>Packed — see as much as possible</option>
+          <option>Relaxed - 2–3 things a day</option>
+          <option>Balanced - a full but comfortable day</option>
+          <option>Packed - see as much as possible</option>
         </select>
       </div>
 

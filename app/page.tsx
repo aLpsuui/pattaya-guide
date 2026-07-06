@@ -70,7 +70,7 @@ async function getDailyDeal(): Promise<Deal | null> {
   }
 }
 
-// Editor's Picks — "The best places in Pattaya", curated order (iconic
+// Editor's Picks - "The best places in Pattaya", curated order (iconic
 // landmarks first, then category best-of).
 const EDITOR_PICKS_SLUGS = [
   'sanctuary-of-truth',
@@ -86,7 +86,7 @@ const EDITOR_PICKS_SLUGS = [
 ]
 async function getTopVenues() { return bySlugs(EDITOR_PICKS_SLUGS) }
 
-// Adrenaline & adventure — curated air/land/water mix.
+// Adrenaline & adventure - curated air/land/water mix.
 const ADVENTURE_SLUGS = [
   'thai-sky-adventures',
   'skydive-pattaya',
@@ -101,7 +101,7 @@ const ADVENTURE_SLUGS = [
 ]
 async function getAdventureVenues() { return bySlugs(ADVENTURE_SLUGS) }
 
-// Curated homepage blog strip — 6 posts across the funnel (decide → plan →
+// Curated homepage blog strip - 6 posts across the funnel (decide → plan →
 // do → stay → eat → culture), in this exact order.
 const HOMEPAGE_BLOG_SLUGS = [
   'is-pattaya-worth-visiting',
@@ -133,14 +133,14 @@ const categories = [
 ]
 
 const planCards = [
-  { img: 'Koh-Sak.webp', pill: 'When to visit', href: '/blog/best-time-to-visit-pattaya', title: 'Best months for Pattaya', text: "Weather, crowds, prices — month by month, with the months we'd actually go.", arrow: 'Read the guide' },
-  { img: 'pattaya-city-beach-1.webp', pill: 'Getting there', href: '/blog/bangkok-to-pattaya', title: 'Bangkok → Pattaya', text: 'Bus, taxi, train or private transfer — real prices, real travel times, no markup tricks.', arrow: 'Compare options' },
-  { img: 'coral-island-pattaya-2.webp', pill: 'Where to stay', href: '/areas', title: 'Pick the right district', text: 'Central, Jomtien, Pratumnak, Naklua — choose your area before you book. Includes streets to avoid.', arrow: 'Compare districts' },
-  { img: 'pattaya-floating-market.webp', pill: 'First-time tips', href: '/blog/first-time-pattaya-mistakes', title: '8 mistakes to skip', text: 'From baht-bus etiquette to which beach to avoid — the things first-timers always regret.', arrow: 'Read the guide' },
+  { img: 'Koh-Sak.webp', pill: 'When to visit', href: '/blog/best-time-to-visit-pattaya', title: 'Best months for Pattaya', text: "Weather, crowds, prices - month by month, with the months we'd actually go.", arrow: 'Read the guide' },
+  { img: 'pattaya-city-beach-1.webp', pill: 'Getting there', href: '/blog/bangkok-to-pattaya', title: 'Bangkok → Pattaya', text: 'Bus, taxi, train or private transfer - real prices, real travel times, no markup tricks.', arrow: 'Compare options' },
+  { img: 'coral-island-pattaya-2.webp', pill: 'Where to stay', href: '/areas', title: 'Pick the right district', text: 'Central, Jomtien, Pratumnak, Naklua - choose your area before you book. Includes streets to avoid.', arrow: 'Compare districts' },
+  { img: 'pattaya-floating-market.webp', pill: 'First-time tips', href: '/blog/first-time-pattaya-mistakes', title: '8 mistakes to skip', text: 'From baht-bus etiquette to which beach to avoid - the things first-timers always regret.', arrow: 'Read the guide' },
 ]
 
 const districts = [
-  { cls: 'dist-1', img: 'pattaya-night-clubs-1.webp', pill: 'Most central', name: 'Central Pattaya', href: '/areas/central-pattaya', desc: 'Beach Road, Walking Street, Soi Buakhao — the busy, loud, never-sleeping heart of the city.' },
+  { cls: 'dist-1', img: 'pattaya-night-clubs-1.webp', pill: 'Most central', name: 'Central Pattaya', href: '/areas/central-pattaya', desc: 'Beach Road, Walking Street, Soi Buakhao - the busy, loud, never-sleeping heart of the city.' },
   { cls: '', img: 'pattaya-city-beach-2.webp', pill: 'Calm & clean', name: 'Jomtien', href: '/areas/jomtien', desc: 'Longer, quieter beach. Best for families and longer stays.' },
   { cls: '', img: 'best-island-pattaya.webp', pill: 'Views & sunsets', name: 'Pratumnak Hill', href: '/areas/pratumnak-hill', desc: 'Quiet hill between Central & Jomtien. Rooftops, viewpoints, walkable.' },
   { cls: '', img: 'pattaya-buddhist-pagoda-golden.webp', pill: 'Local feel', name: 'Naklua', href: '/areas/naklua', desc: 'Northern fishing village vibe. Real Thai seafood and Sanctuary of Truth.' },
@@ -189,7 +189,7 @@ export default async function Home() {
         </div>
         <div className="container hero-inner">
           <h1>Your complete guide<br />to <span>Pattaya.</span></h1>
-          <p className="intro">Restaurants, beaches, attractions, day trips, wellness, sports — 600+ places and 50+ in-depth guides. Plan your trip in 5 minutes.</p>
+          <p className="intro">Restaurants, beaches, attractions, day trips, wellness, sports - 600+ places and 50+ in-depth guides. Plan your trip in 5 minutes.</p>
 
           <HeroSearch />
 
@@ -210,7 +210,7 @@ export default async function Home() {
             <div className="titles">
               <div className="kicker">Browse Pattaya</div>
               <h2>Six categories. Every kind of day.</h2>
-              <p>Six categories cover every kind of day in Pattaya. Re-checked weekly — if a place closes or changes, the page updates within days.</p>
+              <p>Six categories cover every kind of day in Pattaya. Re-checked weekly - if a place closes or changes, the page updates within days.</p>
             </div>
             <a href="/map" className="viewall">All categories <Arrow /></a>
           </div>
@@ -234,7 +234,7 @@ export default async function Home() {
             <div className="titles">
               <div className="kicker">Plan your Pattaya trip</div>
               <h2>Start here if you&apos;re visiting Pattaya.</h2>
-              <p>Four detailed guides covering the questions every first-time visitor asks before booking — month, transport, district and the small things that catch people out.</p>
+              <p>Four detailed guides covering the questions every first-time visitor asks before booking - month, transport, district and the small things that catch people out.</p>
             </div>
             <a href="/plan-my-trip" className="viewall">All planning guides <Arrow /></a>
           </div>
@@ -280,7 +280,7 @@ export default async function Home() {
             <div className="titles">
               <div className="kicker">For the adrenaline-hungry</div>
               <h2>Adrenaline &amp; adventure</h2>
-              <p>Sky dives, paramotors, jet skis, PADI courses and bungee — every operator licensed in Thailand and re-checked every 30 days for safety standards.</p>
+              <p>Sky dives, paramotors, jet skis, PADI courses and bungee - every operator licensed in Thailand and re-checked every 30 days for safety standards.</p>
             </div>
             <a href="/things-to-do" className="viewall">All adventures <Arrow /></a>
           </div>
@@ -301,7 +301,7 @@ export default async function Home() {
             <div className="titles">
               <div className="kicker">Neighborhoods</div>
               <h2>Pick your district</h2>
-              <p>Pattaya is five very different cities in one. Each district has its own pace, prices and personality — pick yours before you book.</p>
+              <p>Pattaya is five very different cities in one. Each district has its own pace, prices and personality - pick yours before you book.</p>
             </div>
             <Link href="/map" className="viewall">Open the map <Arrow /></Link>
           </div>
@@ -373,21 +373,21 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* WHAT'S INSIDE — trust block */}
+      {/* WHAT'S INSIDE - trust block */}
       <section className="section trust">
         <div className="container">
           <div className="sec-head" style={{ justifyContent: 'center', textAlign: 'center' }}>
             <div className="titles" style={{ textAlign: 'center', margin: '0 auto' }}>
               <div className="kicker">What&apos;s inside</div>
               <h2>Everything you need to plan a Pattaya trip.</h2>
-              <p style={{ margin: '8px auto 0', maxWidth: '58ch' }}>From the first &quot;when should I go&quot; to the last &quot;how do I get back to Bangkok&quot; — Go To Pattaya covers it. Free, no signup, no popups.</p>
+              <p style={{ margin: '8px auto 0', maxWidth: '58ch' }}>From the first &quot;when should I go&quot; to the last &quot;how do I get back to Bangkok&quot; - Go To Pattaya covers it. Free, no signup, no popups.</p>
             </div>
           </div>
           <div className="trust-grid">
             <div className="trust-card">
               <div className="ic"><Icon name="pin" size={28} /></div>
               <h3>600+ places, one map</h3>
-              <p>Restaurants, beaches, attractions, wellness, sports and markets — all in one searchable directory with real prices, real photos and an interactive map.</p>
+              <p>Restaurants, beaches, attractions, wellness, sports and markets - all in one searchable directory with real prices, real photos and an interactive map.</p>
             </div>
             <div className="trust-card">
               <div className="ic"><Icon name="book" size={28} /></div>
@@ -418,7 +418,7 @@ export default async function Home() {
           <div className="ebook-content">
             <span className="kick"><Icon name="book" size={15} /> Free travel ebook</span>
             <h2>Get the free <em>7-day Pattaya</em> itinerary.</h2>
-            <p className="lede">Detailed, day-by-day plans — where to eat, what to see and exactly how to get around. Learn Pattaya the smart way, from people who actually live here.</p>
+            <p className="lede">Detailed, day-by-day plans - where to eat, what to see and exactly how to get around. Learn Pattaya the smart way, from people who actually live here.</p>
             <ul className="ebook-bullets">
               <li><Icon name="check" size={14} /> 7 days mapped hour by hour</li>
               <li><Icon name="check" size={14} /> Real local prices &amp; travel times</li>

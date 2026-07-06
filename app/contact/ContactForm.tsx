@@ -10,7 +10,7 @@ export default function ContactForm() {
   if (state.ok) {
     return (
       <div className="cform-done" role="status">
-        <strong>Thanks — your message is on its way.</strong>
+        <strong>Thanks - your message is on its way.</strong>
         <span>We read every message and aim to reply within a couple of working days.</span>
       </div>
     )
@@ -36,7 +36,7 @@ export default function ContactForm() {
         <span>Message</span>
         <textarea name="message" required rows={6} placeholder="How can we help?" />
       </label>
-      {/* Honeypot — hidden from real users */}
+      {/* Honeypot - hidden from real users */}
       <input name="company" type="text" tabIndex={-1} autoComplete="off" aria-hidden="true" className="cform-hp" />
 
       {state.error && <p className="cform-err" role="alert">{state.error}</p>}

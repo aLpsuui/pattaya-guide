@@ -208,7 +208,7 @@ export default function CategoryDirectory({ venues, primaries, areas, typeLabel,
                 <h3>{v.name}</h3>
                 {v.loc && <div className="eat-card__loc"><Icon name="pin" size={16} className="ic" />{v.loc}</div>}
                 <div className="eat-card__foot">
-                  <span className="eat-card__rate"><span className="star">★</span> {v.rating?.toFixed(1) ?? '—'} {v.review_count != null && <span className="count">({v.review_count.toLocaleString()})</span>}</span>
+                  <span className="eat-card__rate"><span className="star">★</span> {v.rating?.toFixed(1) ?? '-'} {v.review_count != null && <span className="count">({v.review_count.toLocaleString()})</span>}</span>
                 </div>
               </div>
             </Link>

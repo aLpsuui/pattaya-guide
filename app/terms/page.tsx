@@ -29,10 +29,10 @@ export default function TermsPage() {
             <p>By using Go To Pattaya you agree to these terms. If you do not agree, please do not use the site. These terms may change over time; continued use after an update means you accept the revised terms.</p>
 
             <h2>Using this site</h2>
-            <p>Go To Pattaya is an independent travel guide provided for general information only. We work hard to keep details accurate, but <strong>listings, prices, opening hours and availability change frequently and may be out of date</strong> — always confirm directly with a venue or operator before relying on anything here. You agree to use the site lawfully and not to disrupt it, scrape it at scale, or misuse its content.</p>
+            <p>Go To Pattaya is an independent travel guide provided for general information only. We work hard to keep details accurate, but <strong>listings, prices, opening hours and availability change frequently and may be out of date</strong> - always confirm directly with a venue or operator before relying on anything here. You agree to use the site lawfully and not to disrupt it, scrape it at scale, or misuse its content.</p>
 
             <h2>Listings &amp; reviews</h2>
-            <p>Our rankings and recommendations are editorial. <strong>We do not accept payment for a higher position</strong> — paying for a listing never moves a venue up the order. We add, update and remove venues at our discretion based on our own research and reader feedback. Where a link is an affiliate or a partnership is in place, we aim to disclose it; such arrangements do not change our editorial judgement.</p>
+            <p>Our rankings and recommendations are editorial. <strong>We do not accept payment for a higher position</strong> - paying for a listing never moves a venue up the order. We add, update and remove venues at our discretion based on our own research and reader feedback. Where a link is an affiliate or a partnership is in place, we aim to disclose it; such arrangements do not change our editorial judgement.</p>
 
             <h2>Intellectual property</h2>
             <p>The site&rsquo;s text, design, logo and original photography are owned by Go To Pattaya or used under licence, and are protected by applicable law. You may share links and brief quotations with attribution, but you may not republish, copy or use our content commercially without written permission. Third-party trademarks and images remain the property of their owners.</p>

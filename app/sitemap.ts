@@ -52,7 +52,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     blogRoutes = []
   }
 
-  // Dynamic: every active venue detail page — the product's deepest, most
+  // Dynamic: every active venue detail page - the product's deepest, most
   // valuable long-tail content. Paginated past PostgREST's 1000-row cap.
   let venueRoutes: MetadataRoute.Sitemap = []
   try {

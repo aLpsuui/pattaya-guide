@@ -4,9 +4,9 @@ import Icon from '@/app/components/Icon'
 const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 
 export const metadata = {
-  title: 'About Go To Pattaya — The Honest Local Guide to Pattaya, Thailand',
+  title: 'About Go To Pattaya - The Honest Local Guide to Pattaya, Thailand',
   description:
-    'Who we are and how we work. Go To Pattaya is an independent, locally-run directory of 600+ verified places — no paid placements, updated weekly by editors who actually live in Pattaya.',
+    'Who we are and how we work. Go To Pattaya is an independent, locally-run directory of 600+ verified places - no paid placements, updated weekly by editors who actually live in Pattaya.',
   alternates: { canonical: '/about' },
 }
 
@@ -21,7 +21,7 @@ const rules = [
   { icon: 'verified', h: 'Verified on the ground', p: "Every venue is visited or re-checked in person by a local editor before it's published." },
   { icon: 'calendar', h: 'Updated weekly', p: 'Hours, prices and openings change fast here. We re-verify the directory every single week.' },
   { icon: 'editors-pick', h: 'No pay-to-play', p: "Rankings can't be bought. Sponsored content is always labelled and never affects a rating." },
-  { icon: 'local-verified', h: 'Written by locals', p: 'Editors who live in Pattaya — fluent in the food, the seasons, and the scams to skip.' },
+  { icon: 'local-verified', h: 'Written by locals', p: 'Editors who live in Pattaya - fluent in the food, the seasons, and the scams to skip.' },
 ]
 
 const team = [
@@ -47,7 +47,7 @@ export default function AboutPage() {
           </nav>
           <div className="kicker" style={{ marginTop: 'var(--s3)' }}>Who we are</div>
           <h1>The honest local guide to Pattaya.</h1>
-          <p className="lead">Go To Pattaya is an independent directory built by people who actually live here. We verify every place on the ground, update weekly, and never accept money to rank a venue higher. Just the real Pattaya — clearly mapped.</p>
+          <p className="lead">Go To Pattaya is an independent directory built by people who actually live here. We verify every place on the ground, update weekly, and never accept money to rank a venue higher. Just the real Pattaya - clearly mapped.</p>
           <div className="row" style={{ marginTop: 'var(--s4)', flexWrap: 'wrap' }}>
             <Link href="/plan-my-trip" className="btn btn-primary">Plan my trip</Link>
             <Link href="/eat-and-drinks" className="btn btn-secondary">Browse all places</Link>
@@ -72,9 +72,9 @@ export default function AboutPage() {
           <div className="prose">
             <div className="kicker">Our story</div>
             <h2>Built in Pattaya, for everyone who visits it.</h2>
-            <p>Pattaya is one of the most visited cities in the world — and one of the hardest to navigate honestly. Most &quot;top 10&quot; lists are paid, outdated, or written by people who have never set foot here.</p>
+            <p>Pattaya is one of the most visited cities in the world - and one of the hardest to navigate honestly. Most &quot;top 10&quot; lists are paid, outdated, or written by people who have never set foot here.</p>
             <p>We started Go To Pattaya to fix that. Our editors live across Central Pattaya, Jomtien and Naklua. We eat at the restaurants, take the tours, and sit in the cafés before a single one of them goes on the site.</p>
-            <p>If a place slips — prices jump, quality drops, it closes — we update it. The guide you read today reflects the Pattaya of <strong>this week</strong>, not last year.</p>
+            <p>If a place slips - prices jump, quality drops, it closes - we update it. The guide you read today reflects the Pattaya of <strong>this week</strong>, not last year.</p>
             <Link href="/blog" className="viewall">Read our latest guides <Arrow /></Link>
           </div>
           <div className="media"><img src={`${ASSETS}/pattaya-city-beach-1.webp`} alt="Pattaya city beach and bay seen from above at daytime" loading="lazy" /></div>
@@ -136,7 +136,7 @@ export default function AboutPage() {
             <div className="kicker">Our promise</div>
             <h2>If it&apos;s on Go To Pattaya, we&apos;d send our own friends there.</h2>
             <ul>
-              <li>We label every partnership and affiliate link — clearly.</li>
+              <li>We label every partnership and affiliate link - clearly.</li>
               <li>We remove places that decline quietly, no exceptions.</li>
               <li>We answer corrections from readers and owners within 2 business days.</li>
               <li>We keep the core guide free, with no signup wall.</li>
@@ -152,7 +152,7 @@ export default function AboutPage() {
           <div className="cta-band">
             <div className="kicker">Ready when you are</div>
             <h2>Start planning your Pattaya trip</h2>
-            <p>Tell us your dates and interests and we&apos;ll build a day-by-day itinerary from verified places — free, no signup.</p>
+            <p>Tell us your dates and interests and we&apos;ll build a day-by-day itinerary from verified places - free, no signup.</p>
             <div className="row" style={{ justifyContent: 'center', flexWrap: 'wrap' }}>
               <Link href="/plan-my-trip" className="btn btn-primary">Plan my trip</Link>
               <Link href="/blog" className="btn btn-secondary">Read the blog</Link>

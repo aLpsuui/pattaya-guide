@@ -6,7 +6,7 @@ import { IconChevR, IconUp, IconDown } from '@/app/admin/_components/icons'
 // configured, swap the sample arrays below for live GA4 Data API + Search
 // Console responses (the markup/charts stay the same).
 
-export const metadata = { title: 'Analytics — Pattaya Guide Admin' }
+export const metadata = { title: 'Analytics - Pattaya Guide Admin' }
 
 // ---- demo dataset -----------------------------------------------------
 const DAYS = 28
@@ -77,7 +77,7 @@ export default function AnalyticsPage() {
       {/* demo banner */}
       <div className="an-banner">
         <div>
-          <b>Demo data — Google not connected yet</b>
+          <b>Demo data - Google not connected yet</b>
           <span>Bağlandığında bu kartlar canlı Google Analytics 4 + Search Console verisiyle dolacak. Şu an örnek verilerle gösteriliyor.</span>
         </div>
         <button className="btn btn--primary" disabled>Connect Google</button>

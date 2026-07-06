@@ -54,7 +54,7 @@ async function getBlogPosts(): Promise<BlogPost[]> {
 }
 
 export const metadata = {
-  title: 'Pattaya Blog — Honest Guides, Tips & Local Stories | Go To Pattaya',
+  title: 'Pattaya Blog - Honest Guides, Tips & Local Stories | Go To Pattaya',
   description: 'In-depth Pattaya guides written by locals: the best restaurants, things to do, wellness, nightlife, districts and practical travel tips.',
   alternates: { canonical: '/blog' },
 }
@@ -115,7 +115,7 @@ export default async function BlogPage({ searchParams }: { searchParams: Promise
           </nav>
           <div className="kicker" style={{marginTop:'var(--s3)'}}>The blog</div>
           <h1>Honest Pattaya guides &amp; stories</h1>
-          <p className="lead">Written and re-checked by editors who live here. No sponsored rankings, no recycled travel-blog fluff — just the real Pattaya, explained.</p>
+          <p className="lead">Written and re-checked by editors who live here. No sponsored rankings, no recycled travel-blog fluff - just the real Pattaya, explained.</p>
         </div>
       </section>
 
@@ -135,7 +135,7 @@ export default async function BlogPage({ searchParams }: { searchParams: Promise
         <div className="container">
           <div className="cards" id="postGrid" style={{gridTemplateColumns:'repeat(auto-fill,minmax(320px,1fr))'}}>
 
-            {/* FEATURED — first post */}
+            {/* FEATURED - first post */}
             {featured && (
               <article className="post post--feature" data-tags={categoryToFilter(featured.category)}>
                 <Link

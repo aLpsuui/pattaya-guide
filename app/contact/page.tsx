@@ -4,7 +4,7 @@ import ContactForm from './ContactForm'
 
 export const metadata = {
   title: 'Contact Us | Go To Pattaya',
-  description: 'Get in touch with the Go To Pattaya team — corrections, listings and partnerships.',
+  description: 'Get in touch with the Go To Pattaya team - corrections, listings and partnerships.',
   alternates: { canonical: '/contact' },
 }
 

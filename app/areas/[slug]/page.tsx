@@ -38,13 +38,13 @@ const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 const guides = guidesData as Record<string, { name: string; html: string }>
 
 const INFO: Record<string, { blurb: string; hero: string }> = {
-  'central-pattaya': { blurb: 'The all-in-one heart of the bay — Beach Road, malls, street food and nightlife, all walkable.', hero: `${ASSETS}/pattaya-city-beach-2.webp` },
-  'jomtien': { blurb: 'A long, calm beach with a residential feel — the family and long-stay pick.', hero: `${ASSETS}/best-island-pattaya.webp` },
-  'naklua': { blurb: 'The older, more local north end — fishing-village roots, seafood and a quieter pace.', hero: `${ASSETS}/pattaya-buddhist-pagoda-golden.webp` },
-  'pratumnak-hill': { blurb: 'The leafy headland between the two beaches — upscale, calm, with viewpoints and coves.', hero: `${ASSETS}/pattaya-city-beach-1.webp` },
-  'wong-amat': { blurb: 'The bay’s most refined beach — clean sand, boutique resorts and a peaceful escape.', hero: `${ASSETS}/pattaya-city-beach-1.webp` },
-  'walking-street': { blurb: 'The full-throttle nightlife strip and the sois around it — clubs, bars and late-night energy.', hero: `${ASSETS}/pattaya-night-clubs-1.webp` },
-  'islands': { blurb: 'Just offshore lie Koh Larn (Coral Island) and its neighbours — the clearest water and best sand.', hero: `${ASSETS}/Coral-Island-pattaya.webp` },
+  'central-pattaya': { blurb: 'The all-in-one heart of the bay - Beach Road, malls, street food and nightlife, all walkable.', hero: `${ASSETS}/pattaya-city-beach-2.webp` },
+  'jomtien': { blurb: 'A long, calm beach with a residential feel - the family and long-stay pick.', hero: `${ASSETS}/best-island-pattaya.webp` },
+  'naklua': { blurb: 'The older, more local north end - fishing-village roots, seafood and a quieter pace.', hero: `${ASSETS}/pattaya-buddhist-pagoda-golden.webp` },
+  'pratumnak-hill': { blurb: 'The leafy headland between the two beaches - upscale, calm, with viewpoints and coves.', hero: `${ASSETS}/pattaya-city-beach-1.webp` },
+  'wong-amat': { blurb: 'The bay’s most refined beach - clean sand, boutique resorts and a peaceful escape.', hero: `${ASSETS}/pattaya-city-beach-1.webp` },
+  'walking-street': { blurb: 'The full-throttle nightlife strip and the sois around it - clubs, bars and late-night energy.', hero: `${ASSETS}/pattaya-night-clubs-1.webp` },
+  'islands': { blurb: 'Just offshore lie Koh Larn (Coral Island) and its neighbours - the clearest water and best sand.', hero: `${ASSETS}/Coral-Island-pattaya.webp` },
 }
 
 interface AreaVenue {
@@ -76,7 +76,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!area) return { title: 'Not Found', robots: { index: false } }
   const info = INFO[slug]
   return {
-    title: `${area.name}, Pattaya — Area Guide | Go To Pattaya`,
+    title: `${area.name}, Pattaya - Area Guide | Go To Pattaya`,
     description: info?.blurb,
     alternates: { canonical: `/areas/${slug}` },
     openGraph: { title: `${area.name}, Pattaya`, description: info?.blurb, url: `${SITE_URL}/areas/${slug}`, images: info?.hero ? [{ url: info.hero }] : undefined },
@@ -124,7 +124,7 @@ export default async function AreaDetailPage({ params }: { params: Promise<{ slu
             <div className="titles">
               <p className="kicker">Where to go</p>
               <h2>Places in {area.name}</h2>
-              <p>Restaurants, bars, spas and things to do we cover in this part of the bay — sorted by rating.</p>
+              <p>Restaurants, bars, spas and things to do we cover in this part of the bay - sorted by rating.</p>
             </div>
             {venues.length > 0 && <span className="pill pill--navy">{venues.length} {venues.length === 1 ? 'place' : 'places'}</span>}
           </div>
@@ -142,7 +142,7 @@ export default async function AreaDetailPage({ params }: { params: Promise<{ slu
                     <h3>{v.name}</h3>
                     {v.address && <div className="eat-card__loc"><Icon name="pin" size={16} className="ic" />{v.address}</div>}
                     <div className="eat-card__foot">
-                      <span className="eat-card__rate"><span className="star">★</span> {v.rating?.toFixed(1) ?? '—'} {v.review_count != null && <span className="count">({v.review_count.toLocaleString()})</span>}</span>
+                      <span className="eat-card__rate"><span className="star">★</span> {v.rating?.toFixed(1) ?? '-'} {v.review_count != null && <span className="count">({v.review_count.toLocaleString()})</span>}</span>
                       <span className="eat-card__price">{v.price_range || ''}</span>
                     </div>
                   </div>
@@ -152,7 +152,7 @@ export default async function AreaDetailPage({ params }: { params: Promise<{ slu
           ) : (
             <p className="adx-empty">
               <Icon name="pin" size={32} style={{ color: 'var(--text-faint)' }} /><br />
-              We don’t have individual places listed for {area.name} yet — explore it on the <a href="/areas#areas-map">map</a>.
+              We don’t have individual places listed for {area.name} yet - explore it on the <a href="/areas#areas-map">map</a>.
             </p>
           )}
 

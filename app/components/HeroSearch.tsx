@@ -14,7 +14,7 @@ interface Sub { label: string; catSlug: string; catName: string }
 
 type Result = { kind: 'cat' | 'sub' | 'area' | 'ven'; name: string; meta: string; href: string }
 
-// Curated Pattaya areas/districts — all link to the Areas page.
+// Curated Pattaya areas/districts - all link to the Areas page.
 const AREAS = [
   'Central Pattaya', 'Jomtien', 'Naklua', 'Pratumnak Hill', 'Wong Amat',
   'Walking Street', 'Islands', 'Koh Larn', 'Soi Buakhao', 'Thappraya',

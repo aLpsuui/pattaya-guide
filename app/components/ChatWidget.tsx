@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { AREAS } from '@/lib/areas'
 
-// Floating concierge chat (bottom-right). No LLM yet — it answers from the
+// Floating concierge chat (bottom-right). No LLM yet - it answers from the
 // site's own data: a small index of categories + venues + areas is loaded on
 // first open, then each message is keyword-matched to relevant pages. The
 // reply bubbles carry real links into the site. Swap `answer()` for an API
@@ -16,7 +16,7 @@ interface Ven { slug: string; name: string; type: string | null }
 
 const INTENTS: { keys: string[]; text: string; links: Link[] }[] = [
   { keys: ['eat', 'food', 'restaurant', 'cafe', 'café', 'coffee', 'breakfast', 'brunch', 'dinner', 'lunch'],
-    text: 'Hungry? Here’s where Pattaya actually eats — filter by type, area and more.',
+    text: 'Hungry? Here’s where Pattaya actually eats - filter by type, area and more.',
     links: [{ label: 'Eat & Drinks', href: '/eat-and-drinks' }] },
   { keys: ['bar', 'club', 'night', 'party', 'nightlife', 'drink', 'walking street', 'go go'],
     text: 'For bars, clubs and rooftops, check the Nightlife hub.',
@@ -25,7 +25,7 @@ const INTENTS: { keys: string[]; text: string; links: Link[] }[] = [
     text: 'Spa, massage and wellness spots are here.',
     links: [{ label: 'Wellness & Beauty', href: '/wellness-and-beauty' }] },
   { keys: ['gym', 'fitness', 'yoga', 'muay', 'boxing', 'training', 'workout'],
-    text: 'Gyms, Muay Thai camps and yoga studios — all in one place.',
+    text: 'Gyms, Muay Thai camps and yoga studios - all in one place.',
     links: [{ label: 'Yoga & Fitness', href: '/yoga-and-fitness' }] },
   { keys: ['tour', 'island', 'beach', 'dive', 'snorkel', 'activity', 'thing', 'do', 'adventure', 'temple', 'rent'],
     text: 'Tours, islands, diving and adventures live under Things to Do.',
@@ -34,14 +34,14 @@ const INTENTS: { keys: string[]; text: string; links: Link[] }[] = [
     text: 'Want a ready-made plan? Start with Plan my trip.',
     links: [{ label: 'Plan my trip', href: '/plan-my-trip' }] },
   { keys: ['area', 'stay', 'where', 'district', 'neighbourhood', 'neighborhood', 'hotel'],
-    text: 'Pick the right area before you book — each guide covers the vibe, streets and who it suits.',
+    text: 'Pick the right area before you book - each guide covers the vibe, streets and who it suits.',
     links: [{ label: 'Areas', href: '/areas' }] },
   { keys: ['blog', 'guide', 'safe', 'weather', 'when', 'tip', 'scam', 'transport', 'bangkok'],
     text: 'Our guides cover safety, weather, getting around and more.',
     links: [{ label: 'Read the guides', href: '/blog' }] },
   { keys: ['map'], text: 'Explore everything on the live map.', links: [{ label: 'Open map', href: '/map' }] },
   { keys: ['contact', 'help', 'email', 'reach', 'support'],
-    text: 'Happy to help — drop us a message and a local editor will reply.',
+    text: 'Happy to help - drop us a message and a local editor will reply.',
     links: [{ label: 'Contact us', href: '/contact' }] },
 ]
 
@@ -54,7 +54,7 @@ const QUICK: Link[] = [
 
 const GREETING: Msg = {
   from: 'bot',
-  text: 'Hi! 👋 I’m the Go To Pattaya concierge. Ask me about places to eat, nightlife, areas, tours — or tap a shortcut below.',
+  text: 'Hi! 👋 I’m the Go To Pattaya concierge. Ask me about places to eat, nightlife, areas, tours - or tap a shortcut below.',
 }
 
 export default function ChatWidget() {
@@ -83,10 +83,10 @@ export default function ChatWidget() {
     const t = q.toLowerCase()
     // direct venue name match
     const venue = vens.find((v) => v.name.toLowerCase().includes(t) && t.length >= 3)
-    if (venue) return { from: 'bot', text: `Found it — here’s ${venue.name}.`, links: [{ label: venue.name, href: `/venues/${venue.slug}` }] }
+    if (venue) return { from: 'bot', text: `Found it - here’s ${venue.name}.`, links: [{ label: venue.name, href: `/venues/${venue.slug}` }] }
     // area match
     const area = AREAS.find((a) => t.includes(a.name.toLowerCase()) || t.includes(a.slug))
-    if (area) return { from: 'bot', text: `${area.name} — here’s the full area guide with where to eat, stay and what to see.`, links: [{ label: `${area.name} guide`, href: `/areas/${area.slug}` }] }
+    if (area) return { from: 'bot', text: `${area.name} - here’s the full area guide with where to eat, stay and what to see.`, links: [{ label: `${area.name} guide`, href: `/areas/${area.slug}` }] }
     // intent match
     for (const i of INTENTS) if (i.keys.some((k) => t.includes(k))) return { from: 'bot', text: i.text, links: i.links }
     // fallback

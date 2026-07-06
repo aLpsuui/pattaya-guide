@@ -118,7 +118,7 @@ export default function BlogForm({ post }: { post?: Post }) {
                 </div>
                 <div className="field col-2">
                   <div className="field-row"><label>Meta description</label><Counter n={meta.length} max={155} warn={140} /></div>
-                  <textarea className="textarea" name="meta_description" value={meta} onChange={(e) => setMeta(e.target.value)} placeholder="Where to get the best massage in Pattaya — 12 trusted spas by area, prices and what to book." />
+                  <textarea className="textarea" name="meta_description" value={meta} onChange={(e) => setMeta(e.target.value)} placeholder="Where to get the best massage in Pattaya - 12 trusted spas by area, prices and what to book." />
                 </div>
                 <div className="field">
                   <label>Focus keyword</label>

@@ -6,7 +6,7 @@ type State = { error: string; ok?: string }
 
 export interface MediaItem { bucket: string; name: string; url: string }
 
-// List every file across the media buckets (paginated) — used by the media
+// List every file across the media buckets (paginated) - used by the media
 // picker so cover images can be chosen from the existing library.
 export async function listMedia(): Promise<MediaItem[]> {
   const buckets = ['blog', 'assets', 'venues']

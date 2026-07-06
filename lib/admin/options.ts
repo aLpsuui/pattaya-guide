@@ -5,9 +5,9 @@ export const AREAS = [
 ]
 
 export const PRICE_RANGES = [
-  { value: '฿', label: '฿ — Budget' },
-  { value: '฿฿', label: '฿฿ — Mid-range' },
-  { value: '฿฿฿', label: '฿฿฿ — Premium' },
+  { value: '฿', label: '฿ - Budget' },
+  { value: '฿฿', label: '฿฿ - Mid-range' },
+  { value: '฿฿฿', label: '฿฿฿ - Premium' },
 ]
 
 export const STATUSES = ['draft', 'pending', 'published'] as const

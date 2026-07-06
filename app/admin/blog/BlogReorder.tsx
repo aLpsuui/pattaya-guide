@@ -41,7 +41,7 @@ export default function BlogReorder({ posts, deleteAction }: { posts: BlogRow[];
   return (
     <section className="panel">
       <div className="reorder-hint">
-        <IconGrip /> Drag a row to reorder — top is shown first on the blog. {saving && <em>Saving…</em>}
+        <IconGrip /> Drag a row to reorder - top is shown first on the blog. {saving && <em>Saving…</em>}
       </div>
       <div className="table-scroll">
         <table className="data">
@@ -72,8 +72,8 @@ export default function BlogReorder({ posts, deleteAction }: { posts: BlogRow[];
                     </div>
                   </Link>
                 </td>
-                <td className="hide-xs"><span className="pill pill--cat">{r.category || '—'}</span></td>
-                <td className="hide-xs muted-cell">{r.author || '—'}</td>
+                <td className="hide-xs"><span className="pill pill--cat">{r.category || '-'}</span></td>
+                <td className="hide-xs muted-cell">{r.author || '-'}</td>
                 <td><span className={`pill ${r.stPill}`}><span className="pdot" />{r.st.charAt(0).toUpperCase() + r.st.slice(1)}</span></td>
                 <td className="hide-xs"><span className={`score-badge ${r.band}`}>{r.sc}<span className="bar"><i style={{ width: `${r.sc}%` }} /></span></span></td>
                 <td>

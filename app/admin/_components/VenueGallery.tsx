@@ -52,7 +52,7 @@ export default function VenueGallery({ venueId, slug, photos }: { venueId: strin
         )}
         <label className="dropzone">
           <div className="dz-ic"><IconUpload /></div>
-          <b>{pending ? 'Uploading…' : <>Add photos — <u>browse</u></>}</b>
+          <b>{pending ? 'Uploading…' : <>Add photos - <u>browse</u></>}</b>
           <span>Select one or more · uploads to the venues bucket</span>
           <input ref={fileRef} type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={onUpload} disabled={pending} />
         </label>

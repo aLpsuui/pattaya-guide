@@ -22,7 +22,7 @@ export async function submitContact(_prev: ContactState, formData: FormData): Pr
   const { error } = await db
     .from('contact_messages')
     .insert({ name, email, subject: subject || null, message })
-  if (error) return { ok: false, error: 'Something went wrong sending your message — please email us directly instead.' }
+  if (error) return { ok: false, error: 'Something went wrong sending your message - please email us directly instead.' }
 
   return { ok: true }
 }

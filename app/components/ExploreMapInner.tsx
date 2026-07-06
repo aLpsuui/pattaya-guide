@@ -16,7 +16,7 @@ interface VenuePin {
 
 type Filter = 'all' | 'areas' | string  // 'all' | 'areas' | <category slug>
 
-// Per-area colours — match the /areas page legend dots.
+// Per-area colours - match the /areas page legend dots.
 const AREA_COLORS: Record<string, string> = {
   'Central Pattaya': '#0178B4',
   'Jomtien': '#1ba672',
@@ -28,7 +28,7 @@ const AREA_COLORS: Record<string, string> = {
 }
 const areaColor = (name: string) => AREA_COLORS[name] ?? '#e0911a'
 
-// Per-category colours — each category's venues get a distinct marker colour.
+// Per-category colours - each category's venues get a distinct marker colour.
 const CATEGORY_COLORS: Record<string, string> = {
   'eat-and-drinks': '#e8632b',
   'things-to-do': '#0178b4',

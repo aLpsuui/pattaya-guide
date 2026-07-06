@@ -3,8 +3,8 @@ import { useEffect } from 'react'
 
 // Client interactivity for the left-rail category directory.
 // Operates on the server-rendered DOM (data-cat / data-area / data-name …).
-//   · primary TYPE  — single select (radio rail)
-//   · AREA          — multi select (checkboxes)
+//   · primary TYPE  - single select (radio rail)
+//   · AREA          - multi select (checkboxes)
 //   · search · sort · active chips · count · load-more · mobile drawer
 export default function EatFilters() {
   useEffect(() => {

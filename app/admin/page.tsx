@@ -20,7 +20,7 @@ async function countWhere(table: string, col: string, val: unknown) {
   return count || 0
 }
 
-// Decorative sparkline (no historical series yet — purely visual).
+// Decorative sparkline (no historical series yet - purely visual).
 function Spark({ id, color, d }: { id: string; color: string; d: string }) {
   return (
     <svg className="kpi-spark" viewBox="0 0 120 42" preserveAspectRatio="none" aria-hidden="true">
@@ -111,8 +111,8 @@ export default async function Dashboard() {
               </svg>
             </div>
             <div className="chart-legend">
-              <span className="lg-item"><span className="sw" style={{ background: '#0178b4' }} />Sessions <b>—</b></span>
-              <span className="lg-item"><span className="sw" style={{ background: '#2fbddc' }} />Page views <b>—</b></span>
+              <span className="lg-item"><span className="sw" style={{ background: '#0178b4' }} />Sessions <b>-</b></span>
+              <span className="lg-item"><span className="sw" style={{ background: '#2fbddc' }} />Page views <b>-</b></span>
               <span className="lg-item" style={{ marginLeft: 'auto' }}><span className="sw" style={{ background: '#1ba672' }} />Live data after launch</span>
             </div>
           </div>
@@ -155,11 +155,11 @@ export default async function Dashboard() {
                   <td>
                     <div className="cell-place">
                       <div className="thumb" style={{ background: v.image_url ? `center/cover url(${v.image_url})` : 'linear-gradient(135deg,#2fbddc,#0178b4)' }} />
-                      <div className="info"><b>{v.name}</b><span><IconPin />{v.neighborhood || '—'}</span></div>
+                      <div className="info"><b>{v.name}</b><span><IconPin />{v.neighborhood || '-'}</span></div>
                     </div>
                   </td>
-                  <td className="hide-xs">{v.categories?.name_en ? <span className="pill pill--cat">{v.categories.name_en}</span> : '—'}</td>
-                  <td>{v.rating != null ? <span className="rate-cell"><IconStar />{v.rating.toFixed(1)}{v.review_count != null && <small>({v.review_count.toLocaleString()})</small>}</span> : <span className="muted-cell">—</span>}</td>
+                  <td className="hide-xs">{v.categories?.name_en ? <span className="pill pill--cat">{v.categories.name_en}</span> : '-'}</td>
+                  <td>{v.rating != null ? <span className="rate-cell"><IconStar />{v.rating.toFixed(1)}{v.review_count != null && <small>({v.review_count.toLocaleString()})</small>}</span> : <span className="muted-cell">-</span>}</td>
                   <td>{v.is_active ? <span className="pill pill--pub"><span className="pdot" />Published</span> : <span className="pill pill--draft"><span className="pdot" />Draft</span>}</td>
                   <td>
                     <div className="row-act">

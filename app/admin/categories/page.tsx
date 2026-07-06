@@ -40,7 +40,7 @@ export default async function CategoriesPage() {
         <p className="cmf-hint">Slug, URL'de kullanılır (ör. <code>/eat-and-drinks</code>). Boş bırakırsan addan otomatik üretilir.</p>
       </section>
 
-      {/* list — editable table */}
+      {/* list - editable table */}
       <section className="panel" style={{ overflowX: 'auto' }}>
         <table className="data cmf-table">
           <thead>
@@ -55,11 +55,11 @@ export default async function CategoriesPage() {
                   <td><input className="cmf-cell" name="name_en" defaultValue={c.name_en} form={fid} required aria-label="Name" /></td>
                   <td><input className="cmf-cell cmf-cell--mono" name="slug" defaultValue={c.slug} form={fid} aria-label="Slug" /></td>
                   <td className="cmf-num">{n}</td>
-                  <td><input className="cmf-cell cmf-cell--sm" name="icon" defaultValue={c.icon || ''} form={fid} placeholder="—" aria-label="Icon" /></td>
+                  <td><input className="cmf-cell cmf-cell--sm" name="icon" defaultValue={c.icon || ''} form={fid} placeholder="-" aria-label="Icon" /></td>
                   <td className="row-act" style={{ whiteSpace: 'nowrap' }}>
                     <button type="submit" form={fid} className="act-btn" title="Save changes" aria-label="Save"><IconCheck /></button>
                     {n > 0 ? (
-                      <button className="act-btn" disabled title={`${n} venue bağlı — silmeden önce taşı/kaldır`} style={{ opacity: 0.4, cursor: 'not-allowed' }}><IconTrash /></button>
+                      <button className="act-btn" disabled title={`${n} venue bağlı - silmeden önce taşı/kaldır`} style={{ opacity: 0.4, cursor: 'not-allowed' }}><IconTrash /></button>
                     ) : (
                       <RowDelete action={deleteCategory} id={c.id} name={c.name_en} />
                     )}
@@ -69,7 +69,7 @@ export default async function CategoriesPage() {
             })}
           </tbody>
         </table>
-        {/* hidden update forms — cells reference these via the form="" attribute */}
+        {/* hidden update forms - cells reference these via the form="" attribute */}
         {categories.map((c) => (
           <form key={'f' + c.id} id={`catf-${c.id}`} action={updateCategory} hidden><input type="hidden" name="id" value={c.id} /></form>
         ))}

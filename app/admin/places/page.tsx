@@ -112,13 +112,13 @@ export default async function PlacesPage({ searchParams }: { searchParams: Promi
                       <Link href={`/admin/places/${r.id}`}>
                         <div className="cell-place">
                           <div className="thumb" style={r.image_url ? { backgroundImage: `url(${r.image_url})` } : { background: 'linear-gradient(135deg,#2fbddc,#0178b4)' }} />
-                          <div className="info"><b className="list-link">{r.name}</b><span><IconPin />{r.neighborhood || '—'}</span></div>
+                          <div className="info"><b className="list-link">{r.name}</b><span><IconPin />{r.neighborhood || '-'}</span></div>
                         </div>
                       </Link>
                     </td>
-                    <td className="hide-xs"><span className="pill pill--cat">{r.categories?.name_en || '—'}</span></td>
-                    <td className="hide-xs muted-cell">{r.neighborhood || '—'}</td>
-                    <td>{r.rating != null ? <span className="rate-cell"><IconStar />{r.rating.toFixed(1)}<small>({(r.review_count || 0).toLocaleString()})</small></span> : <span className="muted-cell">—</span>}</td>
+                    <td className="hide-xs"><span className="pill pill--cat">{r.categories?.name_en || '-'}</span></td>
+                    <td className="hide-xs muted-cell">{r.neighborhood || '-'}</td>
+                    <td>{r.rating != null ? <span className="rate-cell"><IconStar />{r.rating.toFixed(1)}<small>({(r.review_count || 0).toLocaleString()})</small></span> : <span className="muted-cell">-</span>}</td>
                     <td><span className={`pill ${statusPill[st] || 'pill--draft'}`}><span className="pdot" />{st.charAt(0).toUpperCase() + st.slice(1)}</span></td>
                     <td className="hide-xs"><span className={`score-badge ${band}`}>{sc}<span className="bar"><i style={{ width: `${sc}%` }} /></span></span></td>
                     <td>

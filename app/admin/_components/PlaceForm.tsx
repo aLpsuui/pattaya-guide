@@ -38,7 +38,7 @@ export default function PlaceForm({ categories, place, photos = [] }: { categori
   const score = scoreOf(checks)
   const tone = score >= 80 ? 'var(--green-500)' : score >= 50 ? 'var(--amber-500)' : 'var(--red-500)'
 
-  const serpTitle = seoTitle || name || 'Venue name — Pattaya'
+  const serpTitle = seoTitle || name || 'Venue name - Pattaya'
   const serpDesc = meta || 'Short summary of this venue shown in Google search results.'
   const serpUrl = `pattayaguide.com › places › ${slug || '…'}`
 
@@ -73,14 +73,14 @@ export default function PlaceForm({ categories, place, photos = [] }: { categori
                 <div className="field">
                   <label>Category</label>
                   <select className="select" name="category_id" defaultValue={place?.category_id ?? ''}>
-                    <option value="">— Select —</option>
+                    <option value="">- Select -</option>
                     {categories.map((c) => <option key={c.id} value={c.id}>{c.name_en}</option>)}
                   </select>
                 </div>
                 <div className="field">
                   <label>Area / district</label>
                   <select className="select" name="neighborhood" defaultValue={place?.neighborhood ?? ''}>
-                    <option value="">— Select —</option>
+                    <option value="">- Select -</option>
                     {AREAS.map((a) => <option key={a} value={a}>{a}</option>)}
                     {place?.neighborhood && !AREAS.includes(place.neighborhood) && <option value={place.neighborhood}>{place.neighborhood}</option>}
                   </select>
@@ -97,7 +97,7 @@ export default function PlaceForm({ categories, place, photos = [] }: { categori
                 <div className="field">
                   <label>Price range</label>
                   <select className="select" name="price_range" defaultValue={place?.price_range ?? ''}>
-                    <option value="">— Select —</option>
+                    <option value="">- Select -</option>
                     {PRICE_RANGES.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
                   </select>
                 </div>
@@ -141,7 +141,7 @@ export default function PlaceForm({ categories, place, photos = [] }: { categori
                 </div>
                 <div className="field col-2">
                   <div className="field-row"><label>SEO title</label><Counter n={seoTitle.length} max={60} warn={50} /></div>
-                  <input className="input" name="seo_title" value={seoTitle} onChange={(e) => setSeoTitle(e.target.value)} placeholder="Health Land North Pattaya — Spa &amp; Massage" />
+                  <input className="input" name="seo_title" value={seoTitle} onChange={(e) => setSeoTitle(e.target.value)} placeholder="Health Land North Pattaya - Spa &amp; Massage" />
                   <span className="hint">Aim for under 60 characters.</span>
                 </div>
                 <div className="field col-2">
