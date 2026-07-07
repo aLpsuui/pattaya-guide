@@ -255,7 +255,11 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
           ? { '@type': 'GeoCoordinates', latitude: v.latitude, longitude: v.longitude }
           : undefined,
         sameAs: sameAs.length ? sameAs : undefined,
-        aggregateRating: v.rating && v.review_count
+        // M-3: only surface an aggregateRating when the sample is meaningful
+        // (>= 5 ratings). Suppresses thin/one-off counts that read as spammy
+        // structured markup and keeps rich-result stars only where they're
+        // genuinely backed.
+        aggregateRating: v.rating && v.review_count && v.review_count >= 5
           ? { '@type': 'AggregateRating', ratingValue: v.rating, reviewCount: v.review_count, bestRating: 5, worstRating: 1 }
           : undefined,
       },
@@ -529,7 +533,7 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
                 <div className="row"><Icon id="pg-globe" size={20} /><span><a href={v.website} target="_blank" rel="noopener">{v.website_label || 'Website'}</a></span></div>
               )}
               {v.locally_verified && (
-                <div className="row"><Icon id="pg-local-verified" size={20} /><span>Locally verified by Pattaya Guide</span></div>
+                <div className="row"><Icon id="pg-local-verified" size={20} /><span>Locally verified by Go To Pattaya</span></div>
               )}
             </div>
 

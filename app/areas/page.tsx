@@ -698,7 +698,7 @@ const HTML = String.raw`
         </div>
         <p class="ar-tip__local">
           <svg class="pg-icon is-20 is-ocean" aria-hidden="true"><use href="#pg-local-verified"></use></svg>
-          Locally verified · checked on the ground by the Pattaya Guide team
+          Locally verified · checked on the ground by the Go To Pattaya team
         </p>
       </div>
     </div>

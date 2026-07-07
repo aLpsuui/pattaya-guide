@@ -2,6 +2,16 @@
    design-system's components.css — which isn't loaded on the live site.
    Re-implemented here, scoped to .det-area, so nothing leaks elsewhere. */
 
+/* R-1 (regression): 6 of 7 area pages showed mobile horizontal overflow
+   (+35 to +58px at 390px), the widest offender being the hero darkening
+   layer. The hero already clips internally, so the escape happens at the
+   page root — guard it there. `clip` (not `hidden`) contains the overflow
+   without creating a scroll container or breaking sticky/fixed descendants.
+   Acceptance: documentElement.scrollWidth === clientWidth at 390/430px. */
+.adx { overflow-x: clip; }
+.det-area .da-hero,
+.det-area .da-hero__veil { max-width: 100%; }
+
 /* Quick-numbers stats: value <b> + sub <span> were inline (cramped). Stack them. */
 .det-area .glance-grid .stat { display: flex; flex-direction: column; gap: 4px; }
 .det-area .glance-grid .stat > b { font-size: var(--text-h4); line-height: 1.15; }

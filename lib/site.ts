@@ -13,3 +13,7 @@ export const SITE_DESCRIPTION =
 // gotopattaya.com while still keeping the site out of search results. Flip on
 // launch day by setting NEXT_PUBLIC_INDEXABLE=true in the Vercel project.
 export const INDEXABLE = process.env.NEXT_PUBLIC_INDEXABLE === 'true'
+// GA4 Measurement ID (G-XXXXXXXXXX). Set NEXT_PUBLIC_GA_ID in Vercel (Production)
+// to switch analytics on. Empty => the gtag scripts are never rendered, so
+// preview/dev traffic and pre-launch builds stay out of the property.
+export const GA_ID = process.env.NEXT_PUBLIC_GA_ID || ''

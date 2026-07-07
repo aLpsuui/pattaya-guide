@@ -339,7 +339,7 @@ const HTML = String.raw`
           <div class="row"><svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-globe"></use></svg>
             <span><a href="https://www.siladonspas.com/pattaya" target="_blank" rel="noopener">siladonspas.com/pattaya</a></span></div>
           <div class="row"><svg class="pg-icon is-20" aria-hidden="true"><use href="#pg-local-verified"></use></svg>
-            <span>Locally verified by Pattaya Guide</span></div>
+            <span>Locally verified by Go To Pattaya</span></div>
         </div>
 
         <div class="det-yf__card-actions">

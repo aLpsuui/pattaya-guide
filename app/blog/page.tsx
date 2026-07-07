@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { supabase } from '@/lib/supabase'
 import { unstable_cache } from 'next/cache'
 import Link from 'next/link'
@@ -63,12 +64,6 @@ const getBlogPosts = unstable_cache(
 
 const listTitle = 'Pattaya Blog - Honest Guides, Tips & Local Stories | Go To Pattaya'
 const listDescription = 'In-depth Pattaya guides written by locals: the best restaurants, things to do, wellness, nightlife, districts and practical travel tips.'
-export const metadata = {
-  title: listTitle,
-  description: listDescription,
-  alternates: { canonical: '/blog' },
-  openGraph: { title: listTitle, description: listDescription },
-}
 
 const PER_PAGE = 20
 const TOPICS = [
@@ -80,6 +75,34 @@ const TOPICS = [
   { key: 'areas', label: 'Areas' },
   { key: 'travel', label: 'Travel Tips' },
 ]
+
+// Self-canonical for paginated / filtered listings: /blog?page=2 (and
+// ?topic=…) must point to itself, not collapse to page 1 - otherwise Google
+// treats pages 2-5 as duplicates of page 1 and under-crawls their links.
+export async function generateMetadata(
+  { searchParams }: { searchParams: Promise<{ page?: string; topic?: string }> },
+): Promise<Metadata> {
+  const sp = await searchParams
+  const topic = TOPICS.some((t) => t.key === sp.topic) ? sp.topic! : 'all'
+  const all = await getBlogPosts()
+  const filtered = topic === 'all' ? all : all.filter((p) => categoryToFilter(p.category) === topic)
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE))
+  const page = Math.min(Math.max(1, parseInt(sp.page || '1', 10) || 1), totalPages)
+
+  const params = new URLSearchParams()
+  if (topic !== 'all') params.set('topic', topic)
+  if (page > 1) params.set('page', String(page))
+  const qs = params.toString()
+  const canonical = qs ? `/blog?${qs}` : '/blog'
+
+  const title = page > 1 ? `${listTitle} - Page ${page}` : listTitle
+  return {
+    title,
+    description: listDescription,
+    alternates: { canonical },
+    openGraph: { title, description: listDescription },
+  }
+}
 
 export default async function BlogPage({ searchParams }: { searchParams: Promise<{ page?: string; topic?: string }> }) {
   const sp = await searchParams

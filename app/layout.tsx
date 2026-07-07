@@ -4,7 +4,8 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import MobileTabBar from './components/MobileTabBar'
 import RootChrome from './components/RootChrome'
-import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, INDEXABLE } from '@/lib/site'
+import Analytics from './components/Analytics'
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, INDEXABLE, GA_ID } from '@/lib/site'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -86,6 +87,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <RootChrome navbar={<Navbar />} footer={<><Footer /><MobileTabBar /></>}>
           {children}
         </RootChrome>
+        {GA_ID && <Analytics gaId={GA_ID} />}
       </body>
     </html>
   )
