@@ -9,8 +9,8 @@ const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 
 export type MegaVenue = {
   slug: string; name: string; image_url: string | null; rating: number | null
-  review_count: number | null; price_from: number | null; neighborhood: string | null
-  categories: { slug: string; name_en: string } | null; href: string
+  price_from: number | null; neighborhood: string | null
+  categories: { name_en: string } | null; href: string
 }
 export type MegaGuide = { slug: string; title: string; description: string | null; read_time: number | null; author: string | null; hero_image: string | null }
 export type MegaEntry = { venues: MegaVenue[]; guide: MegaGuide | null }
@@ -31,7 +31,7 @@ export const getMegaData = unstable_cache(
       const [{ data: venues }, { data: guide }] = await Promise.all([
         supabase
           .from('venues')
-          .select('slug,name,image_url,rating,review_count,price_from,neighborhood,categories!inner(slug,name_en)')
+          .select('slug,name,image_url,rating,price_from,neighborhood,categories!inner(name_en)')
           .eq('categories.slug', n.slug)
           .eq('is_active', true)
           .not('image_url', 'is', null)
@@ -51,14 +51,14 @@ export const getMegaData = unstable_cache(
       const list: MegaVenue[] = n.slug === 'areas'
         ? AREAS.filter((a) => a.slug !== 'islands').slice(0, 6).map((a) => ({
             slug: a.slug, name: a.name, image_url: `${ASSETS}/${a.image}`, rating: null,
-            review_count: null, price_from: null, neighborhood: a.vibes.join(' · '),
-            categories: { slug: 'areas', name_en: 'Area' }, href: `/areas/${a.slug}`,
+            price_from: null, neighborhood: a.vibes.join(' · '),
+            categories: { name_en: 'Area' }, href: `/areas/${a.slug}`,
           }))
         : ((venues || []) as unknown as Omit<MegaVenue, 'href'>[]).map((v) => ({ ...v, href: `/venues/${v.slug}` }))
       out[n.slug] = { venues: list, guide: (guide || null) as MegaGuide | null }
     }
     return out
   },
-  ['mega-nav-v3'],
+  ['mega-nav-v4'],
   { revalidate: 600, tags: ['mega-nav'] },
 )
