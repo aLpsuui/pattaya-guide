@@ -3,11 +3,14 @@ import Icon from '@/app/components/Icon'
 
 const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 
+const title = 'About Go To Pattaya - The Honest Local Guide to Pattaya, Thailand'
+const description =
+  'Who we are and how we work: an independent, locally-run directory of 600+ verified Pattaya places - no paid placements, updated weekly by editors who live here.'
 export const metadata = {
-  title: 'About Go To Pattaya - The Honest Local Guide to Pattaya, Thailand',
-  description:
-    'Who we are and how we work: an independent, locally-run directory of 600+ verified Pattaya places - no paid placements, updated weekly by editors who live here.',
+  title,
+  description,
   alternates: { canonical: '/about' },
+  openGraph: { title, description },
 }
 
 const stats = [

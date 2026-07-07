@@ -2,11 +2,14 @@ import CategoryListing, { type CatConfig } from '@/app/components/CategoryListin
 
 export const revalidate = 600
 
+const title = 'Spa, Massage & Wellness in Pattaya | Go To Pattaya'
+const description =
+  'A locally verified guide to wellness in Pattaya - Thai and oil massage, day spas, luxury spa resorts, beauty and nail salons. Real prices, hours and directions for every venue.'
 export const metadata = {
-  title: 'Spa, Massage & Wellness in Pattaya | Go To Pattaya',
-  description:
-    'A locally verified guide to wellness in Pattaya - Thai and oil massage, day spas, luxury spa resorts, beauty and nail salons. Real prices, hours and directions for every venue.',
+  title,
+  description,
   alternates: { canonical: '/wellness-and-beauty' },
+  openGraph: { title, description },
 }
 
 const cfg: CatConfig = {

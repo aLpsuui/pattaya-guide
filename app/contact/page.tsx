@@ -2,10 +2,13 @@ import Link from 'next/link'
 import './contact.css'
 import ContactForm from './ContactForm'
 
+const title = 'Contact Us | Go To Pattaya'
+const description = 'Get in touch with the Go To Pattaya team - corrections, listings and partnerships.'
 export const metadata = {
-  title: 'Contact Us | Go To Pattaya',
-  description: 'Get in touch with the Go To Pattaya team - corrections, listings and partnerships.',
+  title,
+  description,
   alternates: { canonical: '/contact' },
+  openGraph: { title, description },
 }
 
 export default function ContactPage() {

@@ -2,11 +2,14 @@ import Link from 'next/link'
 import Icon from '@/app/components/Icon'
 import PlanForm from './PlanForm'
 
+const title = 'Plan My Trip to Pattaya - Build a Custom Itinerary | Go To Pattaya'
+const description =
+  'Tell us your dates, interests and pace and get a custom Pattaya itinerary built from 600+ verified places - day by day, free and with no signup.'
 export const metadata = {
-  title: 'Plan My Trip to Pattaya - Build a Custom Itinerary | Go To Pattaya',
-  description:
-    'Tell us your dates, interests and pace and get a custom Pattaya itinerary built from 600+ verified places - day by day, free and with no signup.',
+  title,
+  description,
   alternates: { canonical: '/plan-my-trip' },
+  openGraph: { title, description },
 }
 
 const perks = [

@@ -2,11 +2,14 @@ import CategoryListing, { type CatConfig } from '@/app/components/CategoryListin
 
 export const revalidate = 600
 
+const title = 'Gyms, Muay Thai & Yoga in Pattaya | Go To Pattaya'
+const description =
+  'A locally verified guide to training in Pattaya - Muay Thai camps, gyms, CrossFit, yoga and pilates studios, with prices, hours and directions.'
 export const metadata = {
-  title: 'Gyms, Muay Thai & Yoga in Pattaya | Go To Pattaya',
-  description:
-    'A locally verified guide to training in Pattaya - Muay Thai camps, gyms, CrossFit, yoga and pilates studios, with prices, hours and directions.',
+  title,
+  description,
   alternates: { canonical: '/yoga-and-fitness' },
+  openGraph: { title, description },
 }
 
 const cfg: CatConfig = {

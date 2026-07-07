@@ -1,9 +1,12 @@
 import Link from 'next/link'
 
+const title = 'Terms of Use | Go To Pattaya'
+const description = 'The terms of use for Go To Pattaya - the rules for using our Pattaya travel guide, directory and content, plus liability, links and contact details.'
 export const metadata = {
-  title: 'Terms of Use | Go To Pattaya',
-  description: 'The terms of use for Go To Pattaya - the rules for using our Pattaya travel guide, directory and content, plus liability, links and contact details.',
+  title,
+  description,
   alternates: { canonical: '/terms' },
+  openGraph: { title, description },
 }
 
 export default function TermsPage() {

@@ -61,10 +61,13 @@ const getBlogPosts = unstable_cache(
   { revalidate: 60, tags: ['blog'] },
 )
 
+const listTitle = 'Pattaya Blog - Honest Guides, Tips & Local Stories | Go To Pattaya'
+const listDescription = 'In-depth Pattaya guides written by locals: the best restaurants, things to do, wellness, nightlife, districts and practical travel tips.'
 export const metadata = {
-  title: 'Pattaya Blog - Honest Guides, Tips & Local Stories | Go To Pattaya',
-  description: 'In-depth Pattaya guides written by locals: the best restaurants, things to do, wellness, nightlife, districts and practical travel tips.',
+  title: listTitle,
+  description: listDescription,
   alternates: { canonical: '/blog' },
+  openGraph: { title: listTitle, description: listDescription },
 }
 
 const PER_PAGE = 20

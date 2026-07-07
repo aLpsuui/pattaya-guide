@@ -1,9 +1,12 @@
 import Link from 'next/link'
 
+const title = 'Privacy Policy | Go To Pattaya'
+const description = 'Our privacy policy: what data Go To Pattaya collects when you use our Pattaya guide, how we use and protect it, cookies, and your rights and choices.'
 export const metadata = {
-  title: 'Privacy Policy | Go To Pattaya',
-  description: 'Our privacy policy: what data Go To Pattaya collects when you use our Pattaya guide, how we use and protect it, cookies, and your rights and choices.',
+  title,
+  description,
   alternates: { canonical: '/privacy' },
+  openGraph: { title, description },
 }
 
 export default function PrivacyPage() {

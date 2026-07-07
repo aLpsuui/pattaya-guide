@@ -1,9 +1,12 @@
 import ExploreMap from '@/app/components/ExploreMap'
 
+const title = 'Pattaya Map - Every venue & area on one map | Go To Pattaya'
+const description = 'Explore Pattaya on an interactive map: spas, venues and districts. Filter by areas or places and open any spot.'
 export const metadata = {
-  title: 'Pattaya Map - Every venue & area on one map | Go To Pattaya',
-  description: 'Explore Pattaya on an interactive map: spas, venues and districts. Filter by areas or places and open any spot.',
+  title,
+  description,
   alternates: { canonical: '/map' },
+  openGraph: { title, description },
 }
 
 export default function MapPage() {

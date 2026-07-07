@@ -2,11 +2,14 @@ import CategoryListing, { type CatConfig } from '@/app/components/CategoryListin
 
 export const revalidate = 600
 
+const title = 'Things to Do in Pattaya - Tours, Islands, Diving & Adventures | Go To Pattaya'
+const description =
+  'A locally verified guide to the best things to do in Pattaya - island tours and boat trips, diving and snorkelling, ATV and adrenaline activities, plus bike, car and jet-ski rentals.'
 export const metadata = {
-  title: 'Things to Do in Pattaya - Tours, Islands, Diving & Adventures | Go To Pattaya',
-  description:
-    'A locally verified guide to the best things to do in Pattaya - island tours and boat trips, diving and snorkelling, ATV and adrenaline activities, plus bike, car and jet-ski rentals.',
+  title,
+  description,
   alternates: { canonical: '/things-to-do' },
+  openGraph: { title, description },
 }
 
 // Note: the DB category slug is the legacy "thinks-to-do" (the public URL is /things-to-do).

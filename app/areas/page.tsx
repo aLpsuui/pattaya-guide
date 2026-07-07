@@ -2,10 +2,13 @@ import './areas.css'
 import BlogScript from '@/app/components/BlogScript'
 import ExploreMap from '@/app/components/ExploreMap'
 
+const title = 'Areas of Pattaya - Find Your Neighborhood | Go To Pattaya'
+const description = "An orientation guide to Pattaya's neighborhoods - Central, Jomtien, Naklua, Pratumnak, Wong Amat and the islands. Compare vibes to decide where to stay."
 export const metadata = {
-  title: 'Areas of Pattaya - Find Your Neighborhood | Go To Pattaya',
-  description: "An orientation guide to Pattaya's neighborhoods - Central, Jomtien, Naklua, Pratumnak, Wong Amat and the islands. Compare vibes to decide where to stay.",
+  title,
+  description,
   alternates: { canonical: '/areas' },
+  openGraph: { title, description },
 }
 
 const HTML = String.raw`
