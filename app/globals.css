@@ -1530,3 +1530,14 @@ a.eat-card:hover h3{color:var(--ocean)}
 .cat-index li{break-inside:avoid;padding:6px 0;border-bottom:1px solid var(--border-soft,rgba(0,0,0,.07))}
 .cat-index a{display:block;color:var(--text-body,#33475b);font-size:14px;text-decoration:none;line-height:1.35}
 .cat-index a:hover{color:var(--ocean,#0178b4);text-decoration:underline}
+
+/* Site search page (/search) */
+.search-form{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line,#e4ebf1);border-radius:14px;padding:6px 6px 6px 16px;max-width:560px;margin-top:20px;box-shadow:0 6px 20px rgba(3,30,60,.06)}
+.search-form svg{color:var(--text-faint,#8598ab);flex:none}
+.search-form input{flex:1;min-width:0;border:none;outline:none;background:none;font-size:16px;color:var(--ink-700,#22303c);padding:9px 0}
+.search-form button{flex:none;background:var(--grad-brand,linear-gradient(135deg,#034487,#0178b4));color:#fff;border:none;border-radius:10px;padding:11px 20px;font-weight:700;font-size:14px;cursor:pointer}
+.search-list{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:10px;max-width:760px}
+.search-list a{display:block;background:#fff;border:1px solid var(--line,#e7edf2);border-radius:12px;padding:13px 16px;text-decoration:none;transition:border-color .15s,transform .15s}
+.search-list a:hover{border-color:var(--ocean,#0178b4);transform:translateY(-1px)}
+.search-list b{display:block;color:#0a2540;font-size:15px}
+.search-list span{display:block;color:#5b7085;font-size:13px;margin-top:2px}
