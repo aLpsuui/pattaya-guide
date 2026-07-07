@@ -3,6 +3,11 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import Icon from '@/app/components/Icon'
 
+// Card thumbnails use a 500px webp variant on R2 (generated in batch) - ~90%
+// smaller than the full-res original that would otherwise fill a ~300px card.
+const cardImg = (u: string | null): string | undefined =>
+  u ? (/cdn\.gotopattaya\.com\/Venues\/.+\.webp$/i.test(u) ? u.replace(/\.webp$/i, '-500.webp') : u) : undefined
+
 // Client directory: receives a compact venue array and renders the filter rail
 // + results grid entirely in React. Only the first `limit` filtered cards are
 // mounted (incremental "Load more"), so the initial DOM stays light while the
@@ -199,7 +204,7 @@ export default function CategoryDirectory({ venues, primaries, areas, typeLabel,
             <Link key={v.id} href={`/venues/${v.slug}`} className="eat-card">
               <div className="eat-card__media">
                 {v.image_url
-                  ? <img src={v.image_url} alt={v.name} width={900} height={600} loading={i < 6 ? 'eager' : 'lazy'} fetchPriority={i < 6 ? 'high' : undefined} />
+                  ? <img src={cardImg(v.image_url)} alt={v.name} width={900} height={600} loading={i < 6 ? 'eager' : 'lazy'} fetchPriority={i < 6 ? 'high' : undefined} />
                   : <div className="eat-card__ph" aria-hidden="true"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="m4 17 4.5-4.5 3.5 3.5 3.5-3.5L20 16" /></svg></div>}
                 <span className="eat-card__tag">{v.venue_type || 'Place'}</span>
               </div>
