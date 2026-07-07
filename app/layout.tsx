@@ -4,7 +4,6 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import MobileTabBar from './components/MobileTabBar'
 import RootChrome from './components/RootChrome'
-import { getMegaData } from '@/lib/megaNav'
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, INDEXABLE } from '@/lib/site'
 
 export const metadata: Metadata = {
@@ -59,8 +58,7 @@ const jsonLd = {
   ],
 }
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const mega = await getMegaData()
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
@@ -80,7 +78,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-        <RootChrome navbar={<Navbar mega={mega} />} footer={<><Footer /><MobileTabBar /></>}>
+        <RootChrome navbar={<Navbar />} footer={<><Footer /><MobileTabBar /></>}>
           {children}
         </RootChrome>
       </body>

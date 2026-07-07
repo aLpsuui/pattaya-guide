@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Icon from '@/app/components/Icon'
 import HeroSearch from '@/app/components/HeroSearch'
@@ -60,10 +60,23 @@ const navItems = [
   ]},
 ]
 
-export default function Navbar({ mega = {} }: { mega?: MegaData }) {
+export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [openMega, setOpenMega] = useState<string | null>(null)
+  const [mega, setMega] = useState<MegaData>({})
+  const megaReq = useRef(false)
+
+  // Lazy-load the mega-menu content on first hover so it isn't baked into every
+  // page's RSC payload (keeps the initial DOM lighter - P-03).
+  function loadMega() {
+    if (megaReq.current) return
+    megaReq.current = true
+    fetch('/api/mega-nav')
+      .then((r) => (r.ok ? r.json() : {}))
+      .then(setMega)
+      .catch(() => { megaReq.current = false })
+  }
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
@@ -98,7 +111,7 @@ export default function Navbar({ mega = {} }: { mega?: MegaData }) {
             <ul className="nav-links">
               {navItems.map(item => (
                 <li key={item.label} className={openMega === item.label ? 'open' : ''}
-                  onMouseEnter={() => setOpenMega(item.label)}
+                  onMouseEnter={() => { setOpenMega(item.label); loadMega() }}
                   onMouseLeave={() => setOpenMega(null)}>
                   <Link href={routeFor(item.slug)} onClick={() => setOpenMega(null)}>
                     <Icon name={item.icon} size={18} className="ic" />
