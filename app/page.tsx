@@ -180,7 +180,8 @@ export default async function Home() {
       {deal && <DailyDealPopup deal={deal} />}
       {/* Preload the LCP hero background (a CSS background-image the browser
           would otherwise only discover after CSS parses). */}
-      <link rel="preload" as="image" href={`${ASSETS}/pattaya-city-beach-1.webp`} fetchPriority="high" />
+      <link rel="preload" as="image" href={`${ASSETS}/hero-pattaya-1600.webp`} media="(min-width:769px)" fetchPriority="high" />
+      <link rel="preload" as="image" href={`${ASSETS}/hero-pattaya-800.webp`} media="(max-width:768px)" fetchPriority="high" />
       {/* HERO */}
       <section className="hero">
         <div className="hero-media">
