@@ -153,7 +153,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         datePublished: post.published_at || undefined,
         dateModified: post.updated_at_post || post.published_at || undefined,
         author: post.author
-          ? { '@type': 'Person', name: post.author, jobTitle: post.author_title || undefined }
+          ? { '@type': 'Person', name: post.author, jobTitle: post.author_title?.split('·')[0].trim() || undefined }
           : undefined,
         publisher: { '@id': `${SITE_URL}/#organization` },
         mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE_URL}/blog/${post.slug}` },

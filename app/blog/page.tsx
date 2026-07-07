@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import { unstable_cache } from 'next/cache'
 import Link from 'next/link'
 
 interface BlogPost {
@@ -40,18 +41,25 @@ function categoryToFilter(category: string): string {
   return map[category] || 'travel'
 }
 
-async function getBlogPosts(): Promise<BlogPost[]> {
-  const cols = 'id, slug, title, description, author, category, hero_image, read_time, published_at'
-  // Honour the admin drag order (sort_order); fall back if the column is absent.
-  let res = await supabase.from('blog_posts').select(cols).eq('is_published', true)
-    .order('sort_order', { ascending: true, nullsFirst: false })
-    .order('published_at', { ascending: false })
-  if (res.error) {
-    res = await supabase.from('blog_posts').select(cols).eq('is_published', true)
+// Cache the DB result in Next's data cache (revalidate 60s) so this dynamic
+// (searchParams-driven) route doesn't hit Supabase on every request — the
+// audit measured ~0.8s TTFB from the live query; cached it drops to ~0.2s.
+const getBlogPosts = unstable_cache(
+  async (): Promise<BlogPost[]> => {
+    const cols = 'id, slug, title, description, author, category, hero_image, read_time, published_at'
+    // Honour the admin drag order (sort_order); fall back if the column is absent.
+    let res = await supabase.from('blog_posts').select(cols).eq('is_published', true)
+      .order('sort_order', { ascending: true, nullsFirst: false })
       .order('published_at', { ascending: false })
-  }
-  return (res.data as BlogPost[]) || []
-}
+    if (res.error) {
+      res = await supabase.from('blog_posts').select(cols).eq('is_published', true)
+        .order('published_at', { ascending: false })
+    }
+    return (res.data as BlogPost[]) || []
+  },
+  ['blog-list'],
+  { revalidate: 60, tags: ['blog'] },
+)
 
 export const metadata = {
   title: 'Pattaya Blog - Honest Guides, Tips & Local Stories | Go To Pattaya',
