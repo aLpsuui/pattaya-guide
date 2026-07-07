@@ -4,7 +4,7 @@ import ExploreMap from '@/app/components/ExploreMap'
 
 export const metadata = {
   title: 'Areas of Pattaya - Find Your Neighborhood | Go To Pattaya',
-  description: "An orientation guide to Pattaya's neighborhoods - Central, Jomtien, Naklua, Pratumnak Hill, Wong Amat, Walking Street and the offshore islands. Compare vibes, beaches and nightlife to decide where to base yourself.",
+  description: "An orientation guide to Pattaya's neighborhoods - Central, Jomtien, Naklua, Pratumnak, Wong Amat and the islands. Compare vibes to decide where to stay.",
   alternates: { canonical: '/areas' },
 }
 

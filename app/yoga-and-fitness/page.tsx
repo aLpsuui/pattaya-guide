@@ -5,7 +5,7 @@ export const revalidate = 600
 export const metadata = {
   title: 'Gyms, Muay Thai & Yoga in Pattaya | Go To Pattaya',
   description:
-    'A locally verified guide to training in Pattaya - Muay Thai and boxing camps, fitness gyms, CrossFit, yoga and pilates studios and climbing gyms. Prices, hours and directions for every venue.',
+    'A locally verified guide to training in Pattaya - Muay Thai camps, gyms, CrossFit, yoga and pilates studios, with prices, hours and directions.',
   alternates: { canonical: '/yoga-and-fitness' },
 }
 

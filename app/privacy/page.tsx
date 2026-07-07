@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 export const metadata = {
   title: 'Privacy Policy | Go To Pattaya',
-  description: 'How Go To Pattaya collects, uses and protects your data.',
+  description: 'Our privacy policy: what data Go To Pattaya collects when you use our Pattaya guide, how we use and protect it, cookies, and your rights and choices.',
   alternates: { canonical: '/privacy' },
 }
 

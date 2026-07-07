@@ -5,7 +5,7 @@ export const revalidate = 600
 export const metadata = {
   title: 'Pattaya Nightlife - Clubs, Bars & Go-Go Bars | Go To Pattaya',
   description:
-    "An honest, locally verified guide to Pattaya nightlife - the big EDM clubs, Walking Street bars, go-go bars, lounges and night markets. Music, hours, entry and directions for every venue.",
+    "An honest, locally verified guide to Pattaya nightlife - EDM clubs, Walking Street bars, go-go bars, lounges and night markets, with hours and directions.",
   alternates: { canonical: '/nightlife' },
 }
 

@@ -6,7 +6,7 @@ const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 export const metadata = {
   title: 'About Go To Pattaya - The Honest Local Guide to Pattaya, Thailand',
   description:
-    'Who we are and how we work. Go To Pattaya is an independent, locally-run directory of 600+ verified places - no paid placements, updated weekly by editors who actually live in Pattaya.',
+    'Who we are and how we work: an independent, locally-run directory of 600+ verified Pattaya places - no paid placements, updated weekly by editors who live here.',
   alternates: { canonical: '/about' },
 }
 

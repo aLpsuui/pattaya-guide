@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 export const metadata = {
   title: 'Terms of Use | Go To Pattaya',
-  description: 'The terms that govern your use of Go To Pattaya.',
+  description: 'The terms of use for Go To Pattaya - the rules for using our Pattaya travel guide, directory and content, plus liability, links and contact details.',
   alternates: { canonical: '/terms' },
 }
 
