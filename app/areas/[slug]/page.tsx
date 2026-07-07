@@ -91,8 +91,36 @@ export default async function AreaDetailPage({ params }: { params: Promise<{ slu
   const guide = guides[slug]
   const venues = await getAreaVenues(area.match)
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+          { '@type': 'ListItem', position: 2, name: 'Areas', item: `${SITE_URL}/areas` },
+          { '@type': 'ListItem', position: 3, name: area.name, item: `${SITE_URL}/areas/${slug}` },
+        ],
+      },
+      {
+        '@type': 'Place',
+        '@id': `${SITE_URL}/areas/${slug}#place`,
+        name: `${area.name}, Pattaya`,
+        description: info?.blurb || undefined,
+        image: info?.hero || undefined,
+        url: `${SITE_URL}/areas/${slug}`,
+        containedInPlace: {
+          '@type': 'City',
+          name: 'Pattaya',
+          address: { '@type': 'PostalAddress', addressRegion: 'Chon Buri', addressCountry: 'TH' },
+        },
+      },
+    ],
+  }
+
   return (
     <div className="adx">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {guide ? (
         // Rich editorial area guide (bespoke .det-area design). translate="no"
         // keeps Google Translate from breaking the CSS grids (e.g. quick numbers).
