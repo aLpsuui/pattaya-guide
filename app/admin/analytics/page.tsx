@@ -1,71 +1,35 @@
 import Shell from '@/app/admin/_components/Shell'
 import { IconChevR, IconUp, IconDown } from '@/app/admin/_components/icons'
+import { getAnalytics } from '@/lib/adminAnalytics'
 
-// NOTE: This page currently renders DEMO data so the dashboard UI can be
-// reviewed. Once a Google Analytics 4 service account + Measurement ID are
-// configured, swap the sample arrays below for live GA4 Data API + Search
-// Console responses (the markup/charts stay the same).
+// GA4 Data API + Search Console (see lib/adminAnalytics.ts). When Google isn't
+// configured or a call fails, getAnalytics() returns the demo dataset so this
+// page always renders - the markup below is identical either way.
 
 export const metadata = { title: 'Analytics - Pattaya Guide Admin' }
 
-// ---- demo dataset -----------------------------------------------------
-const DAYS = 28
-const visitors = [
-  120, 138, 132, 159, 178, 150, 131, 168, 188, 182, 209, 231, 198, 176,
-  221, 242, 233, 261, 286, 248, 224, 272, 301, 296, 324, 352, 309, 341,
-]
-const pageviewsSeries = visitors.map((v) => Math.round(v * 2.9))
-
-const kpis = [
-  { label: 'Users', value: '4,820', delta: 12.4, up: true },
-  { label: 'Sessions', value: '6,310', delta: 9.1, up: true },
-  { label: 'Pageviews', value: '18,940', delta: 15.2, up: true },
-  { label: 'Avg. engagement', value: '2m 14s', delta: 3.8, up: true },
-]
-
-const topPages = [
-  { path: '/', views: 5120, pct: 100 },
-  { path: '/eat-and-drinks', views: 2840, pct: 55 },
-  { path: '/things-to-do', views: 2210, pct: 43 },
-  { path: '/blog/is-pattaya-safe', views: 1730, pct: 34 },
-  { path: '/areas/jomtien', views: 1290, pct: 25 },
-  { path: '/nightlife', views: 980, pct: 19 },
-  { path: '/yoga-and-fitness', views: 760, pct: 15 },
-]
-
-const sources = [
-  { label: 'Organic Search', pct: 58, color: '#0178b4' },
-  { label: 'Direct', pct: 22, color: '#7a5cff' },
-  { label: 'Social', pct: 12, color: '#1ba672' },
-  { label: 'Referral', pct: 8, color: '#e8a33d' },
-]
-
-const devices = [
-  { label: 'Mobile', pct: 64 },
-  { label: 'Desktop', pct: 30 },
-  { label: 'Tablet', pct: 6 },
-]
-
-const search = { clicks: '1,240', impressions: '88,500', ctr: '1.4%', position: '18.3' }
-
 // ---- svg area chart ---------------------------------------------------
 function areaPath(vals: number[], w: number, h: number, pad = 4) {
-  const max = Math.max(...vals) * 1.1
-  const n = vals.length
+  const max = Math.max(...vals, 1) * 1.1
+  const n = Math.max(vals.length, 2)
   const x = (i: number) => (i / (n - 1)) * (w - pad * 2) + pad
   const y = (v: number) => h - pad - (v / max) * (h - pad * 2)
   const line = vals.map((v, i) => `${i === 0 ? 'M' : 'L'} ${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(' ')
-  const area = `${line} L ${x(n - 1).toFixed(1)} ${h} L ${x(0).toFixed(1)} ${h} Z`
+  const area = `${line} L ${x(vals.length - 1).toFixed(1)} ${h} L ${x(0).toFixed(1)} ${h} Z`
   return { line, area }
 }
 
-export default function AnalyticsPage() {
+export default async function AnalyticsPage() {
+  const data = await getAnalytics()
+  const { live, kpis, visitors, topPages, sources, devices, search } = data
+
   const W = 760, H = 200
   const main = areaPath(visitors, W, H)
-  const days = Array.from({ length: DAYS }, (_, i) => i)
+  const days = Array.from({ length: visitors.length }, (_, i) => i)
   // cumulative offsets for the donut
   let acc = 0
   const stops = sources.map((s) => { const from = acc; acc += s.pct; return `${s.color} ${from}% ${acc}%` }).join(', ')
+  const sessionsTotal = kpis.find((k) => k.label === 'Sessions')?.value ?? '-'
 
   return (
     <Shell active="analytics" crumb={<>Growth <IconChevR /> Analytics</>} title="Analytics">
@@ -74,14 +38,23 @@ export default function AnalyticsPage() {
         <div className="ph-r"><span className="seg"><button className="on">28d</button><button>7d</button><button>90d</button></span></div>
       </div>
 
-      {/* demo banner */}
-      <div className="an-banner">
-        <div>
-          <b>Demo data - Google not connected yet</b>
-          <span>Bağlandığında bu kartlar canlı Google Analytics 4 + Search Console verisiyle dolacak. Şu an örnek verilerle gösteriliyor.</span>
+      {/* connection banner */}
+      {live ? (
+        <div className="an-banner an-banner--live">
+          <div>
+            <b>Live · Google Analytics 4 connected</b>
+            <span>Rakamlar son 28 günün gerçek GA4{search ? ' + Search Console' : ''} verisi. Saatlik güncellenir.</span>
+          </div>
         </div>
-        <button className="btn btn--primary" disabled>Connect Google</button>
-      </div>
+      ) : (
+        <div className="an-banner">
+          <div>
+            <b>Demo data - Google not connected yet</b>
+            <span>Bağlandığında bu kartlar canlı Google Analytics 4 + Search Console verisiyle dolacak. Şu an örnek verilerle gösteriliyor.</span>
+          </div>
+          <button className="btn btn--primary" disabled>Connect Google</button>
+        </div>
+      )}
 
       {/* KPI cards */}
       <div className="an-kpis">
@@ -124,6 +97,7 @@ export default function AnalyticsPage() {
                 <span className="an-page__n">{p.views.toLocaleString()}</span>
               </div>
             ))}
+            {topPages.length === 0 && <p className="an-note">Henüz sayfa görüntüleme verisi yok.</p>}
           </div>
         </section>
 
@@ -131,7 +105,7 @@ export default function AnalyticsPage() {
         <section className="panel">
           <div className="panel-head"><div><b>Traffic sources</b><div className="sub">Sessions by channel</div></div></div>
           <div className="an-src">
-            <div className="an-donut" style={{ background: `conic-gradient(${stops})` }}><div className="an-donut__hole"><b>4.8k</b><span>sessions</span></div></div>
+            <div className="an-donut" style={{ background: sources.length ? `conic-gradient(${stops})` : 'var(--border)' }}><div className="an-donut__hole"><b>{sessionsTotal}</b><span>sessions</span></div></div>
             <div className="an-legend">
               {sources.map((s) => (
                 <div className="an-leg" key={s.label}>
@@ -162,18 +136,21 @@ export default function AnalyticsPage() {
 
         {/* search console */}
         <section className="panel">
-          <div className="panel-head"><div><b>Search Console</b><div className="sub">Google Search · placeholder</div></div></div>
-          <div className="an-sc">
-            <div className="an-sc__cell"><b>{search.clicks}</b><span>Clicks</span></div>
-            <div className="an-sc__cell"><b>{search.impressions}</b><span>Impressions</span></div>
-            <div className="an-sc__cell"><b>{search.ctr}</b><span>CTR</span></div>
-            <div className="an-sc__cell"><b>{search.position}</b><span>Avg. position</span></div>
-          </div>
-          <p className="an-note">Search Console verisi, site gerçek domende (gotopattaya.com) yayına girip indekslendikten sonra anlamlı olur.</p>
+          <div className="panel-head"><div><b>Search Console</b><div className="sub">Google Search · last 28 days</div></div></div>
+          {search ? (
+            <div className="an-sc">
+              <div className="an-sc__cell"><b>{search.clicks}</b><span>Clicks</span></div>
+              <div className="an-sc__cell"><b>{search.impressions}</b><span>Impressions</span></div>
+              <div className="an-sc__cell"><b>{search.ctr}</b><span>CTR</span></div>
+              <div className="an-sc__cell"><b>{search.position}</b><span>Avg. position</span></div>
+            </div>
+          ) : (
+            <p className="an-note">Search Console bağlı değil. GSC_SITE_URL eklenip service account GSC&apos;de Viewer yapılınca burası dolar.</p>
+          )}
         </section>
       </div>
 
-      <p className="an-foot">Tüm rakamlar örnektir. Google Analytics 4 + Search Console bağlandığında otomatik canlı veriyle değişir. ({days.length} günlük görünüm)</p>
+      <p className="an-foot">{live ? `Canlı GA4 verisi · saatlik güncellenir · ${days.length} günlük görünüm` : 'Tüm rakamlar örnektir. Google Analytics 4 + Search Console bağlandığında otomatik canlı veriyle değişir.'}</p>
     </Shell>
   )
 }
