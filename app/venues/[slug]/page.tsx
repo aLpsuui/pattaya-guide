@@ -229,21 +229,35 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
   // so getRelatedBySlug resolves it to a category_id then queries siblings.
   const relatedVenues = await getRelatedBySlug(v.categories?.slug || null, v.slug)
 
+  const sameAs = [v.website, v.facebook_url].filter(Boolean)
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'LocalBusiness',
+        '@id': `${SITE_URL}/venues/${v.slug}#business`,
         name: v.name,
         description: v.description || v.tagline || undefined,
         image: photos.map(p => p.url),
-        address: v.address || undefined,
+        url: `${SITE_URL}/venues/${v.slug}`,
         telephone: v.phone || undefined,
-        url: v.website || undefined,
-        aggregateRating: v.rating
-          ? { '@type': 'AggregateRating', ratingValue: v.rating, reviewCount: v.review_count || 0 }
-          : undefined,
         priceRange: v.price_range || undefined,
+        address: v.address
+          ? {
+              '@type': 'PostalAddress',
+              streetAddress: v.address,
+              addressLocality: v.neighborhood || 'Pattaya',
+              addressRegion: 'Chon Buri',
+              addressCountry: 'TH',
+            }
+          : undefined,
+        geo: v.latitude != null && v.longitude != null
+          ? { '@type': 'GeoCoordinates', latitude: v.latitude, longitude: v.longitude }
+          : undefined,
+        sameAs: sameAs.length ? sameAs : undefined,
+        aggregateRating: v.rating && v.review_count
+          ? { '@type': 'AggregateRating', ratingValue: v.rating, reviewCount: v.review_count, bestRating: 5, worstRating: 1 }
+          : undefined,
       },
       {
         '@type': 'BreadcrumbList',
