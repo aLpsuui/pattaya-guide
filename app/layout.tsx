@@ -69,6 +69,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="preconnect" href="https://hjkcmxfmismliskipedz.supabase.co" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://cdn.gotopattaya.com" />
         <link rel="dns-prefetch" href="https://hjkcmxfmismliskipedz.supabase.co" />
+        {/* Fonts: preconnect (incl. gstatic) + a head stylesheet so they load in
+            parallel instead of chaining behind the CSS bundle's @import. */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap"
+        />
       </head>
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />

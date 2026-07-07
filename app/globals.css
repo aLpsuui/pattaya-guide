@@ -1,4 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap');
+/* Fonts are loaded via <link rel="preconnect"> + <link rel="stylesheet"> in
+   app/layout.tsx <head> so they don't chain behind this CSS bundle (was an
+   @import here, which is render-blocking: CSS -> googleapis -> gstatic). */
 
 :root{
   --deep-ocean:#034487; --ocean:#0178B4; --steel:#054C86; --lagoon:#2FBDDC; --sky:#A3CBE5;
