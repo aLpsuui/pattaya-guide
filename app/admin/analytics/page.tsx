@@ -49,10 +49,10 @@ export default async function AnalyticsPage() {
       ) : (
         <div className="an-banner">
           <div>
-            <b>Demo data - Google not connected yet</b>
-            <span>Bağlandığında bu kartlar canlı Google Analytics 4 + Search Console verisiyle dolacak. Şu an örnek verilerle gösteriliyor.</span>
+            <b>Örnek veri · canlı rakamlar Google panellerinde</b>
+            <span>Bu kartlar arayüz önizlemesidir. Sitenin gerçek ziyaretçi, sayfa ve trafik verisi Google Analytics 4&apos;te canlı izlenir.</span>
           </div>
-          <button className="btn btn--primary" disabled>Connect Google</button>
+          <a className="btn btn--primary" href="https://analytics.google.com/" target="_blank" rel="noopener">Google Analytics&apos;i aç →</a>
         </div>
       )}
 
@@ -136,7 +136,10 @@ export default async function AnalyticsPage() {
 
         {/* search console */}
         <section className="panel">
-          <div className="panel-head"><div><b>Search Console</b><div className="sub">Google Search · last 28 days</div></div></div>
+          <div className="panel-head">
+            <div><b>Search Console</b><div className="sub">Google Search · last 28 days</div></div>
+            <a className="an-open" href="https://search.google.com/search-console" target="_blank" rel="noopener">Aç →</a>
+          </div>
           {search ? (
             <div className="an-sc">
               <div className="an-sc__cell"><b>{search.clicks}</b><span>Clicks</span></div>
