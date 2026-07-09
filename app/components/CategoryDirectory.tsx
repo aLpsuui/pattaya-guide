@@ -48,7 +48,17 @@ export default function CategoryDirectory({ venues, primaries, areas, typeLabel,
     const input = document.getElementById('eatSearch') as HTMLInputElement | null
     if (!input) return
     const scrollToResults = () => document.getElementById('eatDir')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    const onInput = () => { setQ(input.value.trim().toLowerCase()); setLimit(STEP) }
+    // The hero search box sits far above the directory, so a query filtered the
+    // results off-screen at the bottom - it looked like nothing happened. Bring
+    // the results into view the moment a search starts (once per query, so we
+    // don't fight the user while they refine or read).
+    let searchScrolled = false
+    const onInput = () => {
+      const val = input.value.trim().toLowerCase()
+      setQ(val); setLimit(STEP)
+      if (val && !searchScrolled) { searchScrolled = true; scrollToResults() }
+      else if (!val) searchScrolled = false
+    }
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Enter') { e.preventDefault(); scrollToResults() } }
     const goBtn = input.closest('.search')?.querySelector('.go') as HTMLElement | null
     const onGo = (e: Event) => { e.preventDefault(); scrollToResults() }
