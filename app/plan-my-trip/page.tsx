@@ -4,7 +4,7 @@ import PlanForm from './PlanForm'
 
 const title = 'Plan My Trip to Pattaya - Build a Custom Itinerary | Go To Pattaya'
 const description =
-  'Tell us your dates, interests and pace and get a custom Pattaya itinerary built from 600+ verified places - day by day, free and with no signup.'
+  'Tell us your dates, interests and pace and get a custom Pattaya itinerary built from 500+ verified places - day by day, free and with no signup.'
 export const metadata = {
   title,
   description,
@@ -13,7 +13,7 @@ export const metadata = {
 }
 
 const perks = [
-  { icon: 'verified', h: 'Verified places only', p: 'Every stop is a real, in-person-checked venue from our 600+ directory.' },
+  { icon: 'verified', h: 'Verified places only', p: 'Every stop is a real, in-person-checked venue from our 500+ directory.' },
   { icon: 'route', h: 'Smart by area', p: "We group your days by district so you're not crossing the city twice." },
   { icon: 'card', h: 'Matched to budget', p: 'From street-food days to premium nights - your plan respects your spend.' },
 ]

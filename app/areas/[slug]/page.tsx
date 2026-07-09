@@ -37,6 +37,30 @@ const AREA_GUIDE_SCRIPT = String.raw`
 const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 const guides = guidesData as Record<string, { name: string; html: string }>
 
+// The bespoke area guides carry a FAQ accordion as authored HTML (not
+// structured data). R-4: pull the Q&A pairs out so we can emit FAQPage schema
+// - same rich-result opportunity the blog posts already get.
+function decodeEntities(s: string): string {
+  return s
+    .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"').replace(/&#39;|&rsquo;/g, "'").replace(/&ldquo;|&rdquo;/g, '"')
+    .replace(/&mdash;|&ndash;/g, '-').replace(/&nbsp;/g, ' ')
+}
+function stripHtml(s: string): string {
+  return decodeEntities(s.replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim()
+}
+function extractFaq(html: string): { q: string; a: string }[] {
+  const out: { q: string; a: string }[] = []
+  for (const block of html.split('<div class="acc">').slice(1)) {
+    const qm = block.match(/<button class="q"[^>]*>([\s\S]*?)<\/button>/)
+    const am = block.match(/<div class="a-in">([\s\S]*?)<\/div>\s*<\/div>/)
+    if (!qm || !am) continue
+    const q = stripHtml(qm[1]); const a = stripHtml(am[1])
+    if (q && a) out.push({ q, a })
+  }
+  return out
+}
+
 const INFO: Record<string, { blurb: string; hero: string }> = {
   'central-pattaya': { blurb: 'The all-in-one heart of the bay - Beach Road, malls, street food and nightlife, all walkable.', hero: `${ASSETS}/pattaya-city-beach-2.webp` },
   'jomtien': { blurb: 'A long, calm beach with a residential feel - the family and long-stay pick.', hero: `${ASSETS}/best-island-pattaya.webp` },
@@ -91,32 +115,42 @@ export default async function AreaDetailPage({ params }: { params: Promise<{ slu
   const guide = guides[slug]
   const venues = await getAreaVenues(area.match)
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@graph': [
-      {
-        '@type': 'BreadcrumbList',
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
-          { '@type': 'ListItem', position: 2, name: 'Areas', item: `${SITE_URL}/areas` },
-          { '@type': 'ListItem', position: 3, name: area.name, item: `${SITE_URL}/areas/${slug}` },
-        ],
+  const faq = guide ? extractFaq(guide.html) : []
+  const graph: Record<string, unknown>[] = [
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+        { '@type': 'ListItem', position: 2, name: 'Areas', item: `${SITE_URL}/areas` },
+        { '@type': 'ListItem', position: 3, name: area.name, item: `${SITE_URL}/areas/${slug}` },
+      ],
+    },
+    {
+      '@type': 'Place',
+      '@id': `${SITE_URL}/areas/${slug}#place`,
+      name: `${area.name}, Pattaya`,
+      description: info?.blurb || undefined,
+      image: info?.hero || undefined,
+      url: `${SITE_URL}/areas/${slug}`,
+      containedInPlace: {
+        '@type': 'City',
+        name: 'Pattaya',
+        address: { '@type': 'PostalAddress', addressRegion: 'Chon Buri', addressCountry: 'TH' },
       },
-      {
-        '@type': 'Place',
-        '@id': `${SITE_URL}/areas/${slug}#place`,
-        name: `${area.name}, Pattaya`,
-        description: info?.blurb || undefined,
-        image: info?.hero || undefined,
-        url: `${SITE_URL}/areas/${slug}`,
-        containedInPlace: {
-          '@type': 'City',
-          name: 'Pattaya',
-          address: { '@type': 'PostalAddress', addressRegion: 'Chon Buri', addressCountry: 'TH' },
-        },
-      },
-    ],
+    },
+  ]
+  if (faq.length) {
+    graph.push({
+      '@type': 'FAQPage',
+      '@id': `${SITE_URL}/areas/${slug}#faq`,
+      mainEntity: faq.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    })
   }
+  const jsonLd = { '@context': 'https://schema.org', '@graph': graph }
 
   return (
     <div className="adx">

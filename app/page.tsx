@@ -190,7 +190,7 @@ export default async function Home() {
         </div>
         <div className="container hero-inner">
           <h1>Your complete guide<br />to <span>Pattaya.</span></h1>
-          <p className="intro">Restaurants, beaches, attractions, day trips, wellness, sports - 600+ places and 50+ in-depth guides. Plan your trip in 5 minutes.</p>
+          <p className="intro">Restaurants, beaches, attractions, day trips, wellness, sports - 500+ places and 50+ in-depth guides. Plan your trip in 5 minutes.</p>
 
           <HeroSearch />
 
@@ -387,7 +387,7 @@ export default async function Home() {
           <div className="trust-grid">
             <div className="trust-card">
               <div className="ic"><Icon name="pin" size={28} /></div>
-              <h3>600+ places, one map</h3>
+              <h3>500+ places, one map</h3>
               <p>Restaurants, beaches, attractions, wellness, sports and markets - all in one searchable directory with real prices, real photos and an interactive map.</p>
             </div>
             <div className="trust-card">

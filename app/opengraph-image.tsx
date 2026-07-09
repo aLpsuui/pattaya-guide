@@ -30,7 +30,7 @@ export default function OpengraphImage() {
           {SITE_NAME}
         </div>
         <div style={{ fontSize: 36, marginTop: 24, maxWidth: 900, opacity: 0.92 }}>
-          600+ verified places · in-depth guides · restaurants, beaches, tours, wellness &amp; nightlife
+          500+ verified places · in-depth guides · restaurants, beaches, tours, wellness &amp; nightlife
         </div>
       </div>
     ),
