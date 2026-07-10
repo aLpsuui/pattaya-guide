@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Icon from '@/app/components/Icon'
+import Star from '@/app/components/Star'
 import { AREAS, areaBySlug } from '@/lib/areas'
 import { SITE_URL } from '@/lib/site'
 import BlogScript from '@/app/components/BlogScript'
@@ -204,7 +205,7 @@ export default async function AreaDetailPage({ params }: { params: Promise<{ slu
                     <h3>{v.name}</h3>
                     {v.address && <div className="eat-card__loc"><Icon name="pin" size={16} className="ic" />{v.address}</div>}
                     <div className="eat-card__foot">
-                      <span className="eat-card__rate"><span className="star">★</span> {v.rating?.toFixed(1) ?? '-'} {v.review_count != null && <span className="count">({v.review_count.toLocaleString()})</span>}</span>
+                      <span className="eat-card__rate"><Star /> {v.rating?.toFixed(1) ?? '-'} {v.review_count != null && <span className="count">({v.review_count.toLocaleString()})</span>}</span>
                       <span className="eat-card__price">{v.price_range || ''}</span>
                     </div>
                   </div>

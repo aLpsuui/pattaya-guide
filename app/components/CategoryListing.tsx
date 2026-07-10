@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import Icon from '@/app/components/Icon'
+import Star from '@/app/components/Star'
 import CategoryDirectory, { VItem } from '@/app/components/CategoryDirectory'
 import { SITE_URL } from '@/lib/site'
 
@@ -181,7 +182,7 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
             <div className="eat-hero__stats" role="list" aria-label="Section overview">
               <div className="st" role="listitem"><b>{total || '-'}</b><span>Verified {unit}</span></div>
               {top && <div className="st" role="listitem"><b>{top.n}</b><span>{top.label}</span></div>}
-              <div className="st" role="listitem"><b>{avg}★</b><span>Avg. rating</span></div>
+              <div className="st" role="listitem"><b>{avg}<Star /></b><span>Avg. rating</span></div>
               {areas.length > 0 && <div className="st" role="listitem"><b>{areas.length}</b><span>Areas</span></div>}
             </div>
           </div>
@@ -259,25 +260,6 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
         </div>
       </section>
 
-      {/* FULL DIRECTORY - every venue as a crawlable link so search engines
-          discover all listings (not just the client-rendered subset) and link
-          equity flows through the whole category. */}
-      {total > 0 && (
-        <section className="sec sec--tight" aria-labelledby="idx-h">
-          <div className="container">
-            <div className="titles">
-              <p className="kicker">Full directory</p>
-              <h2 id="idx-h">All {total} {unit} in Pattaya</h2>
-              <p>Every listing in this category - browse the complete A-to-list.</p>
-            </div>
-            <ul className="cat-index">
-              {venues.filter((v) => v.slug).map((v) => (
-                <li key={v.id}><a href={`/venues/${v.slug}`}>{v.name}</a></li>
-              ))}
-            </ul>
-          </div>
-        </section>
-      )}
     </div>
   )
 }

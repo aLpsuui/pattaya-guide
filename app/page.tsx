@@ -5,6 +5,7 @@ import CarButton from '@/app/components/CarButton'
 import HeroSearch from '@/app/components/HeroSearch'
 import ExploreMap from '@/app/components/ExploreMap'
 import DailyDealPopup, { type Deal } from '@/app/components/DailyDealPopup'
+import Star from '@/app/components/Star'
 
 const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 
@@ -162,7 +163,7 @@ function VenueCard({ v, dark = false }: { v: Venue; dark?: boolean }) {
         <h4>{v.name}</h4>
         <div className="meta"><span>{v.venue_type}</span>{v.address && <span>· {v.address.slice(0, 25)}</span>}</div>
         <div className="rate">
-          <div className="left"><span className="star">★</span> {v.rating?.toFixed(1)} {v.review_count != null && <span className="count">({v.review_count.toLocaleString()})</span>}</div>
+          <div className="left"><Star /> {v.rating?.toFixed(1)} {v.review_count != null && <span className="count">({v.review_count.toLocaleString()})</span>}</div>
           {(v.price_from != null || v.price_range) && <span className="price">{v.price_from != null ? `from ฿${v.price_from.toLocaleString()}` : v.price_range}</span>}
         </div>
       </div>

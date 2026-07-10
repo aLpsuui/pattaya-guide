@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Star from '@/app/components/Star'
 
 export type Deal = {
   slug: string
@@ -55,7 +56,7 @@ export default function DailyDealPopup({ deal }: { deal: Deal }) {
           <div className="ddp-meta">
             {meta && <span>{meta}</span>}
             {deal.rating != null && (
-              <span className="ddp-rate">★ {deal.rating.toFixed(1)}{deal.review_count != null && ` (${deal.review_count.toLocaleString()})`}</span>
+              <span className="ddp-rate"><Star /> {deal.rating.toFixed(1)}{deal.review_count != null && ` (${deal.review_count.toLocaleString()})`}</span>
             )}
           </div>
           <Link href={`/venues/${deal.slug}`} className="ddp-cta" onClick={dismiss}>Mekana git</Link>

@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import Star from '@/app/components/Star'
 
 // Simple site search — powers the WebSite SearchAction (sitelinks searchbox).
 // Search-result URLs shouldn't be indexed.
@@ -70,7 +71,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
                 {venues.map((v) => (
                   <li key={v.slug}><Link href={`/venues/${v.slug}`}>
                     <b>{v.name}</b>
-                    <span>{[v.categories?.name_en || v.venue_type, v.neighborhood].filter(Boolean).join(' · ')}{v.rating != null ? ` · ★ ${v.rating.toFixed(1)}` : ''}</span>
+                    <span>{[v.categories?.name_en || v.venue_type, v.neighborhood].filter(Boolean).join(' · ')}{v.rating != null && <> · <Star /> {v.rating.toFixed(1)}</>}</span>
                   </Link></li>
                 ))}
               </ul>
