@@ -61,14 +61,17 @@ interface Ven { slug: string; name: string; type: string | null; area: string | 
 
 const esc = (s: string) => String(s || '').replace(/[%,()]/g, ' ').trim().slice(0, 60)
 
-async function searchVenues(input: { query?: string; category?: string; area?: string }): Promise<Ven[]> {
+async function runSearch(input: { query?: string; category?: string; area?: string }, useArea: boolean): Promise<Ven[]> {
   const cols = 'slug, name, venue_type, neighborhood, rating, review_count, price_range' + (input.category ? ', categories!inner(slug)' : '')
   let q = supabase.from('venues').select(cols).eq('is_active', true)
   if (input.category) q = q.eq('categories.slug', input.category)
   const kw = esc(input.query || '')
-  if (kw) q = q.or(`name.ilike.%${kw}%,venue_type.ilike.%${kw}%,neighborhood.ilike.%${kw}%`)
+  // NOTE: inside .or() PostgREST uses * as the wildcard (not the SQL % used by a
+  // standalone .ilike). Search name/type/area plus the richer tagline+description
+  // so cuisine/keywords like "seafood" match even when venue_type is generic.
+  if (kw) q = q.or(`name.ilike.*${kw}*,venue_type.ilike.*${kw}*,neighborhood.ilike.*${kw}*,tagline.ilike.*${kw}*,description.ilike.*${kw}*`)
   const area = esc(input.area || '')
-  if (area) q = q.ilike('neighborhood', `%${area}%`)
+  if (useArea && area) q = q.ilike('neighborhood', `%${area}%`)
   const { data } = await q
     .order('rating', { ascending: false, nullsFirst: false })
     .order('review_count', { ascending: false, nullsFirst: false })
@@ -82,6 +85,14 @@ async function searchVenues(input: { query?: string; category?: string; area?: s
     reviews: (v.review_count as number) ?? null,
     price: (v.price_range as string) || null,
   }))
+}
+
+async function searchVenues(input: { query?: string; category?: string; area?: string }): Promise<Ven[]> {
+  const withArea = await runSearch(input, true)
+  // If pinning to an area found nothing, fall back to the keyword across the
+  // whole city rather than dead-ending (e.g. no "seafood" tagged in Jomtien).
+  if (!withArea.length && input.area) return runSearch(input, false)
+  return withArea
 }
 
 type Block = { type: string; [k: string]: unknown }
@@ -147,10 +158,18 @@ export async function POST(req: NextRequest) {
       const text = content.filter((b) => b.type === 'text').map((b) => (b.text as string) || '').join('').trim()
       // Turn the venues Claude actually named into tappable links (fall back to
       // the strongest search hits so a reply is never a dead end).
+      // Normalise (drop "Pattaya" + punctuation) both sides so a venue still
+      // links when Claude names it in short form ("The Sea Garden" vs the DB's
+      // "The Sea Garden Pattaya").
+      const norm = (s: string) => s.toLowerCase().replace(/\bpattaya\b/g, ' ').replace(/[^a-z0-9]+/g, ' ').trim()
+      const nt = norm(text)
       const seen = new Set<string>()
       const uniq = collected.filter((v) => v.slug && !seen.has(v.slug) && (seen.add(v.slug), true))
-      const named = uniq.filter((v) => text.toLowerCase().includes(v.name.toLowerCase()))
-      const links = (named.length ? named : uniq).slice(0, 4).map((v) => ({ label: v.name, href: `/venues/${v.slug}` }))
+      const named = uniq.filter((v) => { const n = norm(v.name); return n.length >= 4 && nt.includes(n) })
+      // Lead with the venues Claude named, then top up with the strongest search
+      // hits so a grounded answer always offers a few tappable places.
+      const ordered = [...named, ...uniq.filter((v) => !named.includes(v))]
+      const links = ordered.slice(0, 4).map((v) => ({ label: v.name, href: `/venues/${v.slug}` }))
       return Response.json({ text: text || FALLBACK.text, links })
     }
     return Response.json(FALLBACK)
