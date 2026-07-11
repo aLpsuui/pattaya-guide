@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Icon from '@/app/components/Icon'
 import HeroSearch from '@/app/components/HeroSearch'
+import BrandLogo from '@/app/components/BrandLogo'
 import type { MegaData } from '@/lib/megaNav'
 
 const StarSvg = () => (<svg viewBox="0 0 24 24" width="11" height="11" aria-hidden="true"><path d="M12 17.3 6.2 20.5l1.1-6.5L2.5 9.4l6.5-.9L12 2.5l3 6 6.5.9-4.8 4.6 1.1 6.5z" /></svg>)
@@ -10,15 +11,6 @@ const StarSvg = () => (<svg viewBox="0 0 24 24" width="11" height="11" aria-hidd
 // The "Things to Do" category slug stays 'thinks-to-do' (DB), but its public URL is /things-to-do.
 const routeFor = (slug: string) => (slug === 'thinks-to-do' ? '/things-to-do' : `/${slug}`)
 
-const LogoSVG = ({ size = 36 }: { size?: number }) => (
-  <svg viewBox="0 0 220 240" xmlns="http://www.w3.org/2000/svg" style={{width:size,height:'auto',flexShrink:0}}>
-    <defs><linearGradient id="npb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#034487"/><stop offset="1" stopColor="#0178B4"/></linearGradient></defs>
-    <path fill="url(#npb)" d="M110 8C56 8 14 49 14 102c0 70 78 122 92 128 3 1 5 1 8 0 14-6 92-58 92-128C206 49 164 8 110 8Z"/>
-    <circle cx="110" cy="98" r="74" fill="#EAF6FB"/>
-    <circle cx="110" cy="80" r="20" fill="#2FBDDC"/>
-    <path fill="#0178B4" d="M44 120c14-10 24-10 38 0s24 10 38 0 24-10 38 0 24 10 38 0v22c-14 10-24 10-38 0s-24-10-38 0-24 10-38 0-24-10-38 0Z"/>
-  </svg>
-)
 
 const navItems = [
   { label: 'Eat & Drinks', icon: 'eat', slug: 'eat-and-drinks', items: [
@@ -94,8 +86,7 @@ export default function Navbar() {
         <div className="tier1">
           <div className="container tier1-inner">
             <Link href="/" className="brand">
-              <LogoSVG />
-              <div className="wm"><i>Go To&nbsp;</i><u>Pattaya</u></div>
+              <BrandLogo h={36} />
             </Link>
             <HeroSearch variant="header" />
             <div className="tier1-actions">
@@ -184,8 +175,7 @@ export default function Navbar() {
       <aside className={`drawer${drawerOpen ? ' show' : ''}`} aria-hidden={!drawerOpen}>
         <div className="drawer-top">
           <Link href="/" className="brand" onClick={() => setDrawerOpen(false)}>
-            <LogoSVG size={30}/>
-            <div className="wm"><i>Go To&nbsp;</i><u>Pattaya</u></div>
+            <BrandLogo h={30} />
           </Link>
           <button className="drawer-close" onClick={() => setDrawerOpen(false)} aria-label="Close">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" width="20" height="20"><path d="M6 6l12 12M18 6 6 18"/></svg>

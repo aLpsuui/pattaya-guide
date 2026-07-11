@@ -1,17 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
-
-// Brand logo - same mark as the navbar, used white-on-dark in the footer.
-const LogoSVG = ({ size = 42 }: { size?: number }) => (
-  <svg viewBox="0 0 220 240" xmlns="http://www.w3.org/2000/svg" style={{ width: size, height: 'auto', flexShrink: 0 }} aria-hidden="true">
-    <defs><linearGradient id="fpb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#034487" /><stop offset="1" stopColor="#0178B4" /></linearGradient></defs>
-    <path fill="url(#fpb)" d="M110 8C56 8 14 49 14 102c0 70 78 122 92 128 3 1 5 1 8 0 14-6 92-58 92-128C206 49 164 8 110 8Z" />
-    <circle cx="110" cy="98" r="74" fill="#EAF6FB" />
-    <circle cx="110" cy="80" r="20" fill="#2FBDDC" />
-    <path fill="#0178B4" d="M44 120c14-10 24-10 38 0s24 10 38 0 24-10 38 0 24 10 38 0v22c-14 10-24 10-38 0s-24-10-38 0-24 10-38 0-24-10-38 0Z" />
-  </svg>
-)
+import BrandLogoWhite from '@/app/components/BrandLogoWhite'
 
 const cols = [
   {
@@ -105,8 +95,7 @@ export default function Footer() {
 
           <div className="footer-brand">
             <Link href="/" className="brand" aria-label="Go To Pattaya home">
-              <LogoSVG />
-              <div className="wm"><i>Go To&nbsp;</i><u>Pattaya</u></div>
+              <BrandLogoWhite h={44} />
             </Link>
             <p>The honest local guide to Pattaya. Real photos, real prices, verified by people who actually live here.</p>
             {SOCIALS.some((s) => s.href) && (
