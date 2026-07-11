@@ -70,7 +70,7 @@ export default function OpengraphImage() {
         >
           {/* new white logo lockup, top-left */}
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <img src={OG_LOGO} width={300} height={82} alt="Go To Pattaya" />
+            <img src={OG_LOGO} width={330} height={68} alt="Go To Pattaya" />
           </div>
 
           {/* headline + subtitle, vertically centred */}
