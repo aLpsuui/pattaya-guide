@@ -44,7 +44,7 @@ const jsonLd = {
       '@id': `${SITE_URL}/#organization`,
       name: SITE_NAME,
       url: SITE_URL,
-      logo: { '@type': 'ImageObject', url: `${SITE_URL}/apple-icon`, width: 180, height: 180 },
+      logo: { '@type': 'ImageObject', url: `${SITE_URL}/icon-512.png`, width: 512, height: 512 },
       description: SITE_DESCRIPTION,
       areaServed: { '@type': 'City', name: 'Pattaya', addressCountry: 'TH' },
     },
