@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { IconUpload } from './icons'
+import BrandLogo from '@/app/components/BrandLogo'
 
 // Logo picker for the settings page: upload from PC (logo_file) or paste a URL
 // (logo_url). A file wins server-side; clearing both reverts to the default
@@ -44,8 +45,11 @@ export default function LogoField({ initial }: { initial: string | null }) {
       >
         {preview
           ? <img src={preview} alt="Logo önizleme" style={{ maxHeight: 80, maxWidth: '80%', objectFit: 'contain' }} />
-          : <span style={{ color: 'var(--muted, #64748b)', fontSize: 13 }}>Varsayılan logo (site ikonu) kullanılıyor</span>}
+          : <BrandLogo h={44} />}
       </div>
+      <small style={{ display: 'block', color: 'var(--muted, #64748b)', marginTop: -6, marginBottom: 12 }}>
+        {preview ? 'Yüklü/seçili logo — sitede bu görünür.' : 'Şu an sitedeki mevcut (varsayılan) logo. Değiştirmek için aşağıdan yükle.'}
+      </small>
 
       <label className="dropzone">
         <div className="dz-ic"><IconUpload /></div>
