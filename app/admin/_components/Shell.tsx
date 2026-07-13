@@ -3,10 +3,10 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import { logout } from '@/app/admin/_actions/auth'
 import {
-  IconPin, IconDoc, IconImage, IconDash, IconSearch, IconSun, IconMoon, IconBurger, IconLogout, IconMail, IconTree, IconChart, IconStar,
+  IconPin, IconDoc, IconImage, IconDash, IconSearch, IconSun, IconMoon, IconBurger, IconLogout, IconMail, IconTree, IconChart, IconStar, IconGear,
 } from './icons'
 
-type Active = 'dashboard' | 'places' | 'categories' | 'blog' | 'media' | 'seo' | 'analytics' | 'messages' | 'deal'
+type Active = 'dashboard' | 'places' | 'categories' | 'blog' | 'media' | 'seo' | 'analytics' | 'messages' | 'deal' | 'settings'
 
 const NAV: { key: Active; href: string; label: string; icon: ReactNode; group: string }[] = [
   { key: 'dashboard', href: '/admin', label: 'Dashboard', icon: <IconDash />, group: 'Overview' },
@@ -18,8 +18,9 @@ const NAV: { key: Active; href: string; label: string; icon: ReactNode; group: s
   { key: 'media', href: '/admin/media', label: 'Media', icon: <IconImage />, group: 'Content' },
   { key: 'analytics', href: '/admin/analytics', label: 'Analytics', icon: <IconChart />, group: 'Growth' },
   { key: 'seo', href: '/admin/seo', label: 'SEO Health', icon: <IconSearch />, group: 'Growth' },
+  { key: 'settings', href: '/admin/settings', label: 'Settings', icon: <IconGear />, group: 'System' },
 ]
-const GROUPS = ['Overview', 'Content', 'Growth']
+const GROUPS = ['Overview', 'Content', 'Growth', 'System']
 
 export default function Shell({
   active, crumb, title, search, actions, children,

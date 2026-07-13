@@ -1,5 +1,9 @@
 // Go To Pattaya - full logo lockup (mark + wordmark). Height-driven via `h` (px); width auto.
-export default function BrandLogo({ h = 36 }: { h?: number }) {
+// `override` (admin-uploaded logo URL) swaps the built-in lockup for that image.
+export default function BrandLogo({ h = 36, override }: { h?: number; override?: string | null }) {
+  if (override) {
+    return <img src={override} alt="Go To Pattaya" style={{ height: h, width: 'auto', display: 'block', flexShrink: 0 }} />
+  }
   return (
     <svg viewBox="0 0 1567 324" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Go To Pattaya" style={{ height: h, width: 'auto', display: 'block', flexShrink: 0 }}>
       <path d="M1561.28 283.33C1563.11 282.595 1565.21 283.472 1565.96 285.3C1566.72 287.128 1565.88 289.226 1564.05 290.011C1562.86 290.528 1561.47 290.361 1560.44 289.573C1559.4 288.785 1558.86 287.499 1559.03 286.206C1559.21 284.913 1560.07 283.815 1561.28 283.33Z" fill="#464648"/>

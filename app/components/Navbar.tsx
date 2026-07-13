@@ -52,7 +52,7 @@ const navItems = [
   ]},
 ]
 
-export default function Navbar() {
+export default function Navbar({ logoUrl }: { logoUrl?: string | null }) {
   const [scrolled, setScrolled] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [openMega, setOpenMega] = useState<string | null>(null)
@@ -86,7 +86,7 @@ export default function Navbar() {
         <div className="tier1">
           <div className="container tier1-inner">
             <Link href="/" className="brand">
-              <BrandLogo h={36} />
+              <BrandLogo h={36} override={logoUrl} />
             </Link>
             <HeroSearch variant="header" />
             <div className="tier1-actions">
@@ -175,7 +175,7 @@ export default function Navbar() {
       <aside className={`drawer${drawerOpen ? ' show' : ''}`} aria-hidden={!drawerOpen}>
         <div className="drawer-top">
           <Link href="/" className="brand" onClick={() => setDrawerOpen(false)}>
-            <BrandLogo h={30} />
+            <BrandLogo h={30} override={logoUrl} />
           </Link>
           <button className="drawer-close" onClick={() => setDrawerOpen(false)} aria-label="Close">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" width="20" height="20"><path d="M6 6l12 12M18 6 6 18"/></svg>

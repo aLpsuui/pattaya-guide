@@ -87,7 +87,7 @@ function FooterCol({ title, links }: { title: string; links: { label: string; hr
   )
 }
 
-export default function Footer() {
+export default function Footer({ logoUrl }: { logoUrl?: string | null }) {
   return (
     <footer className="footer">
       <div className="container">
@@ -95,7 +95,7 @@ export default function Footer() {
 
           <div className="footer-brand">
             <Link href="/" className="brand" aria-label="Go To Pattaya home">
-              <BrandLogoWhite h={44} />
+              <BrandLogoWhite h={44} override={logoUrl} />
             </Link>
             <p>The honest local guide to Pattaya. Real photos, real prices, verified by people who actually live here.</p>
             {SOCIALS.some((s) => s.href) && (

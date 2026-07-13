@@ -6,6 +6,7 @@ import MobileTabBar from './components/MobileTabBar'
 import RootChrome from './components/RootChrome'
 import Analytics from './components/Analytics'
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, INDEXABLE, GA_ID } from '@/lib/site'
+import { getSiteSettings } from '@/lib/siteSettings'
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -64,7 +65,8 @@ const jsonLd = {
   ],
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const { logo_url } = await getSiteSettings()
   return (
     <html lang="en">
       <head>
@@ -84,7 +86,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-        <RootChrome navbar={<Navbar />} footer={<><Footer /><MobileTabBar /></>}>
+        <RootChrome navbar={<Navbar logoUrl={logo_url} />} footer={<><Footer logoUrl={logo_url} /><MobileTabBar /></>}>
           {children}
         </RootChrome>
         {GA_ID && <Analytics gaId={GA_ID} />}
