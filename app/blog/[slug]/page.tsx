@@ -89,6 +89,10 @@ function rewriteHtml(html: string, author?: string | null): string {
     .replace(/\.\.\/yeni-blog-gorselleri\//g, IMG_BASE + '/')
     .replace(/\.\.\/Pattaya-Tum-Gorseller-Resized\//g, IMG_BASE + '/')
     .replace(/\.\.\/pattaya-fotograflar\//g, IMG_BASE + '/')
+  // Every blog body image is served as .webp on the CDN. Map any authored
+  // .png/.jpg/.jpeg under the Blogs/ folder to its .webp twin so the post
+  // always requests the format that's actually uploaded.
+  out = out.replace(/(https:\/\/cdn\.gotopattaya\.com\/Blogs\/[^"]+?)\.(?:png|jpe?g)(?=")/gi, '$1.webp')
   if (author) out = normalizeAuthor(out, author)
   out = out.replace(/href="([^"]+\.html)"/g, (_m, file: string) => {
     if (ROUTE_MAP[file]) return `href="${ROUTE_MAP[file]}"`
