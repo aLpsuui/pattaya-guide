@@ -241,18 +241,25 @@ async function fetchGSC(token: string): Promise<Search | null> {
 // ---- public entry (cached hourly) ------------------------------------------
 async function fetchLive(): Promise<AnalyticsData | null> {
   const token = await getAccessToken()
+  if (!token) return null
   const propertyId = process.env.GA4_PROPERTY_ID
-  if (!token || !propertyId) return null
-  try {
-    const ga = await fetchGA4(propertyId, token)
-    const search = await fetchGSC(token).catch(() => null)
-    return { live: true, ...ga, search }
-  } catch {
-    return null
+  // GA4 and Search Console are fetched independently so one failing (a wrong
+  // property id, missing access, an API hiccup) never blanks out the other.
+  const ga = propertyId ? await fetchGA4(propertyId, token).catch(() => null) : null
+  const search = await fetchGSC(token).catch(() => null)
+  if (!ga && !search) return null
+  return {
+    live: true,
+    kpis: ga?.kpis ?? EMPTY.kpis,
+    visitors: ga?.visitors ?? EMPTY.visitors,
+    topPages: ga?.topPages ?? [],
+    sources: ga?.sources ?? [],
+    devices: ga?.devices ?? [],
+    search: search ?? null,
   }
 }
 
-const getCached = unstable_cache(fetchLive, ['admin-analytics-v1'], { revalidate: 3600, tags: ['analytics'] })
+const getCached = unstable_cache(fetchLive, ['admin-analytics-v2'], { revalidate: 3600, tags: ['analytics'] })
 
 export async function getAnalytics(): Promise<AnalyticsData> {
   try {
