@@ -4,8 +4,8 @@ import AnalyticsTabs from '@/app/admin/_components/AnalyticsTabs'
 import { getAnalytics } from '@/lib/adminAnalytics'
 
 // GA4 Data API + Search Console (see lib/adminAnalytics.ts). When Google isn't
-// configured or a call fails, getAnalytics() returns the demo dataset so this
-// page always renders - the markup below is identical either way.
+// configured or a call fails, getAnalytics() returns an EMPTY dataset (zeros,
+// no fake numbers) with live=false, so the page shows a "not connected" state.
 
 export const metadata = { title: 'Analytics - Pattaya Guide Admin' }
 
@@ -50,8 +50,8 @@ export default async function AnalyticsPage() {
       ) : (
         <div className="an-banner">
           <div>
-            <b>Örnek veri · canlı rakamlar Google panellerinde</b>
-            <span>Bu kartlar arayüz önizlemesidir. Sitenin gerçek ziyaretçi, sayfa ve trafik verisi Google Analytics 4&apos;te canlı izlenir.</span>
+            <b>Canlı GA4 verisi çekilemedi · rakamlar boş</b>
+            <span>Google Analytics bağlantısı yok ya da veri gelmedi. Bağlanınca (GA4_PROPERTY_ID + service account erişimi) buradaki rakamlar otomatik dolar. Uydurma/örnek veri gösterilmez.</span>
           </div>
           <a className="btn btn--primary" href="https://analytics.google.com/" target="_blank" rel="noopener">Google Analytics&apos;i aç →</a>
         </div>
@@ -202,7 +202,7 @@ export default async function AnalyticsPage() {
         }
       />
 
-      <p className="an-foot">{live ? `Canlı GA4 verisi · saatlik güncellenir · ${days.length} günlük görünüm` : 'Tüm rakamlar örnektir. Google Analytics 4 + Search Console bağlandığında otomatik canlı veriyle değişir.'}</p>
+      <p className="an-foot">{live ? `Canlı GA4 verisi · saatlik güncellenir · ${days.length} günlük görünüm` : 'Canlı GA4 verisi bekleniyor. Bağlanınca rakamlar otomatik dolar; örnek/uydurma veri gösterilmez.'}</p>
     </Shell>
   )
 }

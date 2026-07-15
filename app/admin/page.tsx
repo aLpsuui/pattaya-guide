@@ -2,8 +2,21 @@ import Link from 'next/link'
 import { db } from '@/lib/admin/db'
 import Shell from '@/app/admin/_components/Shell'
 import { IconPin, IconDoc, IconChevR, IconPlus, IconCheck, IconWarn, IconStar, IconEye, IconEdit } from '@/app/admin/_components/icons'
+import { getAnalytics } from '@/lib/adminAnalytics'
 
 export const dynamic = 'force-dynamic'
+
+// Real GA4 daily-users series → traffic chart paths for the 740x240 viewBox.
+function trafficPaths(vals: number[]) {
+  const x0 = 40, x1 = 712, yTop = 40, yBot = 200
+  const max = Math.max(...vals, 1)
+  const n = Math.max(vals.length, 2)
+  const x = (i: number) => x0 + (i / (n - 1)) * (x1 - x0)
+  const y = (v: number) => yBot - (v / max) * (yBot - yTop)
+  const line = vals.map((v, i) => `${i === 0 ? 'M' : 'L'} ${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(' ')
+  const last = vals.length - 1
+  return { line, area: `${line} L ${x(last).toFixed(1)} ${yBot} L ${x0} ${yBot} Z`, cx: x(last), cy: y(vals[last] ?? 0) }
+}
 
 const CAT_COLORS: Record<string, string> = {
   'eat-and-drinks': '#e8632b', 'things-to-do': '#0178b4', 'nightlife': '#7a5cff',
@@ -52,6 +65,13 @@ export default async function Dashboard() {
   const venCat = (venCatData.data || []) as { category_id: string | null }[]
   const recent = (recentData.data || []) as unknown as RecentVenue[]
 
+  // Real traffic from GA4 (getAnalytics). No demo/fake series - when GA isn't
+  // connected the chart is flat zeros and the sub-label says so.
+  const analytics = await getAnalytics()
+  const traffic = trafficPaths(analytics.visitors.length ? analytics.visitors : [0])
+  const sessionsVal = analytics.kpis.find((k) => k.label === 'Sessions')?.value ?? '-'
+  const pageviewsVal = analytics.kpis.find((k) => k.label === 'Pageviews')?.value ?? '-'
+
   // real category distribution
   const cats = categories
     .map((c, i) => ({
@@ -97,23 +117,23 @@ export default async function Dashboard() {
       <section className="chart-grid">
         <div className="panel">
           <div className="panel-head">
-            <div><h3>Traffic Overview</h3><div className="sub">Demo · connect Google Analytics for live data</div></div>
+            <div><h3>Traffic Overview</h3><div className="sub">{analytics.live ? 'Daily users · last 28 days · GA4' : 'GA4 bağlantısı bekleniyor · rakamlar boş'}</div></div>
             <div className="ph-actions"><Link className="link-more" href="/admin/analytics">Open analytics<IconChevR /></Link></div>
           </div>
           <div className="panel-body">
             <div className="chart-wrap">
-              <svg className="chart-svg" viewBox="0 0 740 240" preserveAspectRatio="none" role="img" aria-label="Demo traffic chart">
+              <svg className="chart-svg" viewBox="0 0 740 240" preserveAspectRatio="none" role="img" aria-label="Traffic over the last 28 days">
                 <defs><linearGradient id="dArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#0178b4" stopOpacity=".22" /><stop offset="1" stopColor="#0178b4" stopOpacity="0" /></linearGradient></defs>
                 <line x1="40" y1="40" x2="712" y2="40" stroke="var(--grid-line)" /><line x1="40" y1="100" x2="712" y2="100" stroke="var(--grid-line)" /><line x1="40" y1="160" x2="712" y2="160" stroke="var(--grid-line)" /><line x1="40" y1="200" x2="712" y2="200" stroke="var(--grid-line)" />
-                <path d="M40 150 L107 142 L167 148 L226 128 L285 134 L344 120 L404 110 L463 116 L522 100 L581 90 L641 78 L700 66 L700 200 L40 200 Z" fill="url(#dArea)" />
-                <path d="M40 150 L107 142 L167 148 L226 128 L285 134 L344 120 L404 110 L463 116 L522 100 L581 90 L641 78 L700 66" fill="none" stroke="#0178b4" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
-                <circle cx="700" cy="66" r="5" fill="#fff" stroke="#0178b4" strokeWidth="3" />
+                <path d={traffic.area} fill="url(#dArea)" />
+                <path d={traffic.line} fill="none" stroke="#0178b4" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+                <circle cx={traffic.cx} cy={traffic.cy} r="5" fill="#fff" stroke="#0178b4" strokeWidth="3" />
               </svg>
             </div>
             <div className="chart-legend">
-              <span className="lg-item"><span className="sw" style={{ background: '#0178b4' }} />Sessions <b>-</b></span>
-              <span className="lg-item"><span className="sw" style={{ background: '#2fbddc' }} />Page views <b>-</b></span>
-              <span className="lg-item" style={{ marginLeft: 'auto' }}><span className="sw" style={{ background: '#1ba672' }} />Live data after launch</span>
+              <span className="lg-item"><span className="sw" style={{ background: '#0178b4' }} />Sessions <b>{sessionsVal}</b></span>
+              <span className="lg-item"><span className="sw" style={{ background: '#2fbddc' }} />Page views <b>{pageviewsVal}</b></span>
+              <span className="lg-item" style={{ marginLeft: 'auto' }}><span className="sw" style={{ background: analytics.live ? '#1ba672' : '#94a3b8' }} />{analytics.live ? 'Canlı GA4 verisi' : 'Henüz veri yok'}</span>
             </div>
           </div>
         </div>

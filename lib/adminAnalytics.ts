@@ -31,57 +31,23 @@ export type AnalyticsData = {
 
 const SOURCE_COLORS = ['#0178b4', '#7a5cff', '#1ba672', '#e8a33d', '#d0517e', '#38a3a5']
 
-// ---- demo fallback (shown until Google is connected) -----------------------
-const DEMO_VISITORS = [
-  120, 138, 132, 159, 178, 150, 131, 168, 188, 182, 209, 231, 198, 176,
-  221, 242, 233, 261, 286, 248, 224, 272, 301, 296, 324, 352, 309, 341,
-]
-export const DEMO: AnalyticsData = {
+// ---- empty fallback (no fake data) -----------------------------------------
+// When Google isn't configured or a call fails, we return real-looking zeros
+// instead of fabricated numbers, and live=false so the page shows a "not
+// connected" state rather than misleading demo data.
+export const EMPTY: AnalyticsData = {
   live: false,
   kpis: [
-    { label: 'Users', value: '4,820', delta: 12.4, up: true },
-    { label: 'Sessions', value: '6,310', delta: 9.1, up: true },
-    { label: 'Pageviews', value: '18,940', delta: 15.2, up: true },
-    { label: 'Avg. engagement', value: '2m 14s', delta: 3.8, up: true },
+    { label: 'Users', value: '0', delta: 0, up: true },
+    { label: 'Sessions', value: '0', delta: 0, up: true },
+    { label: 'Pageviews', value: '0', delta: 0, up: true },
+    { label: 'Avg. engagement', value: '0m 00s', delta: 0, up: true },
   ],
-  visitors: DEMO_VISITORS,
-  topPages: [
-    { path: '/', views: 5120, pct: 100 },
-    { path: '/eat-and-drinks', views: 2840, pct: 55 },
-    { path: '/things-to-do', views: 2210, pct: 43 },
-    { path: '/blog/is-pattaya-safe', views: 1730, pct: 34 },
-    { path: '/areas/jomtien', views: 1290, pct: 25 },
-    { path: '/nightlife', views: 980, pct: 19 },
-    { path: '/yoga-and-fitness', views: 760, pct: 15 },
-  ],
-  sources: [
-    { label: 'Organic Search', pct: 58, color: '#0178b4' },
-    { label: 'Direct', pct: 22, color: '#7a5cff' },
-    { label: 'Social', pct: 12, color: '#1ba672' },
-    { label: 'Referral', pct: 8, color: '#e8a33d' },
-  ],
-  devices: [
-    { label: 'Mobile', pct: 64 },
-    { label: 'Desktop', pct: 30 },
-    { label: 'Tablet', pct: 6 },
-  ],
-  search: {
-    clicks: '1,240', impressions: '88,500', ctr: '1.4%', position: '18.3',
-    queries: [
-      { key: 'pattaya guide', clicks: '210', impressions: '9,400', ctr: '2.2%', position: '6.1' },
-      { key: 'things to do in pattaya', clicks: '164', impressions: '12,800', ctr: '1.3%', position: '9.4' },
-      { key: 'is pattaya safe', clicks: '132', impressions: '7,100', ctr: '1.9%', position: '7.8' },
-      { key: 'best beaches pattaya', clicks: '98', impressions: '6,300', ctr: '1.6%', position: '11.2' },
-      { key: 'jomtien vs pattaya', clicks: '74', impressions: '4,050', ctr: '1.8%', position: '8.9' },
-    ],
-    pages: [
-      { key: '/', clicks: '318', impressions: '21,400', ctr: '1.5%', position: '12.4' },
-      { key: '/blog/is-pattaya-safe', clicks: '186', impressions: '9,900', ctr: '1.9%', position: '7.8' },
-      { key: '/things-to-do', clicks: '141', impressions: '11,200', ctr: '1.3%', position: '10.1' },
-      { key: '/eat-and-drinks', clicks: '112', impressions: '8,050', ctr: '1.4%', position: '13.6' },
-      { key: '/areas/jomtien', clicks: '89', impressions: '5,400', ctr: '1.6%', position: '9.2' },
-    ],
-  },
+  visitors: [0],
+  topPages: [],
+  sources: [],
+  devices: [],
+  search: null,
 }
 
 // ---- service-account auth --------------------------------------------------
@@ -291,8 +257,8 @@ const getCached = unstable_cache(fetchLive, ['admin-analytics-v1'], { revalidate
 export async function getAnalytics(): Promise<AnalyticsData> {
   try {
     const live = await getCached()
-    return live ?? DEMO
+    return live ?? EMPTY
   } catch {
-    return DEMO
+    return EMPTY
   }
 }
