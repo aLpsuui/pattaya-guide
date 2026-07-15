@@ -1,5 +1,6 @@
 import Shell from '@/app/admin/_components/Shell'
 import { IconChevR, IconUp, IconDown } from '@/app/admin/_components/icons'
+import AnalyticsTabs from '@/app/admin/_components/AnalyticsTabs'
 import { getAnalytics } from '@/lib/adminAnalytics'
 
 // GA4 Data API + Search Console (see lib/adminAnalytics.ts). When Google isn't
@@ -56,102 +57,150 @@ export default async function AnalyticsPage() {
         </div>
       )}
 
-      {/* KPI cards */}
-      <div className="an-kpis">
-        {kpis.map((k) => (
-          <div className="an-kpi" key={k.label}>
-            <div className="an-kpi__l">{k.label}</div>
-            <div className="an-kpi__v">{k.value}</div>
-            <div className={`an-delta${k.up ? ' up' : ' down'}`}>{k.up ? <IconUp /> : <IconDown />}{k.delta}%<span>vs prev</span></div>
-          </div>
-        ))}
-      </div>
-
-      {/* main visitors chart */}
-      <section className="panel an-chart">
-        <div className="panel-head"><div><b>Visitors</b><div className="sub">Daily users · last 28 days</div></div></div>
-        <div className="an-chart__body">
-          <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="an-svg" role="img" aria-label="Visitors over the last 28 days">
-            <defs>
-              <linearGradient id="anFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="var(--ocean)" stopOpacity="0.28" />
-                <stop offset="100%" stopColor="var(--ocean)" stopOpacity="0" />
-              </linearGradient>
-            </defs>
-            <path d={main.area} fill="url(#anFill)" />
-            <path d={main.line} fill="none" stroke="var(--ocean)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
-          </svg>
-          <div className="an-xaxis"><span>28 gün önce</span><span>14 gün</span><span>Bugün</span></div>
-        </div>
-      </section>
-
-      <div className="an-two">
-        {/* top pages */}
-        <section className="panel">
-          <div className="panel-head"><div><b>Top pages</b><div className="sub">By pageviews</div></div></div>
-          <div className="an-pages">
-            {topPages.map((p) => (
-              <div className="an-page" key={p.path}>
-                <span className="an-page__path" title={p.path}>{p.path}</span>
-                <span className="an-page__bar"><span style={{ width: `${p.pct}%` }} /></span>
-                <span className="an-page__n">{p.views.toLocaleString()}</span>
-              </div>
-            ))}
-            {topPages.length === 0 && <p className="an-note">Henüz sayfa görüntüleme verisi yok.</p>}
-          </div>
-        </section>
-
-        {/* traffic sources */}
-        <section className="panel">
-          <div className="panel-head"><div><b>Traffic sources</b><div className="sub">Sessions by channel</div></div></div>
-          <div className="an-src">
-            <div className="an-donut" style={{ background: sources.length ? `conic-gradient(${stops})` : 'var(--border)' }}><div className="an-donut__hole"><b>{sessionsTotal}</b><span>sessions</span></div></div>
-            <div className="an-legend">
-              {sources.map((s) => (
-                <div className="an-leg" key={s.label}>
-                  <span className="an-leg__dot" style={{ background: s.color }} />
-                  <span className="an-leg__l">{s.label}</span>
-                  <span className="an-leg__n">{s.pct}%</span>
+      <AnalyticsTabs
+        ga={
+          <>
+            {/* KPI cards */}
+            <div className="an-kpis">
+              {kpis.map((k) => (
+                <div className="an-kpi" key={k.label}>
+                  <div className="an-kpi__l">{k.label}</div>
+                  <div className="an-kpi__v">{k.value}</div>
+                  <div className={`an-delta${k.up ? ' up' : ' down'}`}>{k.up ? <IconUp /> : <IconDown />}{k.delta}%<span>vs prev</span></div>
                 </div>
               ))}
             </div>
-          </div>
-        </section>
-      </div>
 
-      <div className="an-two">
-        {/* devices */}
-        <section className="panel">
-          <div className="panel-head"><div><b>Devices</b><div className="sub">Share of sessions</div></div></div>
-          <div className="an-bars">
-            {devices.map((d) => (
-              <div className="an-barrow" key={d.label}>
-                <span className="an-barrow__l">{d.label}</span>
-                <span className="an-barrow__track"><span style={{ width: `${d.pct}%` }} /></span>
-                <span className="an-barrow__n">{d.pct}%</span>
+            {/* main visitors chart */}
+            <section className="panel an-chart">
+              <div className="panel-head"><div><b>Visitors</b><div className="sub">Daily users · last 28 days</div></div></div>
+              <div className="an-chart__body">
+                <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="an-svg" role="img" aria-label="Visitors over the last 28 days">
+                  <defs>
+                    <linearGradient id="anFill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="var(--ocean)" stopOpacity="0.28" />
+                      <stop offset="100%" stopColor="var(--ocean)" stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+                  <path d={main.area} fill="url(#anFill)" />
+                  <path d={main.line} fill="none" stroke="var(--ocean)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+                </svg>
+                <div className="an-xaxis"><span>28 gün önce</span><span>14 gün</span><span>Bugün</span></div>
               </div>
-            ))}
-          </div>
-        </section>
+            </section>
 
-        {/* search console */}
-        <section className="panel">
-          <div className="panel-head">
-            <div><b>Search Console</b><div className="sub">Google Search · last 28 days</div></div>
-            <a className="an-open" href="https://search.google.com/search-console" target="_blank" rel="noopener">Aç →</a>
-          </div>
-          {search ? (
-            <div className="an-sc">
-              <div className="an-sc__cell"><b>{search.clicks}</b><span>Clicks</span></div>
-              <div className="an-sc__cell"><b>{search.impressions}</b><span>Impressions</span></div>
-              <div className="an-sc__cell"><b>{search.ctr}</b><span>CTR</span></div>
-              <div className="an-sc__cell"><b>{search.position}</b><span>Avg. position</span></div>
+            <div className="an-two">
+              {/* top pages */}
+              <section className="panel">
+                <div className="panel-head"><div><b>Top pages</b><div className="sub">By pageviews</div></div></div>
+                <div className="an-pages">
+                  {topPages.map((p) => (
+                    <div className="an-page" key={p.path}>
+                      <span className="an-page__path" title={p.path}>{p.path}</span>
+                      <span className="an-page__bar"><span style={{ width: `${p.pct}%` }} /></span>
+                      <span className="an-page__n">{p.views.toLocaleString()}</span>
+                    </div>
+                  ))}
+                  {topPages.length === 0 && <p className="an-note">Henüz sayfa görüntüleme verisi yok.</p>}
+                </div>
+              </section>
+
+              {/* traffic sources */}
+              <section className="panel">
+                <div className="panel-head"><div><b>Traffic sources</b><div className="sub">Sessions by channel</div></div></div>
+                <div className="an-src">
+                  <div className="an-donut" style={{ background: sources.length ? `conic-gradient(${stops})` : 'var(--border)' }}><div className="an-donut__hole"><b>{sessionsTotal}</b><span>sessions</span></div></div>
+                  <div className="an-legend">
+                    {sources.map((s) => (
+                      <div className="an-leg" key={s.label}>
+                        <span className="an-leg__dot" style={{ background: s.color }} />
+                        <span className="an-leg__l">{s.label}</span>
+                        <span className="an-leg__n">{s.pct}%</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </section>
             </div>
+
+            {/* devices */}
+            <section className="panel" style={{ marginBottom: 18 }}>
+              <div className="panel-head"><div><b>Devices</b><div className="sub">Share of sessions</div></div></div>
+              <div className="an-bars">
+                {devices.map((d) => (
+                  <div className="an-barrow" key={d.label}>
+                    <span className="an-barrow__l">{d.label}</span>
+                    <span className="an-barrow__track"><span style={{ width: `${d.pct}%` }} /></span>
+                    <span className="an-barrow__n">{d.pct}%</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </>
+        }
+        search={
+          search ? (
+            <>
+              {/* summary */}
+              <section className="panel" style={{ marginBottom: 18 }}>
+                <div className="panel-head">
+                  <div><b>Search Console</b><div className="sub">Google Search · last 28 days</div></div>
+                  <a className="an-open" href="https://search.google.com/search-console" target="_blank" rel="noopener">Aç →</a>
+                </div>
+                <div className="an-sc">
+                  <div className="an-sc__cell"><b>{search.clicks}</b><span>Clicks</span></div>
+                  <div className="an-sc__cell"><b>{search.impressions}</b><span>Impressions</span></div>
+                  <div className="an-sc__cell"><b>{search.ctr}</b><span>CTR</span></div>
+                  <div className="an-sc__cell"><b>{search.position}</b><span>Avg. position</span></div>
+                </div>
+              </section>
+
+              <div className="an-two">
+                {/* top queries */}
+                <section className="panel">
+                  <div className="panel-head"><div><b>Top queries</b><div className="sub">By clicks · last 28 days</div></div></div>
+                  <div className="an-sctbl-wrap">
+                    <table className="an-sctbl">
+                      <thead><tr><th>Query</th><th>Clicks</th><th>Impr.</th><th>CTR</th><th>Pos.</th></tr></thead>
+                      <tbody>
+                        {search.queries.map((r) => (
+                          <tr key={r.key}><td title={r.key}>{r.key}</td><td>{r.clicks}</td><td>{r.impressions}</td><td>{r.ctr}</td><td>{r.position}</td></tr>
+                        ))}
+                        {search.queries.length === 0 && <tr><td colSpan={5} className="an-note">Henüz sorgu verisi yok.</td></tr>}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+
+                {/* top pages */}
+                <section className="panel">
+                  <div className="panel-head"><div><b>Top pages</b><div className="sub">By clicks · last 28 days</div></div></div>
+                  <div className="an-sctbl-wrap">
+                    <table className="an-sctbl">
+                      <thead><tr><th>Page</th><th>Clicks</th><th>Impr.</th><th>CTR</th><th>Pos.</th></tr></thead>
+                      <tbody>
+                        {search.pages.map((r) => {
+                          const path = r.key.replace(/^https?:\/\/[^/]+/, '') || '/'
+                          return <tr key={r.key}><td title={r.key}>{path}</td><td>{r.clicks}</td><td>{r.impressions}</td><td>{r.ctr}</td><td>{r.position}</td></tr>
+                        })}
+                        {search.pages.length === 0 && <tr><td colSpan={5} className="an-note">Henüz sayfa verisi yok.</td></tr>}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+              </div>
+            </>
           ) : (
-            <p className="an-note">Search Console bağlı değil. GSC_SITE_URL eklenip service account GSC&apos;de Viewer yapılınca burası dolar.</p>
-          )}
-        </section>
-      </div>
+            <section className="panel">
+              <div className="panel-head">
+                <div><b>Search Console</b><div className="sub">Google Search</div></div>
+                <a className="an-open" href="https://search.google.com/search-console" target="_blank" rel="noopener">Aç →</a>
+              </div>
+              <p className="an-note">Search Console bağlı değil. GSC_SITE_URL eklenip service account GSC&apos;de Viewer yapılınca burası dolar.</p>
+            </section>
+          )
+        }
+      />
 
       <p className="an-foot">{live ? `Canlı GA4 verisi · saatlik güncellenir · ${days.length} günlük görünüm` : 'Tüm rakamlar örnektir. Google Analytics 4 + Search Console bağlandığında otomatik canlı veriyle değişir.'}</p>
     </Shell>

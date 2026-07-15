@@ -13,6 +13,12 @@ import { unstable_cache } from 'next/cache'
 
 // ---- shape shared with the page --------------------------------------------
 export type Kpi = { label: string; value: string; delta: number; up: boolean }
+export type GscRow = { key: string; clicks: string; impressions: string; ctr: string; position: string }
+export type Search = {
+  clicks: string; impressions: string; ctr: string; position: string
+  queries: GscRow[]
+  pages: GscRow[]
+}
 export type AnalyticsData = {
   live: boolean
   kpis: Kpi[]
@@ -20,7 +26,7 @@ export type AnalyticsData = {
   topPages: { path: string; views: number; pct: number }[]
   sources: { label: string; pct: number; color: string }[]
   devices: { label: string; pct: number }[]
-  search: { clicks: string; impressions: string; ctr: string; position: string } | null
+  search: Search | null
 }
 
 const SOURCE_COLORS = ['#0178b4', '#7a5cff', '#1ba672', '#e8a33d', '#d0517e', '#38a3a5']
@@ -59,7 +65,23 @@ export const DEMO: AnalyticsData = {
     { label: 'Desktop', pct: 30 },
     { label: 'Tablet', pct: 6 },
   ],
-  search: { clicks: '1,240', impressions: '88,500', ctr: '1.4%', position: '18.3' },
+  search: {
+    clicks: '1,240', impressions: '88,500', ctr: '1.4%', position: '18.3',
+    queries: [
+      { key: 'pattaya guide', clicks: '210', impressions: '9,400', ctr: '2.2%', position: '6.1' },
+      { key: 'things to do in pattaya', clicks: '164', impressions: '12,800', ctr: '1.3%', position: '9.4' },
+      { key: 'is pattaya safe', clicks: '132', impressions: '7,100', ctr: '1.9%', position: '7.8' },
+      { key: 'best beaches pattaya', clicks: '98', impressions: '6,300', ctr: '1.6%', position: '11.2' },
+      { key: 'jomtien vs pattaya', clicks: '74', impressions: '4,050', ctr: '1.8%', position: '8.9' },
+    ],
+    pages: [
+      { key: '/', clicks: '318', impressions: '21,400', ctr: '1.5%', position: '12.4' },
+      { key: '/blog/is-pattaya-safe', clicks: '186', impressions: '9,900', ctr: '1.9%', position: '7.8' },
+      { key: '/things-to-do', clicks: '141', impressions: '11,200', ctr: '1.3%', position: '10.1' },
+      { key: '/eat-and-drinks', clicks: '112', impressions: '8,050', ctr: '1.4%', position: '13.6' },
+      { key: '/areas/jomtien', clicks: '89', impressions: '5,400', ctr: '1.6%', position: '9.2' },
+    ],
+  },
 }
 
 // ---- service-account auth --------------------------------------------------
@@ -206,26 +228,47 @@ function isoDaysAgo(days: number): string {
   return d.toISOString().slice(0, 10)
 }
 
-async function fetchGSC(token: string): Promise<AnalyticsData['search']> {
+type GscApiRow = { keys?: string[]; clicks?: number; impressions?: number; ctr?: number; position?: number }
+const fmtGsc = (r: GscApiRow): GscRow => ({
+  key: r.keys?.[0] ?? '',
+  clicks: numFmt(r.clicks || 0),
+  impressions: numFmt(r.impressions || 0),
+  ctr: `${((r.ctr || 0) * 100).toFixed(1)}%`,
+  position: (r.position || 0).toFixed(1),
+})
+
+async function fetchGSC(token: string): Promise<Search | null> {
   const site = process.env.GSC_SITE_URL
   if (!site) return null
-  const res = await fetch(
-    `https://searchconsole.googleapis.com/webmasters/v3/sites/${encodeURIComponent(site)}/searchAnalytics/query`,
-    {
+  const endpoint = `https://searchconsole.googleapis.com/webmasters/v3/sites/${encodeURIComponent(site)}/searchAnalytics/query`
+  const range = { startDate: isoDaysAgo(28), endDate: isoDaysAgo(1) }
+  const query = async (body: object) => {
+    const res = await fetch(endpoint, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ startDate: isoDaysAgo(28), endDate: isoDaysAgo(1), dimensions: [] }),
-    },
-  )
-  if (!res.ok) return null
-  const data = await res.json()
-  const row = data.rows?.[0]
-  if (!row) return { clicks: '0', impressions: '0', ctr: '0%', position: '-' }
+      body: JSON.stringify(body),
+    })
+    return res.ok ? res.json() : null
+  }
+  const [sum, byQuery, byPage] = await Promise.all([
+    query({ ...range, dimensions: [] }),
+    query({ ...range, dimensions: ['query'], rowLimit: 10 }),
+    query({ ...range, dimensions: ['page'], rowLimit: 10 }),
+  ])
+  if (!sum) return null
+  const row = sum.rows?.[0]
+  const summary = row
+    ? {
+        clicks: numFmt(row.clicks || 0),
+        impressions: numFmt(row.impressions || 0),
+        ctr: `${((row.ctr || 0) * 100).toFixed(1)}%`,
+        position: (row.position || 0).toFixed(1),
+      }
+    : { clicks: '0', impressions: '0', ctr: '0%', position: '-' }
   return {
-    clicks: numFmt(row.clicks || 0),
-    impressions: numFmt(row.impressions || 0),
-    ctr: `${((row.ctr || 0) * 100).toFixed(1)}%`,
-    position: (row.position || 0).toFixed(1),
+    ...summary,
+    queries: (byQuery?.rows ?? []).map(fmtGsc),
+    pages: (byPage?.rows ?? []).map(fmtGsc),
   }
 }
 
