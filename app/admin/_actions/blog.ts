@@ -61,13 +61,24 @@ export async function saveBlog(_prev: State, fd: FormData): Promise<State> {
     : await db.from('blog_posts').insert(row)
   if (res.error) return { error: res.error.message }
 
+  // Refresh the admin list AND the public pages so the edit shows live right
+  // away instead of waiting out the blog pages' 1h ISR window.
   revalidatePath('/admin/blog')
+  revalidatePath('/blog')
+  revalidatePath(`/blog/${slug}`)
+  revalidatePath('/')
   redirect('/admin/blog')
 }
 
 export async function deleteBlog(fd: FormData) {
   const id = String(fd.get('id') || '')
-  if (id) await db.from('blog_posts').delete().eq('id', id)
+  if (id) {
+    const { data } = await db.from('blog_posts').select('slug').eq('id', id).maybeSingle()
+    await db.from('blog_posts').delete().eq('id', id)
+    if (data?.slug) revalidatePath(`/blog/${data.slug}`)
+  }
   revalidatePath('/admin/blog')
+  revalidatePath('/blog')
+  revalidatePath('/')
   redirect('/admin/blog')
 }

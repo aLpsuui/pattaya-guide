@@ -54,14 +54,23 @@ export async function savePlace(_prev: State, fd: FormData): Promise<State> {
     : await db.from('venues').insert(row)
   if (res.error) return { error: res.error.message }
 
+  // Refresh the admin list AND the public venue page + homepage so the edit
+  // shows live right away instead of waiting out the ISR window.
   revalidatePath('/admin/places')
+  revalidatePath(`/venues/${slug}`)
+  revalidatePath('/')
   redirect('/admin/places')
 }
 
 export async function deletePlace(fd: FormData) {
   const id = String(fd.get('id') || '')
-  if (id) await db.from('venues').delete().eq('id', id)
+  if (id) {
+    const { data } = await db.from('venues').select('slug').eq('id', id).maybeSingle()
+    await db.from('venues').delete().eq('id', id)
+    if (data?.slug) revalidatePath(`/venues/${data.slug}`)
+  }
   revalidatePath('/admin/places')
+  revalidatePath('/')
   redirect('/admin/places')
 }
 
