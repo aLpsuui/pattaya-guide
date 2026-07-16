@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from '@/app/components/LocaleLink'
 
 const title = 'Terms of Use | Go To Pattaya'
 const description = 'The terms of use for Go To Pattaya - the rules for using our Pattaya travel guide, directory and content, plus liability, links and contact details.'

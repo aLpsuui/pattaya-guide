@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { supabase } from '@/lib/supabase'
 import { unstable_cache } from 'next/cache'
-import Link from 'next/link'
+import Link from '@/app/components/LocaleLink'
 
 interface BlogPost {
   id: string

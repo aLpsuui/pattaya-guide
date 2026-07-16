@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
-import Link from 'next/link'
+import Link from '@/app/components/LocaleLink'
 import Icon from '@/app/components/Icon'
 import HeroSearch from '@/app/components/HeroSearch'
 import BrandLogo from '@/app/components/BrandLogo'

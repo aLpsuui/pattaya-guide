@@ -1,13 +1,12 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
-import Navbar from './components/Navbar'
-import Footer from './components/Footer'
-import MobileTabBar from './components/MobileTabBar'
-import RootChrome from './components/RootChrome'
 import Analytics from './components/Analytics'
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, INDEXABLE, GA_ID } from '@/lib/site'
-import { getSiteSettings } from '@/lib/siteSettings'
 
+// Thin root layout shared by the public site (app/[lang]/...) and /admin.
+// The public chrome (navbar/footer) lives in app/[lang]/layout.tsx so it can be
+// localized; admin renders its own shell. <html lang> defaults to en here;
+// per-locale lang is a follow-up (hreflang is emitted per page).
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: 'Go To Pattaya - Your complete guide to Pattaya',
@@ -65,8 +64,7 @@ const jsonLd = {
   ],
 }
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const { logo_url } = await getSiteSettings()
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
@@ -86,9 +84,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-        <RootChrome navbar={<Navbar logoUrl={logo_url} />} footer={<><Footer logoUrl={logo_url} /><MobileTabBar /></>}>
-          {children}
-        </RootChrome>
+        {children}
         {GA_ID && <Analytics gaId={GA_ID} />}
       </body>
     </html>

@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import Link from 'next/link'
+import Link from '@/app/components/LocaleLink'
 import Star from '@/app/components/Star'
 
 export type Deal = {

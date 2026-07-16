@@ -1,6 +1,6 @@
 'use client'
 import { usePathname } from 'next/navigation'
-import Link from 'next/link'
+import Link from '@/app/components/LocaleLink'
 
 export default function MobileTabBar() {
   const pathname = usePathname()

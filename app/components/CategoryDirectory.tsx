@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useMemo, useState } from 'react'
-import Link from 'next/link'
+import Link from '@/app/components/LocaleLink'
 import Icon from '@/app/components/Icon'
 import Star from '@/app/components/Star'
 

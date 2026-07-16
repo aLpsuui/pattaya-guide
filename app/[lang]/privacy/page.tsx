@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from '@/app/components/LocaleLink'
 
 const title = 'Privacy Policy | Go To Pattaya'
 const description = 'Our privacy policy: what data Go To Pattaya collects when you use our Pattaya guide, how we use and protect it, cookies, and your rights and choices.'
