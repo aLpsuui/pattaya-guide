@@ -20,6 +20,15 @@ export async function proxy(req: NextRequest) {
 
   // --- 1) Admin auth gate ---
   if (pathname === '/admin' || pathname.startsWith('/admin/')) {
+    // View-only environments (UAT) set ADMIN_DISABLED=true to switch admin off
+    // entirely, so nobody can write to the shared DB from there. Prod leaves it
+    // unset, so admin works normally.
+    if (process.env.ADMIN_DISABLED === 'true') {
+      const home = req.nextUrl.clone()
+      home.pathname = `/${defaultLocale}`
+      home.search = ''
+      return NextResponse.redirect(home)
+    }
     if (pathname.startsWith('/admin/login')) return NextResponse.next()
     const cookie = req.cookies.get(COOKIE_NAME)?.value
     const expected = await sessionToken()
