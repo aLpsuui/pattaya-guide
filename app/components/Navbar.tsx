@@ -4,6 +4,7 @@ import Link from '@/app/components/LocaleLink'
 import Icon from '@/app/components/Icon'
 import HeroSearch from '@/app/components/HeroSearch'
 import BrandLogo from '@/app/components/BrandLogo'
+import LanguageSwitcher from '@/app/components/LanguageSwitcher'
 import type { MegaData } from '@/lib/megaNav'
 
 const StarSvg = () => (<svg viewBox="0 0 24 24" width="11" height="11" aria-hidden="true"><path d="M12 17.3 6.2 20.5l1.1-6.5L2.5 9.4l6.5-.9L12 2.5l3 6 6.5.9-4.8 4.6 1.1 6.5z" /></svg>)
@@ -52,7 +53,8 @@ const navItems = [
   ]},
 ]
 
-export default function Navbar({ logoUrl }: { logoUrl?: string | null }) {
+export default function Navbar({ logoUrl, dict }: { logoUrl?: string | null; dict?: Record<string, string> }) {
+  const t = (s: string) => dict?.[s] ?? s
   const [scrolled, setScrolled] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [openMega, setOpenMega] = useState<string | null>(null)
@@ -90,7 +92,8 @@ export default function Navbar({ logoUrl }: { logoUrl?: string | null }) {
             </Link>
             <HeroSearch variant="header" />
             <div className="tier1-actions">
-              <Link href="/plan-my-trip" className="btn btn-primary btn-sm">Plan my trip</Link>
+              <LanguageSwitcher />
+              <Link href="/plan-my-trip" className="btn btn-primary btn-sm">{t('Plan my trip')}</Link>
               <button className="burger" onClick={() => setDrawerOpen(true)} aria-label="Open menu" aria-expanded={drawerOpen}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" width="22" height="22"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
               </button>
@@ -106,21 +109,21 @@ export default function Navbar({ logoUrl }: { logoUrl?: string | null }) {
                   onMouseLeave={() => setOpenMega(null)}>
                   <Link href={routeFor(item.slug)} onClick={() => setOpenMega(null)}>
                     <Icon name={item.icon} size={18} className="ic" />
-                    {item.label}
+                    {t(item.label)}
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" className="cv" width="13" height="13"><path d="m6 9 6 6 6-6"/></svg>
                   </Link>
                   <div className="mega">
                     <div className="container mega-wrap">
                       <div className="mega-rail">
-                        <h5>Browse {item.label}</h5>
+                        <h5>{t('Browse')} {t(item.label)}</h5>
                         <ul>
                           {item.items.map(sub => (
                             <li key={sub.label}>
-                              <Link href={sub.href} onClick={() => setOpenMega(null)}>{sub.label} {sub.count && <span className="cnt">{sub.count}</span>}</Link>
+                              <Link href={sub.href} onClick={() => setOpenMega(null)}>{t(sub.label)} {sub.count && <span className="cnt">{sub.count}</span>}</Link>
                             </li>
                           ))}
                         </ul>
-                        <Link className="pill-link" href={routeFor(item.slug)} onClick={() => setOpenMega(null)}>All {item.label} →</Link>
+                        <Link className="pill-link" href={routeFor(item.slug)} onClick={() => setOpenMega(null)}>{t('All')} {t(item.label)} →</Link>
                       </div>
 
                       <div className={`bento${item.slug === 'areas' ? ' bento--even' : ''}`}>
@@ -128,9 +131,9 @@ export default function Navbar({ logoUrl }: { logoUrl?: string | null }) {
                           mega[item.slug]!.venues.map((v, i) => (
                             <Link key={v.slug} href={v.href} onClick={() => setOpenMega(null)}>
                               {v.image_url && <img src={v.image_url} alt={v.name} loading="lazy" />}
-                              {i === 0 && <span className="badge">Editor&apos;s pick</span>}
+                              {i === 0 && <span className="badge">{t("Editor's pick")}</span>}
                               {v.rating != null && <span className="rate-chip"><StarSvg />{v.rating.toFixed(1)}</span>}
-                              <span className="k">{v.categories?.name_en || v.neighborhood || item.label}</span>
+                              <span className="k">{v.categories?.name_en || v.neighborhood || t(item.label)}</span>
                               <b>{v.name}</b>
                               {v.price_from != null
                                 ? <small>from ฿{v.price_from.toLocaleString()}</small>
@@ -139,9 +142,9 @@ export default function Navbar({ logoUrl }: { logoUrl?: string | null }) {
                           ))
                         ) : (
                           <Link href={routeFor(item.slug)} onClick={() => setOpenMega(null)} style={{ background: 'var(--grad-brand)' }}>
-                            <span className="k">Explore</span>
-                            <b>Browse all {item.label}</b>
-                            <small>See every place →</small>
+                            <span className="k">{t('Explore')}</span>
+                            <b>{t('Browse all')} {t(item.label)}</b>
+                            <small>{t('See every place →')}</small>
                           </Link>
                         )}
                       </div>
@@ -150,13 +153,13 @@ export default function Navbar({ logoUrl }: { logoUrl?: string | null }) {
                         <Link className="mega-promo" href={`/blog/${mega[item.slug]!.guide!.slug}`} onClick={() => setOpenMega(null)}>
                           <div className="ph" style={mega[item.slug]!.guide!.hero_image
                             ? { backgroundImage: `url(${mega[item.slug]!.guide!.hero_image})`, backgroundSize: 'cover', backgroundPosition: 'center' }
-                            : { background: 'var(--grad-brand)' }}><span className="ph-tag">Featured guide</span></div>
+                            : { background: 'var(--grad-brand)' }}><span className="ph-tag">{t('Featured guide')}</span></div>
                           <div className="bd">
-                            <div className="k">{item.label} guide</div>
+                            <div className="k">{t(item.label)} {t('guide')}</div>
                             <h4>{mega[item.slug]!.guide!.title}</h4>
                             {mega[item.slug]!.guide!.description && <p>{mega[item.slug]!.guide!.description}</p>}
                             <div className="row">
-                              <small><StarSvg /> {mega[item.slug]!.guide!.read_time ? `${mega[item.slug]!.guide!.read_time} min read` : 'Read guide'}{mega[item.slug]!.guide!.author ? ` · ${mega[item.slug]!.guide!.author}` : ''}</small>
+                              <small><StarSvg /> {mega[item.slug]!.guide!.read_time ? `${mega[item.slug]!.guide!.read_time} ${t('min read')}` : t('Read guide')}{mega[item.slug]!.guide!.author ? ` · ${mega[item.slug]!.guide!.author}` : ''}</small>
                             </div>
                           </div>
                         </Link>
@@ -165,7 +168,7 @@ export default function Navbar({ logoUrl }: { logoUrl?: string | null }) {
                   </div>
                 </li>
               ))}
-              <li><Link href="/blog">Blog</Link></li>
+              <li><Link href="/blog">{t('Blog')}</Link></li>
             </ul>
           </div>
         </div>
@@ -184,42 +187,44 @@ export default function Navbar({ logoUrl }: { logoUrl?: string | null }) {
         <div className="drawer-body">
           <div className="m-search">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-            <input type="search" placeholder="Search places, tours & areas…"/>
+            <input type="search" placeholder={t('Search places, tours & areas…')}/>
           </div>
           {navItems.map(item => (
-            <MobileAccordion key={item.label} label={item.label} icon={item.icon} items={item.items} onClose={() => setDrawerOpen(false)}/>
+            <MobileAccordion key={item.label} label={item.label} icon={item.icon} items={item.items} onClose={() => setDrawerOpen(false)} t={t}/>
           ))}
           <Link className="m-link" href="/blog" onClick={() => setDrawerOpen(false)}>
-            <Icon name="book" size={22} className="ic" /> Blog
+            <Icon name="book" size={22} className="ic" /> {t('Blog')}
           </Link>
         </div>
         <div className="drawer-foot">
-          <Link href="/plan-my-trip" className="btn btn-primary" onClick={() => setDrawerOpen(false)}>Plan my trip →</Link>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 10 }}><LanguageSwitcher /></div>
+          <Link href="/plan-my-trip" className="btn btn-primary" onClick={() => setDrawerOpen(false)}>{t('Plan my trip')} →</Link>
         </div>
       </aside>
     </>
   )
 }
 
-function MobileAccordion({ label, icon, items, onClose }: {
+function MobileAccordion({ label, icon, items, onClose, t }: {
   label: string
   icon: string
   items: { label: string; count: string; href: string }[]
   onClose: () => void
+  t: (s: string) => string
 }) {
   const [open, setOpen] = useState(false)
   return (
     <div className={`m-acc${open ? ' open' : ''}`}>
       <button className="m-acc-h" onClick={() => setOpen(!open)} aria-expanded={open}>
         <Icon name={icon} size={22} className="ic" />
-        {label}
+        {t(label)}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="cv" width="18" height="18"><path d="m6 9 6 6 6-6"/></svg>
       </button>
       <div className="m-acc-body" style={{maxHeight: open ? '400px' : '0'}}>
         <div className="m-acc-list">
           {items.map(item => (
             <Link key={item.label} href={item.href} onClick={onClose}>
-              {item.label} {item.count && <span className="cnt">{item.count}</span>}
+              {t(item.label)} {item.count && <span className="cnt">{item.count}</span>}
             </Link>
           ))}
         </div>
