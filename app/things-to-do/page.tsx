@@ -2,7 +2,7 @@ import CategoryListing, { type CatConfig } from '@/app/components/CategoryListin
 
 export const revalidate = 600
 
-const title = 'Things to Do in Pattaya - Tours, Islands, Diving & Adventures | Go To Pattaya'
+const title = 'Things to Do in Pattaya - Tours, Islands & Diving | Go To Pattaya'
 const description =
   'A locally verified guide to the best things to do in Pattaya - island tours and boat trips, diving and snorkelling, ATV and adrenaline activities, plus bike, car and jet-ski rentals.'
 export const metadata = {
@@ -15,6 +15,7 @@ export const metadata = {
 // Note: the DB category slug is the legacy "thinks-to-do" (the public URL is /things-to-do).
 const cfg: CatConfig = {
   slug: 'thinks-to-do',
+  path: '/things-to-do',
   kicker: 'Things to Do · Pattaya',
   h1: 'Your Pattaya adventure starts here',
   em: 'adventure',

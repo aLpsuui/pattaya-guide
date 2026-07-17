@@ -65,6 +65,36 @@ const getBlogPosts = unstable_cache(
 const listTitle = 'Pattaya Blog - Honest Guides, Tips & Local Stories | Go To Pattaya'
 const listDescription = 'In-depth Pattaya guides written by locals: the best restaurants, things to do, wellness, nightlife, districts and practical travel tips.'
 
+// Every ?topic= view needs its own title + description - identical metas
+// across the filter URLs register as duplicate title/description issues
+// (Semrush flagged 10 duplicate titles / 13 duplicate descriptions here).
+const TOPIC_META: Record<string, { title: string; description: string }> = {
+  eat: {
+    title: 'Pattaya Food & Drink Guides - Blog | Go To Pattaya',
+    description: 'Local guides to eating and drinking in Pattaya: the best restaurants, street food, seafood, cafés and rooftop bars - honestly reviewed.',
+  },
+  things: {
+    title: 'Things to Do in Pattaya - Guides & Tips | Go To Pattaya',
+    description: 'Blog guides to things to do in Pattaya: island trips, tours, beaches, viewpoints, family activities and hidden gems from local writers.',
+  },
+  wellness: {
+    title: 'Pattaya Wellness & Spa Guides - Blog | Go To Pattaya',
+    description: 'Massage, spas, Muay Thai, gyms and wellness retreats in Pattaya - practical local guides with prices and honest picks.',
+  },
+  nightlife: {
+    title: 'Pattaya Nightlife Guides - Blog | Go To Pattaya',
+    description: 'Local nightlife guides for Pattaya: Walking Street, rooftop bars, beach clubs, night markets and how to enjoy them safely.',
+  },
+  areas: {
+    title: 'Pattaya Areas & Neighbourhoods - Blog | Go To Pattaya',
+    description: 'Which part of Pattaya suits you? Local guides to Jomtien, Central, Naklua, Pratumnak, Wong Amat and beyond.',
+  },
+  travel: {
+    title: 'Pattaya Travel Tips - Blog | Go To Pattaya',
+    description: 'Practical Pattaya travel tips from locals: transport, safety, budgets, seasons, SIM cards and first-timer advice.',
+  },
+}
+
 const PER_PAGE = 20
 const TOPICS = [
   { key: 'all', label: 'All' },
@@ -95,12 +125,14 @@ export async function generateMetadata(
   const qs = params.toString()
   const canonical = qs ? `/blog?${qs}` : '/blog'
 
-  const title = page > 1 ? `${listTitle} - Page ${page}` : listTitle
+  const base = TOPIC_META[topic] || { title: listTitle, description: listDescription }
+  const title = page > 1 ? `${base.title} - Page ${page}` : base.title
+  const description = page > 1 ? `${base.description} (Page ${page})` : base.description
   return {
     title,
-    description: listDescription,
+    description,
     alternates: { canonical },
-    openGraph: { title, description: listDescription },
+    openGraph: { title, description },
   }
 }
 

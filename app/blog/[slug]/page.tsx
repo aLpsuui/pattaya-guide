@@ -41,7 +41,11 @@ const ROUTE_MAP: Record<string, string> = {
   'pillar-things-to-do.html': '/things-to-do',
   'pillar-wellness-beauty.html': '/wellness-and-beauty',
   'pillar-eat-drink.html': '/eat-and-drinks',
+  // Some posts were authored with the plural file name - same pillar page.
+  'pillar-eat-drinks.html': '/eat-and-drinks',
   'pillar-yoga-fitness.html': '/yoga-and-fitness',
+  // Authored venue detail pages map to their live /venues/ slug.
+  'detail-eat-nitan-coffee.html': '/venues/nitan-coffee-s-tale-pattaya',
 }
 function authorInitials(name: string): string {
   return name.split(/\s+/).filter(Boolean).map((w) => w[0]).join('').slice(0, 2).toUpperCase()
@@ -83,7 +87,19 @@ function rewriteSchema(schema: string, author?: string | null): string {
   return out
 }
 
-function rewriteHtml(html: string, author?: string | null): string {
+// Posts sometimes link to planned-but-not-yet-published articles (the authored
+// HTML ships the whole content plan's cross-links). A link to a post that is
+// not live is a 404 for users and crawlers, so unwrap it - keep the anchor
+// text, drop the <a>. Because pages re-render through ISR, the link comes back
+// by itself the moment the target post is published.
+function unwrapDeadBlogLinks(html: string, publishedSlugs: Set<string>): string {
+  return html.replace(
+    /<a\b[^>]*href="\/blog\/([^"/?#]+)"[^>]*>([\s\S]*?)<\/a>/g,
+    (full, slug: string, inner: string) => (publishedSlugs.has(slug) ? full : inner),
+  )
+}
+
+function rewriteHtml(html: string, author?: string | null, publishedSlugs?: Set<string>): string {
   // All authored image folders map flat into the Supabase `blog` bucket.
   let out = html
     .replace(/\.\.\/yeni-blog-gorselleri\//g, IMG_BASE + '/')
@@ -100,7 +116,15 @@ function rewriteHtml(html: string, author?: string | null): string {
     if (blog) return `href="/blog/${blog[1]}"`
     return `href="/${file.replace(/\.html$/, '')}"`
   })
+  if (publishedSlugs) out = unwrapDeadBlogLinks(out, publishedSlugs)
   return out
+}
+
+// Published slugs power the dead-link unwrap above; one tiny cached query
+// shared by every post render (invalidated with the same 'blog' tag as posts).
+async function getPublishedSlugs(): Promise<Set<string>> {
+  const { data } = await supabase.from('blog_posts').select('slug').eq('is_published', true).limit(2000)
+  return new Set((data || []).map((p: { slug: string }) => p.slug))
 }
 
 async function getBlogPost(slug: string): Promise<BlogPost | null> {
@@ -145,6 +169,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const { slug } = await params
   const post = await getBlogPost(slug)
   if (!post) notFound()
+  const publishedSlugs = await getPublishedSlugs()
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -194,7 +219,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(finalJsonLd) }}
       />
-      {post.page_html && <div dangerouslySetInnerHTML={{ __html: rewriteHtml(post.page_html, post.author) }} />}
+      {post.page_html && <div dangerouslySetInnerHTML={{ __html: rewriteHtml(post.page_html, post.author, publishedSlugs) }} />}
       <BlogScript script={BLOG_TEMPLATE_SCRIPT} />
     </>
   )

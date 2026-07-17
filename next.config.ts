@@ -38,6 +38,10 @@ const nextConfig: NextConfig = {
     return [
       { source: '/thinks-to-do', destination: '/things-to-do', permanent: true },
       { source: '/thinks-to-do/:path*', destination: '/things-to-do/:path*', permanent: true },
+      // Authored-HTML artifacts that leaked as URLs and got crawled (Semrush
+      // 17 Jul 2026 audit): send each to its real page instead of a 404.
+      { source: '/pillar-eat-drinks', destination: '/eat-and-drinks', permanent: true },
+      { source: '/detail-eat-nitan-coffee', destination: '/venues/nitan-coffee-s-tale-pattaya', permanent: true },
     ]
   },
 }

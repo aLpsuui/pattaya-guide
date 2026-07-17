@@ -138,8 +138,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!v) return { title: 'Not Found', robots: { index: false } }
   const canonical = `/venues/${v.slug}`
   const description = v.description || v.tagline || undefined
+  // SERPs truncate titles past ~70 chars; drop the neighborhood segment when
+  // the full lockup would overflow (the name itself is the ranking signal).
+  const fullTitle = `${v.name} - ${v.neighborhood || 'Pattaya'} | Go To Pattaya`
   return {
-    title: `${v.name} - ${v.neighborhood || 'Pattaya'} | Go To Pattaya`,
+    title: fullTitle.length > 70 ? `${v.name} | Go To Pattaya` : fullTitle,
     description,
     alternates: { canonical },
     openGraph: {
@@ -177,7 +180,12 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
   const v = await getVenue(slug)
   if (!v) notFound()
 
-  const categorySlug = v.categories?.slug ? `/${v.categories.slug}` : '/'
+  // The DB category slug for Things to Do is the legacy 'thinks-to-do'; its
+  // public route is /things-to-do. Linking the raw slug costs a 308 hop on
+  // every venue page (breadcrumb + JSON-LD), so map it here.
+  const categorySlug = v.categories?.slug
+    ? (v.categories.slug === 'thinks-to-do' ? '/things-to-do' : `/${v.categories.slug}`)
+    : '/'
   const categoryName = v.categories?.name_en || 'Pattaya'
   const mapsHref = `https://maps.google.com/?q=${encodeURIComponent(v.maps_query || v.name + ' Pattaya')}`
   const photos = v.venue_photos

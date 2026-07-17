@@ -20,6 +20,7 @@ export interface PrimaryGroup {
 
 export interface CatConfig {
   slug: string          // DB category slug
+  path?: string         // public route when it differs from /<slug> (e.g. thinks-to-do → /things-to-do)
   kicker: string
   h1: string
   em?: string           // emphasised word inside the h1 (rendered with <span>)
@@ -139,7 +140,7 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
         '@type': 'BreadcrumbList',
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
-          { '@type': 'ListItem', position: 2, name: catName, item: `${SITE_URL}/${cfg.slug}` },
+          { '@type': 'ListItem', position: 2, name: catName, item: `${SITE_URL}${cfg.path || `/${cfg.slug}`}` },
         ],
       },
       {
@@ -260,6 +261,27 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
         </div>
       </section>
 
+      {/* FULL DIRECTORY - every venue as a crawlable server-rendered link, so
+          search engines discover all listings (the interactive grid above only
+          mounts the first page client-side; without this block ~85% of venue
+          pages have zero incoming internal links and go orphan). Collapsed by
+          default to keep the visual design unchanged. */}
+      {total > 0 && (
+        <section className="sec sec--tight" aria-labelledby="idx-h">
+          <div className="container">
+            <details className="cat-index-wrap">
+              <summary id="idx-h" style={{ cursor: 'pointer', fontWeight: 600 }}>
+                Browse all {total} {unit} in Pattaya (A–Z)
+              </summary>
+              <ul className="cat-index">
+                {venues.filter((v) => v.slug).map((v) => (
+                  <li key={v.id}><a href={`/venues/${v.slug}`}>{v.name}</a></li>
+                ))}
+              </ul>
+            </details>
+          </div>
+        </section>
+      )}
     </div>
   )
 }
