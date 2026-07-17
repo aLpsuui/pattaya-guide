@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { supabase } from '@/lib/supabase'
 import { unstable_cache } from 'next/cache'
 import Link from '@/app/components/LocaleLink'
+import { hasLocale } from '@/lib/i18n/config'
+import { getTranslated } from '@/lib/i18n/translateContent'
 
 interface BlogPost {
   id: string
@@ -104,15 +106,27 @@ export async function generateMetadata(
   }
 }
 
-export default async function BlogPage({ searchParams }: { searchParams: Promise<{ page?: string; topic?: string }> }) {
-  const sp = await searchParams
+export default async function BlogPage({ params, searchParams }: { params: Promise<{ lang: string }>; searchParams: Promise<{ page?: string; topic?: string }> }) {
+  const [{ lang }, sp] = await Promise.all([params, searchParams])
+  const locale = hasLocale(lang) ? lang : 'en'
   const topic = TOPICS.some((t) => t.key === sp.topic) ? sp.topic! : 'all'
   const all = await getBlogPosts()
   const filtered = topic === 'all' ? all : all.filter((p) => categoryToFilter(p.category) === topic)
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE))
   const page = Math.min(Math.max(1, parseInt(sp.page || '1', 10) || 1), totalPages)
-  const slice = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE)
+  let slice = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE)
+  // Translate the visible cards' DB text for /ru (cached; shares keys with the
+  // detail page so it's instant once a post has been translated once).
+  if (locale !== 'en') {
+    slice = await Promise.all(
+      slice.map(async (p) => ({
+        ...p,
+        title: await getTranslated('blog_posts', p.id, 'title', p.title, locale),
+        description: await getTranslated('blog_posts', p.id, 'description', p.description, locale),
+      })),
+    )
+  }
   const showFeatured = page === 1 && slice.length > 0
   const featured = showFeatured ? slice[0] : null
   const rest = showFeatured ? slice.slice(1) : slice
