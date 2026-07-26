@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase'
-import Link from 'next/link'
+import Link from '@/app/components/LocaleLink'
 import Star from '@/app/components/Star'
 
 // Simple site search — powers the WebSite SearchAction (sitelinks searchbox).

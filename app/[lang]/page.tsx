@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase'
-import Link from 'next/link'
+import Link from '@/app/components/LocaleLink'
 import Icon from '@/app/components/Icon'
 import CarButton from '@/app/components/CarButton'
 import HeroSearch from '@/app/components/HeroSearch'

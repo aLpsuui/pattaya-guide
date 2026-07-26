@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from '@/app/components/LocaleLink'
 import './contact.css'
 import ContactForm from './ContactForm'
 

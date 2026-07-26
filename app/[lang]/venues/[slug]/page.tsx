@@ -1,7 +1,7 @@
 import './venue.css'
 import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
+import Link from '@/app/components/LocaleLink'
 import BlogScript from '@/app/components/BlogScript'
 import { SITE_URL } from '@/lib/site'
 import VenueIcons from './VenueIcons'

@@ -2,15 +2,20 @@ import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import BlogScript from '@/app/components/BlogScript'
 import { SITE_URL } from '@/lib/site'
+import { hasLocale } from '@/lib/i18n/config'
+import { getTranslated } from '@/lib/i18n/translateContent'
 import { BLOG_TEMPLATE_SCRIPT } from './blogTemplate'
 import './blog-template.css'
 
 // ISR + pre-render all published posts at build so blog pages serve from the
 // edge cache (HIT) rather than being dynamically rendered each request.
+// Only English is pre-rendered at build; Russian pages generate on-demand on
+// first visit (they translate + cache DB content, which we don't want to run
+// for every post at build time).
 export const revalidate = 3600
 export async function generateStaticParams() {
   const { data } = await supabase.from('blog_posts').select('slug').eq('is_published', true).limit(2000)
-  return (data || []).map((p: { slug: string }) => ({ slug: p.slug }))
+  return (data || []).map((p: { slug: string }) => ({ lang: 'en', slug: p.slug }))
 }
 
 interface BlogPost {
@@ -137,19 +142,24 @@ async function getBlogPost(slug: string): Promise<BlogPost | null> {
   return (data as BlogPost) || null
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params
+export async function generateMetadata({ params }: { params: Promise<{ lang: string; slug: string }> }) {
+  const { lang, slug } = await params
   const post = await getBlogPost(slug)
   if (!post) return { title: 'Not Found', robots: { index: false } }
-  const canonical = `/blog/${post.slug}`
+  const locale = hasLocale(lang) ? lang : 'en'
+  const [title, description] = await Promise.all([
+    getTranslated('blog_posts', post.id, 'title', post.title, locale),
+    getTranslated('blog_posts', post.id, 'description', post.description, locale),
+  ])
+  const canonical = `/${locale}/blog/${post.slug}`
   return {
-    title: `${post.title} | Go To Pattaya`,
-    description: post.description,
+    title: `${title} | Go To Pattaya`,
+    description,
     alternates: { canonical },
     openGraph: {
       type: 'article',
-      title: post.title,
-      description: post.description,
+      title,
+      description,
       url: `${SITE_URL}${canonical}`,
       publishedTime: post.published_at || undefined,
       modifiedTime: post.updated_at_post || post.published_at || undefined,
@@ -158,26 +168,32 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     },
     twitter: {
       card: 'summary_large_image',
-      title: post.title,
-      description: post.description,
+      title,
+      description,
       images: post.hero_image ? [post.hero_image] : undefined,
     },
   }
 }
 
-export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params
+export default async function BlogPostPage({ params }: { params: Promise<{ lang: string; slug: string }> }) {
+  const { lang, slug } = await params
   const post = await getBlogPost(slug)
   if (!post) notFound()
   const publishedSlugs = await getPublishedSlugs()
+  const locale = hasLocale(lang) ? lang : 'en'
+  const [title, description, pageHtml] = await Promise.all([
+    getTranslated('blog_posts', post.id, 'title', post.title, locale),
+    getTranslated('blog_posts', post.id, 'description', post.description, locale),
+    getTranslated('blog_posts', post.id, 'page_html', post.page_html, locale),
+  ])
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'Article',
-        headline: post.title,
-        description: post.description,
+        headline: title,
+        description,
         image: post.hero_image ? [post.hero_image] : undefined,
         datePublished: post.published_at || undefined,
         dateModified: post.updated_at_post || post.published_at || undefined,
@@ -185,16 +201,16 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           ? { '@type': 'Person', name: post.author, jobTitle: post.author_title?.split('·')[0].trim() || undefined }
           : undefined,
         publisher: { '@id': `${SITE_URL}/#organization` },
-        mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE_URL}/blog/${post.slug}` },
+        mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE_URL}/${locale}/blog/${post.slug}` },
         articleSection: post.category || undefined,
-        inLanguage: 'en',
+        inLanguage: locale,
       },
       {
         '@type': 'BreadcrumbList',
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
-          { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog` },
-          { '@type': 'ListItem', position: 3, name: post.title, item: `${SITE_URL}/blog/${post.slug}` },
+          { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/${locale}` },
+          { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/${locale}/blog` },
+          { '@type': 'ListItem', position: 3, name: title, item: `${SITE_URL}/${locale}/blog/${post.slug}` },
         ],
       },
     ],
@@ -219,7 +235,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(finalJsonLd) }}
       />
-      {post.page_html && <div dangerouslySetInnerHTML={{ __html: rewriteHtml(post.page_html, post.author, publishedSlugs) }} />}
+      {pageHtml && <div dangerouslySetInnerHTML={{ __html: rewriteHtml(pageHtml, post.author, publishedSlugs) }} />}
       <BlogScript script={BLOG_TEMPLATE_SCRIPT} />
     </>
   )
