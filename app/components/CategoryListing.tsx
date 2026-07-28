@@ -5,6 +5,7 @@ import CategoryDirectory, { VItem } from '@/app/components/CategoryDirectory'
 import { SITE_URL } from '@/lib/site'
 import { hasLocale } from '@/lib/i18n/config'
 import { getDictionary } from '@/lib/i18n/dictionaries'
+import { translateMany } from '@/lib/i18n/translateContent'
 
 const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 
@@ -81,6 +82,10 @@ export default async function CategoryListing({ cfg, lang }: { cfg: CatConfig; l
   // group) so the grid + editor's picks look image-rich; photo-less ones fall
   // to the end rather than being hidden.
   venues.sort((a, b) => (a.image_url ? 0 : 1) - (b.image_url ? 0 : 1))
+  // Translate venue_type labels (shared/deduped); venue NAMES stay Latin. Used
+  // for the card tags/cuisine and the raw-type filter labels below.
+  const typeMap = await translateMany('venue_types', 'label', venues.map((v) => v.venue_type), locale)
+  const tt = (s: string | null) => (s ? (typeMap.get(s) ?? s) : s)
   const total = venues.length
   const unit = cfg.unit || 'places'
   const unitSingular = unit.endsWith('ies') ? unit.slice(0, -3) + 'y' : unit.replace(/s$/, '')
@@ -117,7 +122,7 @@ export default async function CategoryListing({ cfg, lang }: { cfg: CatConfig; l
       e.n++; counts.set(k, e)
     }
     primaries = [...counts.entries()].sort((a, b) => b[1].n - a[1].n).slice(0, 10)
-      .map(([slug, e]) => ({ slug, label: e.label, n: e.n }))
+      .map(([slug, e]) => ({ slug, label: tt(e.label) as string, n: e.n }))
   }
 
   // ---- AREA facet (multi select) ---------------------------------------
@@ -139,7 +144,7 @@ export default async function CategoryListing({ cfg, lang }: { cfg: CatConfig; l
   // initial DOM light while filtering stays instant).
   const items: VItem[] = venues.map((v, i) => ({
     id: v.id, slug: v.slug, name: v.name, rating: v.rating, review_count: v.review_count,
-    venue_type: v.venue_type, loc: v.address || v.neighborhood || null, image_url: v.image_url,
+    venue_type: tt(v.venue_type), loc: v.address || v.neighborhood || null, image_url: v.image_url,
     cat: familyOf(v), area: areaOf(v.neighborhood)?.slug || '', order: i,
   }))
 

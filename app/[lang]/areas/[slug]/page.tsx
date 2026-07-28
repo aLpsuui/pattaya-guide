@@ -11,7 +11,7 @@ import { AREAS, areaBySlug } from '@/lib/areas'
 import { SITE_URL } from '@/lib/site'
 import BlogScript from '@/app/components/BlogScript'
 import guidesData from './area-guides.json'
-import { getTranslated } from '@/lib/i18n/translateContent'
+import { getTranslated, translateMany } from '@/lib/i18n/translateContent'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { hasLocale } from '@/lib/i18n/config'
 
@@ -127,6 +127,13 @@ export default async function AreaDetailPage({ params }: { params: Promise<{ lan
   ])
   const t = (s: string) => dict?.[s] ?? s
 
+  // Translate venue card labels (type + category); names stay Latin.
+  const [typeMap, catMap] = await Promise.all([
+    translateMany('venue_types', 'label', venues.map((v) => v.venue_type), locale),
+    translateMany('categories', 'name_en', venues.map((v) => v.categories?.name_en), locale),
+  ])
+  const tt = (s: string | null | undefined) => (s ? (typeMap.get(s) ?? catMap.get(s) ?? s) : s)
+
   const faq = guide ? extractFaq(guide.html) : []
   const graph: Record<string, unknown>[] = [
     {
@@ -209,10 +216,10 @@ export default async function AreaDetailPage({ params }: { params: Promise<{ lan
                 <Link key={v.id} href={`/venues/${v.slug}`} className="eat-card">
                   <div className="eat-card__media">
                     {v.image_url && <img src={v.image_url} alt={v.name} loading="lazy" />}
-                    <span className="eat-card__tag">{v.venue_type || v.categories?.name_en}</span>
+                    <span className="eat-card__tag">{tt(v.venue_type || v.categories?.name_en)}</span>
                   </div>
                   <div className="eat-card__body">
-                    {v.venue_type && <div className="eat-card__cuisine">{v.venue_type}</div>}
+                    {v.venue_type && <div className="eat-card__cuisine">{tt(v.venue_type)}</div>}
                     <h3>{v.name}</h3>
                     {v.address && <div className="eat-card__loc"><Icon name="pin" size={16} className="ic" />{v.address}</div>}
                     <div className="eat-card__foot">

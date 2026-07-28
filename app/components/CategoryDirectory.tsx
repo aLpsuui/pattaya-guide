@@ -219,7 +219,7 @@ export default function CategoryDirectory({ venues, primaries, areas, typeLabel,
                 {v.image_url
                   ? <img src={cardImg(v.image_url)} alt={v.name} width={900} height={600} loading={i < 6 ? 'eager' : 'lazy'} fetchPriority={i < 6 ? 'high' : undefined} />
                   : <div className="eat-card__ph" aria-hidden="true"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="m4 17 4.5-4.5 3.5 3.5 3.5-3.5L20 16" /></svg></div>}
-                <span className="eat-card__tag">{v.venue_type || 'Place'}</span>
+                <span className="eat-card__tag">{v.venue_type || t('Place')}</span>
               </div>
               <div className="eat-card__body">
                 {v.venue_type && <div className="eat-card__cuisine">{v.venue_type}</div>}
