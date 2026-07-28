@@ -11,6 +11,9 @@ import { AREAS, areaBySlug } from '@/lib/areas'
 import { SITE_URL } from '@/lib/site'
 import BlogScript from '@/app/components/BlogScript'
 import guidesData from './area-guides.json'
+import { getTranslated } from '@/lib/i18n/translateContent'
+import { getDictionary } from '@/lib/i18n/dictionaries'
+import { hasLocale } from '@/lib/i18n/config'
 
 export const revalidate = 300
 
@@ -91,8 +94,10 @@ async function getAreaVenues(match: string[]): Promise<AreaVenue[]> {
   return (data || []) as unknown as AreaVenue[]
 }
 
+// Pre-render English only; Russian area guides translate on first visit + cache
+// (the guide HTML is large, so we don't want to translate all of them at build).
 export function generateStaticParams() {
-  return AREAS.map((a) => ({ slug: a.slug }))
+  return AREAS.map((a) => ({ lang: 'en', slug: a.slug }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -108,13 +113,19 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 }
 
-export default async function AreaDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params
+export default async function AreaDetailPage({ params }: { params: Promise<{ lang: string; slug: string }> }) {
+  const { lang, slug } = await params
   const area = areaBySlug(slug)
   if (!area) notFound()
+  const locale = hasLocale(lang) ? lang : 'en'
   const info = INFO[slug]
   const guide = guides[slug]
-  const venues = await getAreaVenues(area.match)
+  const [dict, venues, guideHtml] = await Promise.all([
+    getDictionary(locale),
+    getAreaVenues(area.match),
+    guide ? getTranslated('static', `area-guide-${slug}`, 'html', guide.html, locale) : Promise.resolve(''),
+  ])
+  const t = (s: string) => dict?.[s] ?? s
 
   const faq = guide ? extractFaq(guide.html) : []
   const graph: Record<string, unknown>[] = [
@@ -160,7 +171,7 @@ export default async function AreaDetailPage({ params }: { params: Promise<{ slu
         // Rich editorial area guide (bespoke .det-area design). translate="no"
         // keeps Google Translate from breaking the CSS grids (e.g. quick numbers).
         <>
-          <div translate="no" dangerouslySetInnerHTML={{ __html: guide.html }} />
+          <div translate="no" dangerouslySetInnerHTML={{ __html: guideHtml }} />
           <BlogScript script={AREA_GUIDE_SCRIPT} />
         </>
       ) : (
@@ -170,11 +181,11 @@ export default async function AreaDetailPage({ params }: { params: Promise<{ slu
           <div className="adx-hero__veil" aria-hidden="true" />
           <div className="adx-hero__inner">
             <div className="container">
-              <Link href="/areas" className="adx-back"><Icon name="arrow-left" size={16} /> All areas</Link>
-              <span className="kicker" style={{ color: '#bfe3ff' }}>Area guide</span>
-              <h1>{area.name}</h1>
-              <p className="adx-lead">{info?.blurb}</p>
-              <div className="adx-vibes">{area.vibes.map((v) => <span key={v} className="adx-chip">{v}</span>)}</div>
+              <Link href="/areas" className="adx-back"><Icon name="arrow-left" size={16} /> {t('All areas')}</Link>
+              <span className="kicker" style={{ color: '#bfe3ff' }}>{t('Area guide')}</span>
+              <h1>{t(area.name)}</h1>
+              <p className="adx-lead">{t(info?.blurb ?? '')}</p>
+              <div className="adx-vibes">{area.vibes.map((v) => <span key={v} className="adx-chip">{t(v)}</span>)}</div>
             </div>
           </div>
         </section>
@@ -185,11 +196,11 @@ export default async function AreaDetailPage({ params }: { params: Promise<{ slu
         <div className="container">
           <div className="eat-head">
             <div className="titles">
-              <p className="kicker">Where to go</p>
-              <h2>Places in {area.name}</h2>
-              <p>Restaurants, bars, spas and things to do we cover in this part of the bay - sorted by rating.</p>
+              <p className="kicker">{t('Where to go')}</p>
+              <h2>{t('Places in')} {t(area.name)}</h2>
+              <p>{t('Restaurants, bars, spas and things to do we cover in this part of the bay - sorted by rating.')}</p>
             </div>
-            {venues.length > 0 && <span className="pill pill--navy">{venues.length} {venues.length === 1 ? 'place' : 'places'}</span>}
+            {venues.length > 0 && <span className="pill pill--navy">{venues.length} {venues.length === 1 ? t('place') : t('places')}</span>}
           </div>
 
           {venues.length > 0 ? (
@@ -215,14 +226,14 @@ export default async function AreaDetailPage({ params }: { params: Promise<{ slu
           ) : (
             <p className="adx-empty">
               <Icon name="pin" size={32} style={{ color: 'var(--text-faint)' }} /><br />
-              We don’t have individual places listed for {area.name} yet - explore it on the <a href="/areas#areas-map">map</a>.
+              {t('We don’t have individual places listed for')} {t(area.name)} {t('yet - explore it on the')} <a href="/areas#areas-map">{t('map')}</a>.
             </p>
           )}
 
           <div className="adx-other">
-            <span>Other areas:</span>
+            <span>{t('Other areas:')}</span>
             {AREAS.filter((a) => a.slug !== slug).map((a) => (
-              <Link key={a.slug} href={`/areas/${a.slug}`} className="adx-otherlink">{a.name}</Link>
+              <Link key={a.slug} href={`/areas/${a.slug}`} className="adx-otherlink">{t(a.name)}</Link>
             ))}
           </div>
         </div>
