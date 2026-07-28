@@ -6,6 +6,8 @@ import HeroSearch from '@/app/components/HeroSearch'
 import ExploreMap from '@/app/components/ExploreMap'
 import DailyDealPopup, { type Deal } from '@/app/components/DailyDealPopup'
 import Star from '@/app/components/Star'
+import { getDictionary } from '@/lib/i18n/dictionaries'
+import { hasLocale } from '@/lib/i18n/config'
 
 const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 
@@ -171,10 +173,14 @@ function VenueCard({ v, dark = false }: { v: Venue; dark?: boolean }) {
   )
 }
 
-export default async function Home() {
-  const [topVenues, adventureVenues, blogPosts, deal] = await Promise.all([
-    getTopVenues(), getAdventureVenues(), getBlogPosts(), getDailyDeal(),
+export default async function Home({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params
+  const locale = hasLocale(lang) ? lang : 'en'
+  const [dict, [topVenues, adventureVenues, blogPosts, deal]] = await Promise.all([
+    getDictionary(locale),
+    Promise.all([getTopVenues(), getAdventureVenues(), getBlogPosts(), getDailyDeal()]),
   ])
+  const t = (s: string) => dict?.[s] ?? s
 
   return (
     <>
@@ -190,17 +196,17 @@ export default async function Home() {
           <div className="hero-overlay"></div>
         </div>
         <div className="container hero-inner">
-          <h1>Your complete guide<br />to <span>Pattaya.</span></h1>
-          <p className="intro">Restaurants, beaches, attractions, day trips, wellness, sports - 500+ places and 50+ in-depth guides. Plan your trip in 5 minutes.</p>
+          <h1>{t('Your complete guide')}<br /><span>{t('to Pattaya.')}</span></h1>
+          <p className="intro">{t('Restaurants, beaches, attractions, day trips, wellness, sports - 500+ places and 50+ in-depth guides. Plan your trip in 5 minutes.')}</p>
 
           <HeroSearch />
 
           <div className="hero-tags" role="list">
-            <a href="#cats" className="qtag" role="listitem"><Icon name="eat" size={14} /> Eat</a>
-            <a href="#cats" className="qtag" role="listitem"><Icon name="beach" size={14} /> Beaches</a>
-            <a href="#cats" className="qtag" role="listitem"><Icon name="tours" size={14} /> Tours</a>
-            <a href="#cats" className="qtag" role="listitem"><Icon name="wellness" size={14} /> Wellness</a>
-            <a href="#plan" className="qtag" role="listitem"><Icon name="calendar" size={14} /> First-time visitor</a>
+            <a href="#cats" className="qtag" role="listitem"><Icon name="eat" size={14} /> {t('Eat')}</a>
+            <a href="#cats" className="qtag" role="listitem"><Icon name="beach" size={14} /> {t('Beaches')}</a>
+            <a href="#cats" className="qtag" role="listitem"><Icon name="tours" size={14} /> {t('Tours')}</a>
+            <a href="#cats" className="qtag" role="listitem"><Icon name="wellness" size={14} /> {t('Wellness')}</a>
+            <a href="#plan" className="qtag" role="listitem"><Icon name="calendar" size={14} /> {t('First-time visitor')}</a>
           </div>
         </div>
       </section>
@@ -210,19 +216,19 @@ export default async function Home() {
         <div className="container">
           <div className="sec-head">
             <div className="titles">
-              <div className="kicker">Browse Pattaya</div>
-              <h2>Six categories. Every kind of day.</h2>
-              <p>Six categories cover every kind of day in Pattaya. Re-checked weekly - if a place closes or changes, the page updates within days.</p>
+              <div className="kicker">{t('Browse Pattaya')}</div>
+              <h2>{t('Six categories. Every kind of day.')}</h2>
+              <p>{t('Six categories cover every kind of day in Pattaya. Re-checked weekly - if a place closes or changes, the page updates within days.')}</p>
             </div>
-            <a href="/map" className="viewall">All categories <Arrow /></a>
+            <a href="/map" className="viewall">{t('All categories')} <Arrow /></a>
           </div>
-          <div className="cats-grid" translate="no">
+          <div className="cats-grid">
             {categories.map(cat => (
               <Link key={cat.name} href={cat.href} className={`cat${cat.feat ? ' cat-feat' : ''}`}>
                 <div className="bg" style={{ backgroundImage: `url(${ASSETS}/${cat.img})` }}></div>
                 <div className="cat-ic"><Icon name={cat.icon} size={22} style={{ color: '#fff' }} /></div>
-                <b>{cat.name}</b>
-                <div className="meta">{cat.meta}</div>
+                <b>{t(cat.name)}</b>
+                <div className="meta">{t(cat.meta)}</div>
               </Link>
             ))}
           </div>
@@ -234,20 +240,20 @@ export default async function Home() {
         <div className="container">
           <div className="sec-head">
             <div className="titles">
-              <div className="kicker">Plan your Pattaya trip</div>
-              <h2>Start here if you&apos;re visiting Pattaya.</h2>
-              <p>Four detailed guides covering the questions every first-time visitor asks before booking - month, transport, district and the small things that catch people out.</p>
+              <div className="kicker">{t('Plan your Pattaya trip')}</div>
+              <h2>{t("Start here if you're visiting Pattaya.")}</h2>
+              <p>{t('Four detailed guides covering the questions every first-time visitor asks before booking - month, transport, district and the small things that catch people out.')}</p>
             </div>
-            <a href="/plan-my-trip" className="viewall">All planning guides <Arrow /></a>
+            <a href="/plan-my-trip" className="viewall">{t('All planning guides')} <Arrow /></a>
           </div>
-          <div className="plan-grid" translate="no">
+          <div className="plan-grid">
             {planCards.map(card => (
               <a key={card.title} href={card.href} className="plan-card">
                 <div className="bg" style={{ backgroundImage: `url(${ASSETS}/${card.img})` }}></div>
-                <span className="pill">{card.pill}</span>
-                <h3>{card.title}</h3>
-                <p>{card.text}</p>
-                <span className="arrow">{card.arrow} <Arrow /></span>
+                <span className="pill">{t(card.pill)}</span>
+                <h3>{t(card.title)}</h3>
+                <p>{t(card.text)}</p>
+                <span className="arrow">{t(card.arrow)} <Arrow /></span>
               </a>
             ))}
           </div>
@@ -259,11 +265,11 @@ export default async function Home() {
         <div className="container">
           <div className="sec-head">
             <div className="titles">
-              <div className="kicker">Editor&apos;s picks</div>
-              <h2>The 10 best places in Pattaya</h2>
-              <p>Hand-picked by our editorial team. Every place visited in person, photographed by us, re-checked weekly.</p>
+              <div className="kicker">{t("Editor's picks")}</div>
+              <h2>{t('The 10 best places in Pattaya')}</h2>
+              <p>{t('Hand-picked by our editorial team. Every place visited in person, photographed by us, re-checked weekly.')}</p>
             </div>
-            <a href="/map" className="viewall">View all places <Arrow /></a>
+            <a href="/map" className="viewall">{t('View all places')} <Arrow /></a>
           </div>
           <div className="carousel-wrap">
             <CarButton target="topCar" dir={-1} label="Previous" />
@@ -280,11 +286,11 @@ export default async function Home() {
         <div className="container">
           <div className="sec-head">
             <div className="titles">
-              <div className="kicker">For the adrenaline-hungry</div>
-              <h2>Adrenaline &amp; adventure</h2>
-              <p>Sky dives, paramotors, jet skis, PADI courses and bungee - every operator licensed in Thailand and re-checked every 30 days for safety standards.</p>
+              <div className="kicker">{t('For the adrenaline-hungry')}</div>
+              <h2>{t('Adrenaline & adventure')}</h2>
+              <p>{t('Sky dives, paramotors, jet skis, PADI courses and bungee - every operator licensed in Thailand and re-checked every 30 days for safety standards.')}</p>
             </div>
-            <a href="/things-to-do" className="viewall">All adventures <Arrow /></a>
+            <a href="/things-to-do" className="viewall">{t('All adventures')} <Arrow /></a>
           </div>
           <div className="carousel-wrap">
             <CarButton target="extremeCar" dir={-1} label="Previous" />
@@ -301,20 +307,20 @@ export default async function Home() {
         <div className="container">
           <div className="sec-head">
             <div className="titles">
-              <div className="kicker">Neighborhoods</div>
-              <h2>Pick your district</h2>
-              <p>Pattaya is five very different cities in one. Each district has its own pace, prices and personality - pick yours before you book.</p>
+              <div className="kicker">{t('Neighborhoods')}</div>
+              <h2>{t('Pick your district')}</h2>
+              <p>{t('Pattaya is five very different cities in one. Each district has its own pace, prices and personality - pick yours before you book.')}</p>
             </div>
-            <Link href="/map" className="viewall">Open the map <Arrow /></Link>
+            <Link href="/map" className="viewall">{t('Open the map')} <Arrow /></Link>
           </div>
-          <div className="dist-grid" translate="no">
+          <div className="dist-grid">
             {districts.map(d => (
               <a key={d.name} href={d.href} className={`dist ${d.cls}`}>
                 <div className="dist-bg" style={{ backgroundImage: `url(${ASSETS}/${d.img})` }}></div>
                 <div className="dist-content">
-                  <span className="pill pill-glass">{d.pill}</span>
-                  <h3>{d.name}</h3>
-                  <p>{d.desc}</p>
+                  <span className="pill pill-glass">{t(d.pill)}</span>
+                  <h3>{t(d.name)}</h3>
+                  <p>{t(d.desc)}</p>
                 </div>
               </a>
             ))}
@@ -327,14 +333,14 @@ export default async function Home() {
         <div className="container">
           <div className="sec-head">
             <div className="titles">
-              <div className="kicker">Interactive map</div>
-              <h2>Every place. One map.</h2>
-              <p>Filter by category or district. Save areas before you fly. See exactly which neighborhood each guide is in.</p>
+              <div className="kicker">{t('Interactive map')}</div>
+              <h2>{t('Every place. One map.')}</h2>
+              <p>{t('Filter by category or district. Save areas before you fly. See exactly which neighborhood each guide is in.')}</p>
             </div>
           </div>
           <ExploreMap />
           <div style={{ marginTop: 'var(--s4)' }}>
-            <Link href="/map" className="btn btn-primary btn-sm">Open full map <Arrow /></Link>
+            <Link href="/map" className="btn btn-primary btn-sm">{t('Open full map')} <Arrow /></Link>
           </div>
         </div>
       </section>
@@ -344,11 +350,11 @@ export default async function Home() {
         <div className="container">
           <div className="sec-head">
             <div className="titles">
-              <div className="kicker">From the blog</div>
-              <h2>50+ in-depth Pattaya guides</h2>
-              <p>Long-form articles covering itineraries, food, transport, neighborhoods and seasonal updates. No fluff, no AI rewrites, no affiliate-driven lists.</p>
+              <div className="kicker">{t('From the blog')}</div>
+              <h2>{t('50+ in-depth Pattaya guides')}</h2>
+              <p>{t('Long-form articles covering itineraries, food, transport, neighborhoods and seasonal updates. No fluff, no AI rewrites, no affiliate-driven lists.')}</p>
             </div>
-            <Link href="/blog" className="viewall">All articles <Arrow /></Link>
+            <Link href="/blog" className="viewall">{t('All articles')} <Arrow /></Link>
           </div>
           <div className="blog-grid">
             {blogPosts.map(post => (
@@ -360,7 +366,7 @@ export default async function Home() {
                   <div className="pmeta">
                     <span>{new Date(post.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                     <i></i>
-                    <span>{post.read_time} min read</span>
+                    <span>{post.read_time} {t('min read')}</span>
                   </div>
                   <h3>{post.title}</h3>
                   <p className="excerpt">{post.description}</p>
@@ -380,26 +386,26 @@ export default async function Home() {
         <div className="container">
           <div className="sec-head" style={{ justifyContent: 'center', textAlign: 'center' }}>
             <div className="titles" style={{ textAlign: 'center', margin: '0 auto' }}>
-              <div className="kicker">What&apos;s inside</div>
-              <h2>Everything you need to plan a Pattaya trip.</h2>
-              <p style={{ margin: '8px auto 0', maxWidth: '58ch' }}>From the first &quot;when should I go&quot; to the last &quot;how do I get back to Bangkok&quot; - Go To Pattaya covers it. Free, no signup, no popups.</p>
+              <div className="kicker">{t("What's inside")}</div>
+              <h2>{t('Everything you need to plan a Pattaya trip.')}</h2>
+              <p style={{ margin: '8px auto 0', maxWidth: '58ch' }}>{t('From the first "when should I go" to the last "how do I get back to Bangkok" - Go To Pattaya covers it. Free, no signup, no popups.')}</p>
             </div>
           </div>
           <div className="trust-grid">
             <div className="trust-card">
               <div className="ic"><Icon name="pin" size={28} /></div>
-              <h3>500+ places, one map</h3>
-              <p>Restaurants, beaches, attractions, wellness, sports and markets - all in one searchable directory with real prices, real photos and an interactive map.</p>
+              <h3>{t('500+ places, one map')}</h3>
+              <p>{t('Restaurants, beaches, attractions, wellness, sports and markets - all in one searchable directory with real prices, real photos and an interactive map.')}</p>
             </div>
             <div className="trust-card">
               <div className="ic"><Icon name="book" size={28} /></div>
-              <h3>50+ in-depth guides</h3>
-              <p>Long-form articles for first-timers and returning visitors: when to go, where to stay, how to get around, what to eat. Built to answer real questions, not to chase keywords.</p>
+              <h3>{t('50+ in-depth guides')}</h3>
+              <p>{t('Long-form articles for first-timers and returning visitors: when to go, where to stay, how to get around, what to eat. Built to answer real questions, not to chase keywords.')}</p>
             </div>
             <div className="trust-card">
               <div className="ic"><Icon name="open-now" size={28} /></div>
-              <h3>Free, no signup, no ads</h3>
-              <p>Use everything without an account. No popups, no email-gates, no &quot;register to see prices&quot; tricks. We don&apos;t run paid placements and don&apos;t dress ads up as reviews.</p>
+              <h3>{t('Free, no signup, no ads')}</h3>
+              <p>{t('Use everything without an account. No popups, no email-gates, no "register to see prices" tricks. We don\'t run paid placements and don\'t dress ads up as reviews.')}</p>
             </div>
           </div>
         </div>
@@ -410,30 +416,30 @@ export default async function Home() {
         <div className="container ebook-inner">
           <div className="ebook-cover">
             <div className="book" aria-hidden="true">
-              <span className="b-tag">FREE PDF</span>
+              <span className="b-tag">{t('FREE PDF')}</span>
               <span className="b-k">Go To Pattaya</span>
-              <h3>The 7-Day<br />Pattaya<br />Itinerary</h3>
+              <h3>{t('The 7-Day Pattaya Itinerary')}</h3>
               <div className="b-d"></div>
-              <span className="b-f">Day-by-day plans · 2026 edition</span>
+              <span className="b-f">{t('Day-by-day plans · 2026 edition')}</span>
             </div>
           </div>
           <div className="ebook-content">
-            <span className="kick"><Icon name="book" size={15} /> Free travel ebook</span>
-            <h2>Get the free <em>7-day Pattaya</em> itinerary.</h2>
-            <p className="lede">Detailed, day-by-day plans - where to eat, what to see and exactly how to get around. Learn Pattaya the smart way, from people who actually live here.</p>
+            <span className="kick"><Icon name="book" size={15} /> {t('Free travel ebook')}</span>
+            <h2>{t('Get the free 7-day Pattaya itinerary.')}</h2>
+            <p className="lede">{t('Detailed, day-by-day plans - where to eat, what to see and exactly how to get around. Learn Pattaya the smart way, from people who actually live here.')}</p>
             <ul className="ebook-bullets">
-              <li><Icon name="check" size={14} /> 7 days mapped hour by hour</li>
-              <li><Icon name="check" size={14} /> Real local prices &amp; travel times</li>
-              <li><Icon name="check" size={14} /> Offline-ready PDF</li>
+              <li><Icon name="check" size={14} /> {t('7 days mapped hour by hour')}</li>
+              <li><Icon name="check" size={14} /> {t('Real local prices & travel times')}</li>
+              <li><Icon name="check" size={14} /> {t('Offline-ready PDF')}</li>
             </ul>
             <form className="ebook-form">
               <input type="email" placeholder="your@email.com" aria-label="Email address" required />
-              <button type="submit">Send me the guide <Arrow /></button>
+              <button type="submit">{t('Send me the guide')} <Arrow /></button>
             </form>
             <div className="ebook-micro">
-              <span><Icon name="check" size={14} /> 12,400+ travelers</span>
-              <span><Icon name="check" size={14} /> No spam</span>
-              <span><Icon name="check" size={14} /> 1-click unsubscribe</span>
+              <span><Icon name="check" size={14} /> {t('12,400+ travelers')}</span>
+              <span><Icon name="check" size={14} /> {t('No spam')}</span>
+              <span><Icon name="check" size={14} /> {t('1-click unsubscribe')}</span>
             </div>
           </div>
         </div>
