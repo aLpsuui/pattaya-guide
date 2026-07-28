@@ -3,6 +3,8 @@ import Icon from '@/app/components/Icon'
 import Star from '@/app/components/Star'
 import CategoryDirectory, { VItem } from '@/app/components/CategoryDirectory'
 import { SITE_URL } from '@/lib/site'
+import { hasLocale } from '@/lib/i18n/config'
+import { getDictionary } from '@/lib/i18n/dictionaries'
 
 const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 
@@ -63,7 +65,10 @@ function areaOf(nb: string | null): { slug: string; label: string } | null {
   return { slug: slugify(nb), label: nb.trim() }
 }
 
-export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
+export default async function CategoryListing({ cfg, lang }: { cfg: CatConfig; lang: string }) {
+  const locale = hasLocale(lang) ? lang : 'en'
+  const dict = await getDictionary(locale)
+  const t = (s: string) => dict?.[s] ?? s
   const { data } = await supabase
     .from('venues')
     .select('id, slug, name, rating, review_count, venue_type, price_range, address, neighborhood, image_url, categories!inner(slug)')
@@ -81,6 +86,13 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
   const unitSingular = unit.endsWith('ies') ? unit.slice(0, -3) + 'y' : unit.replace(/s$/, '')
   const typeLabel = cfg.typeLabel || 'Type'
   const typeIcon = cfg.typeIcon || 'filter'
+  // Translated hero/copy strings (English source stays in cfg for SEO/JSON-LD).
+  const kicker = t(cfg.kicker)
+  const h1 = t(cfg.h1)
+  const em = cfg.em ? t(cfg.em) : undefined
+  const lead = t(cfg.lead)
+  const searchPlaceholder = t(cfg.searchPlaceholder)
+  const badge = t(cfg.badge || 'Locally verified · weekly')
 
   // ---- primary TYPE rail (single select) -------------------------------
   const familyOf = (v: Venue): string => {
@@ -95,7 +107,7 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
   let primaries: { slug: string; label: string; icon?: string; n: number }[]
   if (cfg.primaryGroups) {
     primaries = cfg.primaryGroups
-      .map((g) => ({ slug: g.slug, label: g.label, icon: g.icon, n: venues.filter((v) => familyOf(v) === g.slug).length }))
+      .map((g) => ({ slug: g.slug, label: t(g.label), icon: g.icon, n: venues.filter((v) => familyOf(v) === g.slug).length }))
       .filter((p) => p.n > 0)
   } else {
     const counts = new Map<string, { label: string; n: number }>()
@@ -117,7 +129,7 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
     e.n++; areaCounts.set(a.slug, e)
   }
   const areas = [...areaCounts.entries()].sort((a, b) => b[1].n - a[1].n).slice(0, 12)
-    .map(([slug, e]) => ({ slug, label: e.label, n: e.n }))
+    .map(([slug, e]) => ({ slug, label: t(e.label), n: e.n }))
 
   const rated = venues.filter((v) => typeof v.rating === 'number')
   const avg = rated.length ? (rated.reduce((s, v) => s + (v.rating || 0), 0) / rated.length).toFixed(1) : '-'
@@ -166,32 +178,32 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
         <div className="container eat-hero__inner">
           <div className="eat-hero__copy">
             <div className="eat-hero__meta">
-              <span><b>{total || '-'}</b> {unit}</span><span className="dot" aria-hidden="true"></span>
-              <span>Updated <b>weekly</b></span><span className="dot" aria-hidden="true"></span>
-              <span>Locally verified</span>
+              <span><b>{total || '-'}</b> {t(unit)}</span><span className="dot" aria-hidden="true"></span>
+              <span>{t('Updated')} <b>{t('weekly')}</b></span><span className="dot" aria-hidden="true"></span>
+              <span>{t('Locally verified')}</span>
             </div>
-            <p className="kicker">{cfg.kicker}</p>
-            <h1>{cfg.em ? <>{cfg.h1.split(cfg.em)[0]}<span>{cfg.em}</span>{cfg.h1.split(cfg.em)[1]}</> : cfg.h1}</h1>
-            <p className="eat-hero__lead">{cfg.lead}</p>
+            <p className="kicker">{kicker}</p>
+            <h1>{em ? <>{h1.split(em)[0]}<span>{em}</span>{h1.split(em)[1]}</> : h1}</h1>
+            <p className="eat-hero__lead">{lead}</p>
 
             <div className="search" role="search">
               <Icon name="search" size={20} style={{ color: 'var(--text-faint)' }} />
-              <input type="search" id="eatSearch" placeholder={cfg.searchPlaceholder} aria-label={cfg.searchPlaceholder} autoComplete="off" />
-              <button type="button" className="go" aria-label="Search"><Icon name="arrow-right" size={20} /></button>
+              <input type="search" id="eatSearch" placeholder={searchPlaceholder} aria-label={searchPlaceholder} autoComplete="off" />
+              <button type="button" className="go" aria-label={t('Search')}><Icon name="arrow-right" size={20} /></button>
             </div>
 
             <div className="eat-hero__stats" role="list" aria-label="Section overview">
-              <div className="st" role="listitem"><b>{total || '-'}</b><span>Verified {unit}</span></div>
+              <div className="st" role="listitem"><b>{total || '-'}</b><span>{t('Verified')} {t(unit)}</span></div>
               {top && <div className="st" role="listitem"><b>{top.n}</b><span>{top.label}</span></div>}
-              <div className="st" role="listitem"><b>{avg}<Star /></b><span>Avg. rating</span></div>
-              {areas.length > 0 && <div className="st" role="listitem"><b>{areas.length}</b><span>Areas</span></div>}
+              <div className="st" role="listitem"><b>{avg}<Star /></b><span>{t('Avg. rating')}</span></div>
+              {areas.length > 0 && <div className="st" role="listitem"><b>{areas.length}</b><span>{t('Areas')}</span></div>}
             </div>
           </div>
 
           <div className="eat-hero__art" aria-hidden="true">
             <div className="eat-hero__img main" style={{ backgroundImage: `url('${img(cfg.heroImg)}')` }}></div>
             {cfg.heroImg2 && <div className="eat-hero__img sub" style={{ backgroundImage: `url('${img(cfg.heroImg2)}')` }}></div>}
-            <div className="eat-hero__badge"><Icon name="local-verified" size={20} className="ic" /><b>{cfg.badge || 'Locally verified · weekly'}</b></div>
+            <div className="eat-hero__badge"><Icon name="local-verified" size={20} className="ic" /><b>{badge}</b></div>
           </div>
         </div>
       </section>
@@ -201,16 +213,16 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
         <div className="container">
           <div className="eat-head">
             <div className="titles">
-              <p className="kicker">The full list</p>
-              <h2 id="dir-h">Every {unitSingular} <span>worth your time</span></h2>
-              <p>Pick a {typeLabel.toLowerCase()}, stack areas, then sort. Search filters by name too.</p>
+              <p className="kicker">{t('The full list')}</p>
+              <h2 id="dir-h">{t('Every')} {t(unitSingular)} <span>{t('worth your time')}</span></h2>
+              <p>{t('Pick a')} {t(typeLabel).toLowerCase()}, {t('stack areas, then sort. Search filters by name too.')}</p>
             </div>
           </div>
 
           {total === 0 ? (
             <p className="eat-empty on" role="status">
               <Icon name="search" size={32} style={{ color: 'var(--text-faint)' }} /><br />
-              No {unit} published yet in this category.
+              {t(`No ${unit} published yet in this category.`)}
             </p>
           ) : (
             <CategoryDirectory
@@ -222,6 +234,7 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
               unit={unit}
               unitSingular={unitSingular}
               total={total}
+              dict={dict}
             />
           )}
         </div>
@@ -232,28 +245,28 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
         <div className="container">
           <div className="trust-grid">
             <div>
-              <p className="kicker">How we rank</p>
-              <h2 id="rank-h">No <span>pay-to-play</span>. Ever.</h2>
+              <p className="kicker">{t('How we rank')}</p>
+              <h2 id="rank-h">{t('No')} <span>{t('pay-to-play')}</span>. {t('Ever.')}</h2>
               <p style={{ color: 'var(--text-muted)', fontSize: 18, maxWidth: '52ch' }}>
-                Venues can&apos;t buy a higher spot on this page. Our ordering blends real visit notes, fresh review trends and local reporting - then we re-check the list every week.
+                {t("Venues can't buy a higher spot on this page. Our ordering blends real visit notes, fresh review trends and local reporting - then we re-check the list every week.")}
               </p>
               <ul className="trust-list">
-                <li><Icon name="check" size={24} className="ic" /><span><b>We pay our own way.</b> Editors visit anonymously; no freebies influence a ranking.</span></li>
-                <li><Icon name="check" size={24} className="ic" /><span><b>Reviews are weighted, not counted.</b> We discount suspicious spikes and reward consistency over time.</span></li>
-                <li><Icon name="check" size={24} className="ic" /><span><b>Listings ≠ rankings.</b> A venue paying for a listing never moves up the order.</span></li>
+                <li><Icon name="check" size={24} className="ic" /><span><b>{t('We pay our own way.')}</b> {t('Editors visit anonymously; no freebies influence a ranking.')}</span></li>
+                <li><Icon name="check" size={24} className="ic" /><span><b>{t('Reviews are weighted, not counted.')}</b> {t('We discount suspicious spikes and reward consistency over time.')}</span></li>
+                <li><Icon name="check" size={24} className="ic" /><span><b>{t('Listings ≠ rankings.')}</b> {t('A venue paying for a listing never moves up the order.')}</span></li>
               </ul>
             </div>
             <div className="trust-aside">
               <div className="alert alert--info">
                 <Icon name="info" size={24} />
-                <div><b>Spotted something off?</b><br />Hours change, places close, owners move on. If a detail here is stale, flag it from any venue page and a local editor will verify it.</div>
+                <div><b>{t('Spotted something off?')}</b><br />{t('Hours change, places close, owners move on. If a detail here is stale, flag it from any venue page and a local editor will verify it.')}</div>
               </div>
               <div className="author">
                 <span className="ava" aria-hidden="true">PG</span>
                 <div className="who">
-                  <b>The Go To Pattaya local desk</b>
-                  <span className="role"><Icon name="local-verified" size={16} style={{ verticalAlign: '-3px' }} /> Locally verified</span>
-                  <p>On-the-ground in Pattaya since 2019 - visiting, checking and double-checking so the list stays honest.</p>
+                  <b>{t('The Go To Pattaya local desk')}</b>
+                  <span className="role"><Icon name="local-verified" size={16} style={{ verticalAlign: '-3px' }} /> {t('Locally verified')}</span>
+                  <p>{t('On-the-ground in Pattaya since 2019 - visiting, checking and double-checking so the list stays honest.')}</p>
                 </div>
               </div>
             </div>
@@ -271,7 +284,7 @@ export default async function CategoryListing({ cfg }: { cfg: CatConfig }) {
           <div className="container">
             <details className="cat-index-wrap">
               <summary id="idx-h" style={{ cursor: 'pointer', fontWeight: 600 }}>
-                Browse all {total} {unit} in Pattaya (A–Z)
+                {t('Browse all')} {total} {t(unit)} {t('in Pattaya (A–Z)')}
               </summary>
               <ul className="cat-index">
                 {venues.filter((v) => v.slug).map((v) => (

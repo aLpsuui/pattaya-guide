@@ -1,6 +1,8 @@
 import Link from '@/app/components/LocaleLink'
 import Icon from '@/app/components/Icon'
 import PlanForm from './PlanForm'
+import { getDictionary } from '@/lib/i18n/dictionaries'
+import { hasLocale } from '@/lib/i18n/config'
 
 const title = 'Plan My Trip to Pattaya - Build a Custom Itinerary | Go To Pattaya'
 const description =
@@ -46,33 +48,38 @@ const days = [
   },
 ]
 
-export default function PlanMyTripPage() {
+export default async function PlanMyTripPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params
+  const locale = hasLocale(lang) ? lang : 'en'
+  const dict = await getDictionary(locale)
+  const t = (s: string) => dict?.[s] ?? s
+
   return (
     <div className="plan-page">
       {/* HERO */}
       <section className="page-hero page-hero--dark">
         <div className="container inner">
           <nav className="crumb" aria-label="Breadcrumb">
-            <Link href="/">Home</Link>
+            <Link href="/">{t('Home')}</Link>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="m9 6 6 6-6 6" /></svg>
-            <span className="cur">Plan My Trip</span>
+            <span className="cur">{t('Plan My Trip')}</span>
           </nav>
-          <div className="kicker" style={{ marginTop: 'var(--s3)' }}>Free trip planner</div>
-          <h1>Build your perfect Pattaya itinerary</h1>
-          <p className="lead">Answer a few questions and we&apos;ll put together a day-by-day plan from verified places - matched to your dates, interests and pace. No signup, no spam.</p>
+          <div className="kicker" style={{ marginTop: 'var(--s3)' }}>{t('Free trip planner')}</div>
+          <h1>{t('Build your perfect Pattaya itinerary')}</h1>
+          <p className="lead">{t("Answer a few questions and we'll put together a day-by-day plan from verified places - matched to your dates, interests and pace. No signup, no spam.")}</p>
         </div>
       </section>
 
       {/* FORM */}
       <section className="section">
         <div className="container form-layout">
-          <PlanForm />
+          <PlanForm dict={dict} />
           <aside className="stack-4">
             {perks.map(p => (
               <div key={p.h} className="feature">
                 <div className="fic"><Icon name={p.icon} size={24} /></div>
-                <h3>{p.h}</h3>
-                <p>{p.p}</p>
+                <h3>{t(p.h)}</h3>
+                <p>{t(p.p)}</p>
               </div>
             ))}
           </aside>
@@ -84,9 +91,9 @@ export default function PlanMyTripPage() {
         <div className="container">
           <div className="sec-head">
             <div className="titles">
-              <div className="kicker">Need inspiration?</div>
-              <h2>A sample 3-day Pattaya plan</h2>
-              <p>Here&apos;s what a balanced first trip can look like - yours is tailored to your answers above.</p>
+              <div className="kicker">{t('Need inspiration?')}</div>
+              <h2>{t('A sample 3-day Pattaya plan')}</h2>
+              <p>{t("Here's what a balanced first trip can look like - yours is tailored to your answers above.")}</p>
             </div>
           </div>
           <div className="grid g3">
@@ -94,13 +101,13 @@ export default function PlanMyTripPage() {
               <div key={day.n} className="day">
                 <div className="dh">
                   <span className="n">{day.n}</span>
-                  <div><b>{day.title}</b><br /><span>{day.sub}</span></div>
+                  <div><b>{t(day.title)}</b><br /><span>{t(day.sub)}</span></div>
                 </div>
                 <ul className="dl">
                   {day.items.map(it => (
                     <li key={it.t}>
                       <span className="t">{it.t}</span>
-                      <span className="d"><b>{it.b}</b><span>{it.d}</span></span>
+                      <span className="d"><b>{t(it.b)}</b><span>{t(it.d)}</span></span>
                     </li>
                   ))}
                 </ul>
@@ -114,12 +121,12 @@ export default function PlanMyTripPage() {
       <section className="section">
         <div className="container">
           <div className="cta-band">
-            <div className="kicker">Already know what you love?</div>
-            <h2>Start from your saved places</h2>
-            <p>Heart the spots you like as you browse, and we&apos;ll build the itinerary around them.</p>
+            <div className="kicker">{t('Already know what you love?')}</div>
+            <h2>{t('Start from your saved places')}</h2>
+            <p>{t("Heart the spots you like as you browse, and we'll build the itinerary around them.")}</p>
             <div className="row" style={{ justifyContent: 'center', flexWrap: 'wrap' }}>
-              <Link href="/eat-and-drinks" className="btn btn-primary">Browse places</Link>
-              <Link href="/blog" className="btn btn-secondary">Read the blog</Link>
+              <Link href="/eat-and-drinks" className="btn btn-primary">{t('Browse places')}</Link>
+              <Link href="/blog" className="btn btn-secondary">{t('Read the blog')}</Link>
             </div>
           </div>
         </div>

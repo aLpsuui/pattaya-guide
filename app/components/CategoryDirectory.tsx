@@ -31,11 +31,13 @@ interface Props {
   unit: string
   unitSingular: string
   total: number
+  dict?: Record<string, string>
 }
 
 const STEP = 18
 
-export default function CategoryDirectory({ venues, primaries, areas, typeLabel, typeIcon, unit, unitSingular, total }: Props) {
+export default function CategoryDirectory({ venues, primaries, areas, typeLabel, typeIcon, unit, unitSingular, total, dict }: Props) {
+  const t = (s: string) => dict?.[s] ?? s
   const [primary, setPrimary] = useState('all')
   const [areaSet, setAreaSet] = useState<Set<string>>(new Set())
   const [q, setQ] = useState('')
@@ -124,20 +126,20 @@ export default function CategoryDirectory({ venues, primaries, areas, typeLabel,
       <div className={`eat-rail-backdrop${railOpen ? ' on' : ''}`} aria-hidden="true" onClick={() => setRailOpen(false)}></div>
 
       {/* LEFT FILTER RAIL */}
-      <aside className="eat-rail" aria-label="Filter the directory">
+      <aside className="eat-rail" aria-label={t('Filter the directory')}>
         <div className="eat-rail__inner">
           <div className="eat-rail__head">
-            <h2><Icon name={typeIcon} size={20} className="ic" />Filters</h2>
-            <button type="button" className="eat-rail__clear" onClick={clearAll}>Clear all</button>
-            <button type="button" className="eat-rail__close" aria-label="Close filters" onClick={() => setRailOpen(false)}><Icon name="close" size={20} /></button>
+            <h2><Icon name={typeIcon} size={20} className="ic" />{t('Filters')}</h2>
+            <button type="button" className="eat-rail__clear" onClick={clearAll}>{t('Clear all')}</button>
+            <button type="button" className="eat-rail__close" aria-label={t('Close filters')} onClick={() => setRailOpen(false)}><Icon name="close" size={20} /></button>
           </div>
 
           {/* primary TYPE (single) */}
           <div className="fgroup">
-            <p className="fgroup__t" aria-hidden="true">{typeLabel}</p>
-            <div className="ftype" role="group" aria-label={`${typeLabel} (choose one)`}>
+            <p className="fgroup__t" aria-hidden="true">{t(typeLabel)}</p>
+            <div className="ftype" role="group" aria-label={`${t(typeLabel)} ${t('(choose one)')}`}>
               <button type="button" aria-pressed={primary === 'all'} onClick={() => pickPrimary('all')}>
-                <Icon name={typeIcon} size={16} className="ic" />All <span className="n">{total}</span>
+                <Icon name={typeIcon} size={16} className="ic" />{t('All')} <span className="n">{total}</span>
               </button>
               {primaries.map((p) => (
                 <button key={p.slug} type="button" aria-pressed={primary === p.slug} onClick={() => pickPrimary(p.slug)}>
@@ -151,7 +153,7 @@ export default function CategoryDirectory({ venues, primaries, areas, typeLabel,
           {areas.length > 1 && (
             <div className={`fgroup${areaCollapsed ? ' collapsed' : ''}`}>
               <button type="button" className="fgroup__t" aria-expanded={!areaCollapsed} onClick={() => setAreaCollapsed((c) => !c)}>
-                Area <Icon name="chevron-right" size={16} className="ic x" />
+                {t('Area')} <Icon name="chevron-right" size={16} className="ic x" />
               </button>
               <div className="fgroup__body">
                 <div className="fopts">
@@ -174,37 +176,37 @@ export default function CategoryDirectory({ venues, primaries, areas, typeLabel,
         <div className="eat-toolbar">
           <div className="eat-toolbar__left">
             <button type="button" className="eat-filter-toggle" onClick={() => setRailOpen(true)}>
-              <Icon name="filter" size={16} />Filters{activeCount > 0 && <span className="pill">{activeCount}</span>}
+              <Icon name="filter" size={16} />{t('Filters')}{activeCount > 0 && <span className="pill">{activeCount}</span>}
             </button>
-            <span className="eat-toolbar__count" aria-live="polite"><b>{matched.length}</b> {matched.length === 1 ? unitSingular : unit}</span>
+            <span className="eat-toolbar__count" aria-live="polite"><b>{matched.length}</b> {t(matched.length === 1 ? unitSingular : unit)}</span>
           </div>
           <div className="eat-sort">
-            <label htmlFor="sortSel">Sort</label>
+            <label htmlFor="sortSel">{t('Sort')}</label>
             <select id="sortSel" value={sort} onChange={(e) => setSort(e.target.value)}>
-              <option value="reviews">Most reviewed</option>
-              <option value="rating">Highest rated</option>
-              <option value="editor">Featured</option>
-              <option value="az">A–Z</option>
+              <option value="reviews">{t('Most reviewed')}</option>
+              <option value="rating">{t('Highest rated')}</option>
+              <option value="editor">{t('Featured')}</option>
+              <option value="az">{t('A–Z')}</option>
             </select>
           </div>
         </div>
 
         {(activeCount > 0 || q) && (
           <div className="eat-active">
-            <span className="lbl">{activeCount + (q ? 1 : 0)} {activeCount + (q ? 1 : 0) === 1 ? 'filter' : 'filters'}</span>
+            <span className="lbl">{activeCount + (q ? 1 : 0)} {t(activeCount + (q ? 1 : 0) === 1 ? 'filter' : 'filters')}</span>
             {q && (
               <span className="achip">“{q}”
-                <button type="button" aria-label="Clear search" onClick={() => { setQ(''); setLimit(STEP); const el = document.getElementById('eatSearch') as HTMLInputElement | null; if (el) el.value = '' }}><Icon name="close" size={11} /></button>
+                <button type="button" aria-label={t('Clear search')} onClick={() => { setQ(''); setLimit(STEP); const el = document.getElementById('eatSearch') as HTMLInputElement | null; if (el) el.value = '' }}><Icon name="close" size={11} /></button>
               </span>
             )}
             {primary !== 'all' && (
               <span className="achip">{primaryLabel(primary)}
-                <button type="button" aria-label={`Remove ${primaryLabel(primary)}`} onClick={() => pickPrimary('all')}><Icon name="close" size={11} /></button>
+                <button type="button" aria-label={`${t('Remove')} ${primaryLabel(primary)}`} onClick={() => pickPrimary('all')}><Icon name="close" size={11} /></button>
               </span>
             )}
             {[...areaSet].map((slug) => (
               <span key={slug} className="achip">{areaLabel(slug)}
-                <button type="button" aria-label={`Remove ${areaLabel(slug)}`} onClick={() => toggleArea(slug)}><Icon name="close" size={11} /></button>
+                <button type="button" aria-label={`${t('Remove')} ${areaLabel(slug)}`} onClick={() => toggleArea(slug)}><Icon name="close" size={11} /></button>
               </span>
             ))}
           </div>
@@ -234,7 +236,7 @@ export default function CategoryDirectory({ venues, primaries, areas, typeLabel,
         {matched.length > shown.length && (
           <div className="load-more-wrap">
             <button type="button" className="load-more" onClick={() => setLimit((l) => l + STEP)}>
-              Load more ({matched.length - shown.length})
+              {t('Load more')} ({matched.length - shown.length})
             </button>
           </div>
         )}
@@ -242,7 +244,7 @@ export default function CategoryDirectory({ venues, primaries, areas, typeLabel,
         {matched.length === 0 && (
           <p className="eat-empty on" role="status">
             <Icon name="search" size={32} style={{ color: 'var(--text-faint)' }} /><br />
-            No {unit} match. Try removing a filter.
+            {t(`No ${unit} match. Try removing a filter.`)}
           </p>
         )}
       </div>

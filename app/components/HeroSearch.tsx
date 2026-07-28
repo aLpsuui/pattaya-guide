@@ -32,7 +32,8 @@ function highlight(text: string, term: string) {
   )
 }
 
-export default function HeroSearch({ variant = 'hero' }: { variant?: 'hero' | 'header' } = {}) {
+export default function HeroSearch({ variant = 'hero', dict }: { variant?: 'hero' | 'header'; dict?: Record<string, string> } = {}) {
+  const t = (s: string) => dict?.[s] ?? s
   const router = useRouter()
   const [cats, setCats] = useState<Cat[]>([])
   const [vens, setVens] = useState<Ven[]>([])
@@ -138,8 +139,8 @@ export default function HeroSearch({ variant = 'hero' }: { variant?: 'hero' | 'h
       {variant === 'header' ? (
         <div className="searchbar" role="search">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
-          <input placeholder="Search places, tours & areas…" aria-label="Search" {...inputCommon} />
-          <button type="button" className="go" aria-label="Search" onClick={() => { if (flat[0]) go(flat[0].href) }}>
+          <input placeholder={t('Search places, tours & areas…')} aria-label={t('Search')} {...inputCommon} />
+          <button type="button" className="go" aria-label={t('Search')} onClick={() => { if (flat[0]) go(flat[0].href) }}>
             <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.4" width="16" height="16"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
           </button>
         </div>
@@ -147,11 +148,11 @@ export default function HeroSearch({ variant = 'hero' }: { variant?: 'hero' | 'h
         <div className="hero-search" role="search">
           <label className="hsr" htmlFor="heroInput">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
-            <input id="heroInput" aria-label="Search places, areas and guides" placeholder="Search places, areas, or guides..." {...inputCommon} />
+            <input id="heroInput" aria-label={t('Search places, areas and guides')} placeholder={t('Search places, areas, or guides...')} {...inputCommon} />
           </label>
-          <button type="button" className="go" aria-label="Search"
+          <button type="button" className="go" aria-label={t('Search')}
             onClick={() => { if (flat[0]) go(flat[0].href) }}>
-            <span>Search</span>
+            <span>{t('Search')}</span>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
           </button>
         </div>
@@ -159,35 +160,35 @@ export default function HeroSearch({ variant = 'hero' }: { variant?: 'hero' | 'h
 
       {show && (
         <div className="hs-panel" id="hs-panel" role="listbox">
-          {flat.length === 0 && <div className="hs-empty">No matches for “{q}”.</div>}
+          {flat.length === 0 && <div className="hs-empty">{t('No matches for')} “{q}”.</div>}
 
           {groups.cat.length > 0 && (
             <div className="hs-group">
-              <div className="hs-label hs-cat"><span className="hsdot" /> Categories</div>
-              {groups.cat.map(c => <Item key={'c' + c.slug} r={{ kind: 'cat', name: c.name, meta: 'Category', href: `/${c.slug}` }} />)}
+              <div className="hs-label hs-cat"><span className="hsdot" /> {t('Categories')}</div>
+              {groups.cat.map(c => <Item key={'c' + c.slug} r={{ kind: 'cat', name: c.name, meta: t('Category'), href: `/${c.slug}` }} />)}
             </div>
           )}
           {groups.sub.length > 0 && (
             <div className="hs-group">
-              <div className="hs-label hs-sub"><span className="hsdot" /> Sub-categories</div>
+              <div className="hs-label hs-sub"><span className="hsdot" /> {t('Sub-categories')}</div>
               {groups.sub.map(s => <Item key={'s' + s.label} r={{ kind: 'sub', name: s.label, meta: s.catName, href: `/${s.catSlug}` }} />)}
             </div>
           )}
           {groups.area.length > 0 && (
             <div className="hs-group">
-              <div className="hs-label hs-area"><span className="hsdot" /> Areas</div>
-              {groups.area.map(a => <Item key={'a' + a} r={{ kind: 'area', name: a, meta: 'Area', href: '/areas' }} />)}
+              <div className="hs-label hs-area"><span className="hsdot" /> {t('Areas')}</div>
+              {groups.area.map(a => <Item key={'a' + a} r={{ kind: 'area', name: a, meta: t('Area'), href: '/areas' }} />)}
             </div>
           )}
           {groups.ven.length > 0 && (
             <div className="hs-group">
-              <div className="hs-label hs-ven"><span className="hsdot" /> Places</div>
-              {groups.ven.map(v => <Item key={'v' + v.slug} r={{ kind: 'ven', name: v.name, meta: v.type ?? 'Place', href: `/venues/${v.slug}` }} />)}
+              <div className="hs-label hs-ven"><span className="hsdot" /> {t('Places')}</div>
+              {groups.ven.map(v => <Item key={'v' + v.slug} r={{ kind: 'ven', name: v.name, meta: v.type ?? t('Place'), href: `/venues/${v.slug}` }} />)}
             </div>
           )}
 
           {flat.length > 0 && (
-            <div className="hs-foot"><span>↑↓ to navigate · ↵ to open</span><span>{flat.length} result{flat.length > 1 ? 's' : ''}</span></div>
+            <div className="hs-foot"><span>{t('↑↓ to navigate · ↵ to open')}</span><span>{flat.length} {flat.length > 1 ? t('results') : t('result')}</span></div>
           )}
         </div>
       )}

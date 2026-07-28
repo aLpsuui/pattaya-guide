@@ -32,7 +32,7 @@ export default async function LangLayout({
       <main id="main">{children}</main>
       <Footer dict={dict} logoUrl={logo_url} />
       <MobileTabBar dict={dict} />
-      <ChatWidget />
+      <ChatWidget dict={dict} />
     </>
   )
 }

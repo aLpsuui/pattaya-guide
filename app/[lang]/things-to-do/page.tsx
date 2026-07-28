@@ -27,6 +27,7 @@ const cfg: CatConfig = {
   unit: 'activities',
 }
 
-export default function ThingsToDoPage() {
-  return <CategoryListing cfg={cfg} />
+export default async function ThingsToDoPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params
+  return <CategoryListing cfg={cfg} lang={lang} />
 }

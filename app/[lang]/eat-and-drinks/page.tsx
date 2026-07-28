@@ -30,6 +30,7 @@ const cfg: CatConfig = {
   ],
 }
 
-export default function EatDrinksPage() {
-  return <CategoryListing cfg={cfg} />
+export default async function EatDrinksPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params
+  return <CategoryListing cfg={cfg} lang={lang} />
 }

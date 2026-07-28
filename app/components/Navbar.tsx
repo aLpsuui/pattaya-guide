@@ -90,7 +90,7 @@ export default function Navbar({ logoUrl, dict }: { logoUrl?: string | null; dic
             <Link href="/" className="brand">
               <BrandLogo h={36} override={logoUrl} />
             </Link>
-            <HeroSearch variant="header" />
+            <HeroSearch variant="header" dict={dict} />
             <div className="tier1-actions">
               <LanguageSwitcher />
               <Link href="/plan-my-trip" className="btn btn-primary btn-sm">{t('Plan my trip')}</Link>

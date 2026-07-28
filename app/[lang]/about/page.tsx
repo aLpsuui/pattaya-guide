@@ -1,5 +1,7 @@
 import Link from '@/app/components/LocaleLink'
 import Icon from '@/app/components/Icon'
+import { getDictionary } from '@/lib/i18n/dictionaries'
+import { hasLocale } from '@/lib/i18n/config'
 
 const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 
@@ -37,23 +39,28 @@ const Arrow = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
 )
 
-export default function AboutPage() {
+export default async function AboutPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params
+  const locale = hasLocale(lang) ? lang : 'en'
+  const dict = await getDictionary(locale)
+  const t = (s: string) => dict?.[s] ?? s
+
   return (
     <div className="about-page">
       {/* HERO */}
       <section className="page-hero">
         <div className="container inner">
           <nav className="crumb" aria-label="Breadcrumb">
-            <Link href="/">Home</Link>
+            <Link href="/">{t('Home')}</Link>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="m9 6 6 6-6 6" /></svg>
-            <span className="cur">About</span>
+            <span className="cur">{t('About')}</span>
           </nav>
-          <div className="kicker" style={{ marginTop: 'var(--s3)' }}>Who we are</div>
-          <h1>The honest local guide to Pattaya.</h1>
-          <p className="lead">Go To Pattaya is an independent directory built by people who actually live here. We verify every place on the ground, update weekly, and never accept money to rank a venue higher. Just the real Pattaya - clearly mapped.</p>
+          <div className="kicker" style={{ marginTop: 'var(--s3)' }}>{t('Who we are')}</div>
+          <h1>{t('The honest local guide to Pattaya.')}</h1>
+          <p className="lead">{t('Go To Pattaya is an independent directory built by people who actually live here. We verify every place on the ground, update weekly, and never accept money to rank a venue higher. Just the real Pattaya - clearly mapped.')}</p>
           <div className="row" style={{ marginTop: 'var(--s4)', flexWrap: 'wrap' }}>
-            <Link href="/plan-my-trip" className="btn btn-primary">Plan my trip</Link>
-            <Link href="/eat-and-drinks" className="btn btn-secondary">Browse all places</Link>
+            <Link href="/plan-my-trip" className="btn btn-primary">{t('Plan my trip')}</Link>
+            <Link href="/eat-and-drinks" className="btn btn-secondary">{t('Browse all places')}</Link>
           </div>
         </div>
       </section>
@@ -63,7 +70,7 @@ export default function AboutPage() {
         <div className="container">
           <div className="stat-band">
             {stats.map(s => (
-              <div key={s.l} className="stat"><b>{s.n}</b><span>{s.l}</span></div>
+              <div key={s.l} className="stat"><b>{s.n}</b><span>{t(s.l)}</span></div>
             ))}
           </div>
         </div>
@@ -73,12 +80,12 @@ export default function AboutPage() {
       <section className="section">
         <div className="container split">
           <div className="prose">
-            <div className="kicker">Our story</div>
-            <h2>Built in Pattaya, for everyone who visits it.</h2>
-            <p>Pattaya is one of the most visited cities in the world - and one of the hardest to navigate honestly. Most &quot;top 10&quot; lists are paid, outdated, or written by people who have never set foot here.</p>
-            <p>We started Go To Pattaya to fix that. Our editors live across Central Pattaya, Jomtien and Naklua. We eat at the restaurants, take the tours, and sit in the cafés before a single one of them goes on the site.</p>
-            <p>If a place slips - prices jump, quality drops, it closes - we update it. The guide you read today reflects the Pattaya of <strong>this week</strong>, not last year.</p>
-            <Link href="/blog" className="viewall">Read our latest guides <Arrow /></Link>
+            <div className="kicker">{t('Our story')}</div>
+            <h2>{t('Built in Pattaya, for everyone who visits it.')}</h2>
+            <p>{t('Pattaya is one of the most visited cities in the world - and one of the hardest to navigate honestly. Most "top 10" lists are paid, outdated, or written by people who have never set foot here.')}</p>
+            <p>{t('We started Go To Pattaya to fix that. Our editors live across Central Pattaya, Jomtien and Naklua. We eat at the restaurants, take the tours, and sit in the cafés before a single one of them goes on the site.')}</p>
+            <p>{t('If a place slips - prices jump, quality drops, it closes - we update it. The guide you read today reflects the Pattaya of this week, not last year.')}</p>
+            <Link href="/blog" className="viewall">{t('Read our latest guides')} <Arrow /></Link>
           </div>
           <div className="media"><img src={`${ASSETS}/pattaya-city-beach-1.webp`} alt="Pattaya city beach and bay seen from above at daytime" loading="lazy" /></div>
         </div>
@@ -89,17 +96,17 @@ export default function AboutPage() {
         <div className="container">
           <div className="sec-head">
             <div className="titles">
-              <div className="kicker">How we work</div>
-              <h2>Four rules we never break</h2>
-              <p>The standards behind every listing, rating and recommendation on Go To Pattaya.</p>
+              <div className="kicker">{t('How we work')}</div>
+              <h2>{t('Four rules we never break')}</h2>
+              <p>{t('The standards behind every listing, rating and recommendation on Go To Pattaya.')}</p>
             </div>
           </div>
           <div className="grid g4">
             {rules.map(r => (
               <article key={r.h} className="feature">
                 <div className="fic"><Icon name={r.icon} size={24} /></div>
-                <h3>{r.h}</h3>
-                <p>{r.p}</p>
+                <h3>{t(r.h)}</h3>
+                <p>{t(r.p)}</p>
               </article>
             ))}
           </div>
@@ -111,19 +118,19 @@ export default function AboutPage() {
         <div className="container">
           <div className="sec-head">
             <div className="titles">
-              <div className="kicker">The editors</div>
-              <h2>Real people, on the ground</h2>
-              <p>A small, multilingual team covering food, wellness, nightlife and things to do.</p>
+              <div className="kicker">{t('The editors')}</div>
+              <h2>{t('Real people, on the ground')}</h2>
+              <p>{t('A small, multilingual team covering food, wellness, nightlife and things to do.')}</p>
             </div>
           </div>
           <div className="grid g3">
-            {team.map(t => (
-              <div key={t.name} className="author">
-                <div className="ava">{t.av}</div>
+            {team.map(member => (
+              <div key={member.name} className="author">
+                <div className="ava">{member.av}</div>
                 <div className="who">
-                  <b>{t.name}</b>
-                  <span className="role">{t.role}</span>
-                  <p>{t.bio}</p>
+                  <b>{member.name}</b>
+                  <span className="role">{t(member.role)}</span>
+                  <p>{t(member.bio)}</p>
                 </div>
               </div>
             ))}
@@ -136,15 +143,15 @@ export default function AboutPage() {
         <div className="container split">
           <div className="media"><img src={`${ASSETS}/pattaya-temputre.webp`} alt="Golden Buddhist temple detail in Pattaya, Thailand" loading="lazy" /></div>
           <div className="prose">
-            <div className="kicker">Our promise</div>
-            <h2>If it&apos;s on Go To Pattaya, we&apos;d send our own friends there.</h2>
+            <div className="kicker">{t('Our promise')}</div>
+            <h2>{t("If it's on Go To Pattaya, we'd send our own friends there.")}</h2>
             <ul>
-              <li>We label every partnership and affiliate link - clearly.</li>
-              <li>We remove places that decline quietly, no exceptions.</li>
-              <li>We answer corrections from readers and owners within 2 business days.</li>
-              <li>We keep the core guide free, with no signup wall.</li>
+              <li>{t('We label every partnership and affiliate link - clearly.')}</li>
+              <li>{t('We remove places that decline quietly, no exceptions.')}</li>
+              <li>{t('We answer corrections from readers and owners within 2 business days.')}</li>
+              <li>{t('We keep the core guide free, with no signup wall.')}</li>
             </ul>
-            <Link href="/blog" className="viewall">Found something off? Tell us <Arrow /></Link>
+            <Link href="/blog" className="viewall">{t('Found something off? Tell us')} <Arrow /></Link>
           </div>
         </div>
       </section>
@@ -153,12 +160,12 @@ export default function AboutPage() {
       <section className="section">
         <div className="container">
           <div className="cta-band">
-            <div className="kicker">Ready when you are</div>
-            <h2>Start planning your Pattaya trip</h2>
-            <p>Tell us your dates and interests and we&apos;ll build a day-by-day itinerary from verified places - free, no signup.</p>
+            <div className="kicker">{t('Ready when you are')}</div>
+            <h2>{t('Start planning your Pattaya trip')}</h2>
+            <p>{t("Tell us your dates and interests and we'll build a day-by-day itinerary from verified places - free, no signup.")}</p>
             <div className="row" style={{ justifyContent: 'center', flexWrap: 'wrap' }}>
-              <Link href="/plan-my-trip" className="btn btn-primary">Plan my trip</Link>
-              <Link href="/blog" className="btn btn-secondary">Read the blog</Link>
+              <Link href="/plan-my-trip" className="btn btn-primary">{t('Plan my trip')}</Link>
+              <Link href="/blog" className="btn btn-secondary">{t('Read the blog')}</Link>
             </div>
           </div>
         </div>

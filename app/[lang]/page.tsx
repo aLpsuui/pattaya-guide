@@ -184,7 +184,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
 
   return (
     <>
-      {deal && <DailyDealPopup deal={deal} />}
+      {deal && <DailyDealPopup deal={deal} dict={dict} />}
       {/* Preload the LCP hero background (a CSS background-image the browser
           would otherwise only discover after CSS parses). */}
       <link rel="preload" as="image" href={`${ASSETS}/hero-pattaya-1600.webp`} media="(min-width:769px)" fetchPriority="high" />
@@ -199,7 +199,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
           <h1>{t('Your complete guide')}<br /><span>{t('to Pattaya.')}</span></h1>
           <p className="intro">{t('Restaurants, beaches, attractions, day trips, wellness, sports - 500+ places and 50+ in-depth guides. Plan your trip in 5 minutes.')}</p>
 
-          <HeroSearch />
+          <HeroSearch dict={dict} />
 
           <div className="hero-tags" role="list">
             <a href="#cats" className="qtag" role="listitem"><Icon name="eat" size={14} /> {t('Eat')}</a>

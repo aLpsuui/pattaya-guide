@@ -17,7 +17,8 @@ export type Deal = {
 const KEY = 'pg-deal-seen'
 const today = () => new Date().toISOString().slice(0, 10)
 
-export default function DailyDealPopup({ deal }: { deal: Deal }) {
+export default function DailyDealPopup({ deal, dict }: { deal: Deal; dict?: Record<string, string> }) {
+  const t = (s: string) => dict?.[s] ?? s
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
@@ -44,14 +45,14 @@ export default function DailyDealPopup({ deal }: { deal: Deal }) {
   const meta = deal.venue_type || deal.category
 
   return (
-    <div className="ddp-scrim" role="dialog" aria-modal="true" aria-label="Günün mekanı" onClick={dismiss}>
+    <div className="ddp-scrim" role="dialog" aria-modal="true" aria-label={t('Venue of the day')} onClick={dismiss}>
       <div className="ddp-card" onClick={(e) => e.stopPropagation()}>
-        <button className="ddp-close" onClick={dismiss} aria-label="Kapat" type="button">×</button>
+        <button className="ddp-close" onClick={dismiss} aria-label={t('Close')} type="button">×</button>
         <div className="ddp-media" style={{ backgroundImage: deal.image_url ? `url(${deal.image_url})` : 'var(--grad-brand)' }}>
           {deal.label && <span className="ddp-badge">{deal.label}</span>}
         </div>
         <div className="ddp-body">
-          <div className="ddp-kicker">Günün mekanı</div>
+          <div className="ddp-kicker">{t('Venue of the day')}</div>
           <h3 className="ddp-name">{deal.name}</h3>
           <div className="ddp-meta">
             {meta && <span>{meta}</span>}
@@ -59,7 +60,7 @@ export default function DailyDealPopup({ deal }: { deal: Deal }) {
               <span className="ddp-rate"><Star /> {deal.rating.toFixed(1)}{deal.review_count != null && ` (${deal.review_count.toLocaleString()})`}</span>
             )}
           </div>
-          <Link href={`/venues/${deal.slug}`} className="ddp-cta" onClick={dismiss}>Mekana git</Link>
+          <Link href={`/venues/${deal.slug}`} className="ddp-cta" onClick={dismiss}>{t('Visit venue')}</Link>
         </div>
       </div>
     </div>
