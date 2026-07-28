@@ -27,6 +27,12 @@ export default async function LangLayout({
 
   return (
     <>
+      {/* Root <html> is static lang="en"; correct it to the active locale so
+          screen readers and JS-aware crawlers see the right language. The
+          primary hreflang signal for search engines is emitted via sitemap.ts. */}
+      {lang !== 'en' && (
+        <script dangerouslySetInnerHTML={{ __html: `document.documentElement.lang=${JSON.stringify(lang)}` }} />
+      )}
       <a href="#main" className="skip-link">Skip to content</a>
       <Navbar logoUrl={logo_url} dict={dict} />
       <main id="main">{children}</main>
