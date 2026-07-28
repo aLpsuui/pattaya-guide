@@ -12,9 +12,26 @@ import type { Locale } from './config'
 const MODEL = 'claude-sonnet-5'
 const API_URL = 'https://api.anthropic.com/v1/messages'
 
-// 'static' = kod içindeki sabit HTML blokları (ör. areas sayfası) — DB'den gelmez
-// ama aynı cache tablosunda saklanır (source_id ile ayrışır).
-export type SourceTable = 'blog_posts' | 'venues' | 'categories' | 'static'
+// 'static' = kod içindeki sabit HTML blokları (ör. areas sayfası) — DB'den gelmez.
+// 'venue_types' = venue_type etiketleri (ör. "Water Park"), değerin kendisiyle
+// anahtarlanır (tekrar eden tipler bir kez çevrilir, tüm kartlarda paylaşılır).
+export type SourceTable = 'blog_posts' | 'venues' | 'categories' | 'static' | 'venue_types'
+
+// Aynı locale için birden çok metni çevirir; tekrar edenleri bir kez çevirip
+// haritada döndürür (kartlarda çokça tekrarlanan venue_type/kategori için).
+// id, metnin kendisidir (sabit doğal anahtar). Boş/çeviri gerekmeyen → aynen.
+export async function translateMany(
+  table: SourceTable,
+  field: string,
+  values: (string | null | undefined)[],
+  locale: Locale,
+): Promise<Map<string, string>> {
+  const unique = [...new Set(values.filter((v): v is string => !!v && !!v.trim()))]
+  const entries = await Promise.all(
+    unique.map(async (v) => [v, await getTranslated(table, v, field, v, locale)] as const),
+  )
+  return new Map(entries)
+}
 
 function sha256(text: string): string {
   return createHash('sha256').update(text).digest('hex')

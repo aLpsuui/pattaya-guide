@@ -8,6 +8,7 @@ import DailyDealPopup, { type Deal } from '@/app/components/DailyDealPopup'
 import Star from '@/app/components/Star'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { hasLocale } from '@/lib/i18n/config'
+import { translateMany } from '@/lib/i18n/translateContent'
 
 const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 
@@ -155,15 +156,15 @@ const Arrow = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
 )
 
-function VenueCard({ v, dark = false }: { v: Venue; dark?: boolean }) {
+function VenueCard({ v, dark = false, tt = (s) => s }: { v: Venue; dark?: boolean; tt?: (s: string | null | undefined) => string | null | undefined }) {
   return (
     <Link href={`/venues/${v.slug}`} className="place">
       <div className="ph" style={{ backgroundImage: v.image_url ? `url(${v.image_url})` : 'var(--grad-brand)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
-        <span className="tagpill">{v.categories?.name_en || v.venue_type}</span>
+        <span className="tagpill">{tt(v.categories?.name_en || v.venue_type)}</span>
       </div>
       <div className="pb">
         <h4>{v.name}</h4>
-        <div className="meta"><span>{v.venue_type}</span>{v.address && <span>· {v.address.slice(0, 25)}</span>}</div>
+        <div className="meta"><span>{tt(v.venue_type)}</span>{v.address && <span>· {v.address.slice(0, 25)}</span>}</div>
         <div className="rate">
           <div className="left"><Star /> {v.rating?.toFixed(1)} {v.review_count != null && <span className="count">({v.review_count.toLocaleString()})</span>}</div>
           {(v.price_from != null || v.price_range) && <span className="price">{v.price_from != null ? `from ฿${v.price_from.toLocaleString()}` : v.price_range}</span>}
@@ -182,9 +183,19 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
   ])
   const t = (s: string) => dict?.[s] ?? s
 
+  // Translate DB card labels (venue_type + category). Venue NAMES stay Latin
+  // (proper nouns). Repeated types are translated once and shared via the map.
+  const cardVenues = [...topVenues, ...adventureVenues]
+  const [typeMap, catMap] = await Promise.all([
+    translateMany('venue_types', 'label', [...cardVenues.map((v) => v.venue_type), deal?.venue_type], locale),
+    translateMany('categories', 'name_en', [...cardVenues.map((v) => v.categories?.name_en), deal?.category], locale),
+  ])
+  const tt = (s: string | null | undefined) => (s ? (typeMap.get(s) ?? catMap.get(s) ?? s) : s)
+  const dealTr = deal ? { ...deal, venue_type: tt(deal.venue_type) ?? deal.venue_type, category: tt(deal.category) ?? deal.category } : null
+
   return (
     <>
-      {deal && <DailyDealPopup deal={deal} dict={dict} />}
+      {dealTr && <DailyDealPopup deal={dealTr} dict={dict} />}
       {/* Preload the LCP hero background (a CSS background-image the browser
           would otherwise only discover after CSS parses). */}
       <link rel="preload" as="image" href={`${ASSETS}/hero-pattaya-1600.webp`} media="(min-width:769px)" fetchPriority="high" />
@@ -275,7 +286,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
             <CarButton target="topCar" dir={-1} label="Previous" />
             <CarButton target="topCar" dir={1} label="Next" />
             <div className="carousel" id="topCar">
-              {topVenues.map(v => <VenueCard key={v.id} v={v} />)}
+              {topVenues.map(v => <VenueCard key={v.id} v={v} tt={tt} />)}
             </div>
           </div>
         </div>
@@ -296,7 +307,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
             <CarButton target="extremeCar" dir={-1} label="Previous" />
             <CarButton target="extremeCar" dir={1} label="Next" />
             <div className="carousel" id="extremeCar">
-              {adventureVenues.map(v => <VenueCard key={v.id} v={v} dark />)}
+              {adventureVenues.map(v => <VenueCard key={v.id} v={v} dark tt={tt} />)}
             </div>
           </div>
         </div>
