@@ -12,7 +12,9 @@ import type { Locale } from './config'
 const MODEL = 'claude-sonnet-5'
 const API_URL = 'https://api.anthropic.com/v1/messages'
 
-export type SourceTable = 'blog_posts' | 'venues' | 'categories'
+// 'static' = kod içindeki sabit HTML blokları (ör. areas sayfası) — DB'den gelmez
+// ama aynı cache tablosunda saklanır (source_id ile ayrışır).
+export type SourceTable = 'blog_posts' | 'venues' | 'categories' | 'static'
 
 function sha256(text: string): string {
   return createHash('sha256').update(text).digest('hex')

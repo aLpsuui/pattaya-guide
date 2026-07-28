@@ -1,6 +1,9 @@
 import './areas.css'
 import BlogScript from '@/app/components/BlogScript'
 import ExploreMap from '@/app/components/ExploreMap'
+import { getTranslated } from '@/lib/i18n/translateContent'
+import { getDictionary } from '@/lib/i18n/dictionaries'
+import { hasLocale } from '@/lib/i18n/config'
 
 const title = 'Areas of Pattaya - Find Your Neighborhood | Go To Pattaya'
 const description = "An orientation guide to Pattaya's neighborhoods - Central, Jomtien, Naklua, Pratumnak, Wong Amat and the islands. Compare vibes to decide where to stay."
@@ -9,6 +12,14 @@ export const metadata = {
   description,
   alternates: { canonical: '/areas' },
   openGraph: { title, description },
+}
+
+// Only pre-render English at build; Russian generates on first visit (it
+// translates the static HTML via Claude + caches it, which we don't want to run
+// at build time). Matches the blog pages' EN-only prerender strategy.
+export const revalidate = 3600
+export function generateStaticParams() {
+  return [{ lang: 'en' }]
 }
 
 const HTML = String.raw`
@@ -781,26 +792,42 @@ const SCRIPT = String.raw`
 // HEAD keeps the `.area-page` wrapper open (we re-close it); the wrapper's
 // own closing </div> lives at the very end of REST, so we re-open it on the
 // second half. The real interactive map is injected between the two.
-const MARKER = 'DISTRICT CARDS'
-const cut = HTML.lastIndexOf('<!--', HTML.indexOf(MARKER))
-const HEAD = HTML.slice(0, cut)
-const REST = HTML.slice(cut)
+// The inline SVG icon sprite is kept OUT of translation: it's non-text markup
+// (paths/coords) the translator shouldn't touch, and translating it would waste
+// tokens and risk corrupting the icons. Slice it off the front, translate only
+// the content, and re-prepend the sprite (it just needs to be in the DOM once).
+const SPRITE_END = HTML.indexOf('</svg>') + '</svg>'.length
+const SPRITE = HTML.slice(0, SPRITE_END)
+const CONTENT = HTML.slice(SPRITE_END)
 
-export default function AreasPage() {
+const MARKER = 'DISTRICT CARDS'
+const cut = CONTENT.lastIndexOf('<!--', CONTENT.indexOf(MARKER))
+const HEAD = CONTENT.slice(0, cut)
+const REST = CONTENT.slice(cut)
+
+export default async function AreasPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params
+  const locale = hasLocale(lang) ? lang : 'en'
+  const [dict, head, rest] = await Promise.all([
+    getDictionary(locale),
+    getTranslated('static', 'areas-overview', 'head', HEAD, locale),
+    getTranslated('static', 'areas-overview', 'rest', REST, locale),
+  ])
+  const t = (s: string) => dict?.[s] ?? s
   return (
     <>
-      <div dangerouslySetInnerHTML={{ __html: HEAD + '</div>' }} />
+      <div dangerouslySetInnerHTML={{ __html: SPRITE + head + '</div>' }} />
       <section className="ar-livemap" aria-labelledby="areas-map-title" id="areas-map">
         <div className="container">
           <div className="sec-head">
-            <span className="kicker">Live map</span>
-            <h2 id="areas-map-title">Explore Pattaya on the map</h2>
-            <p>All seven areas and every place we cover, pinned on one map. Tap an area to open its guide, or a venue for details.</p>
+            <span className="kicker">{t('Live map')}</span>
+            <h2 id="areas-map-title">{t('Explore Pattaya on the map')}</h2>
+            <p>{t('All seven areas and every place we cover, pinned on one map. Tap an area to open its guide, or a venue for details.')}</p>
           </div>
           <ExploreMap />
         </div>
       </section>
-      <div dangerouslySetInnerHTML={{ __html: '<div class="area-page">' + REST }} />
+      <div dangerouslySetInnerHTML={{ __html: '<div class="area-page">' + rest }} />
       <BlogScript script={SCRIPT} />
     </>
   )
