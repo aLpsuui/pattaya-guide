@@ -3,6 +3,7 @@ import Link from '@/app/components/LocaleLink'
 import Star from '@/app/components/Star'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { hasLocale } from '@/lib/i18n/config'
+import { translateMany } from '@/lib/i18n/translateContent'
 
 // Simple site search — powers the WebSite SearchAction (sitelinks searchbox).
 // Search-result URLs shouldn't be indexed.
@@ -41,6 +42,12 @@ export default async function SearchPage({ params, searchParams }: { params: Pro
   const query = q.trim().slice(0, 80)
   const { venues, posts } = query ? await runSearch(query) : { venues: [], posts: [] }
   const total = venues.length + posts.length
+  // Translate result venue types/categories; names + neighborhoods stay Latin.
+  const [typeMap, catMap] = await Promise.all([
+    translateMany('venue_types', 'label', venues.map((v) => v.venue_type), locale),
+    translateMany('categories', 'name_en', venues.map((v) => v.categories?.name_en), locale),
+  ])
+  const tt = (s: string | null | undefined) => (s ? (typeMap.get(s) ?? catMap.get(s) ?? s) : s)
 
   return (
     <main id="main">
@@ -76,7 +83,7 @@ export default async function SearchPage({ params, searchParams }: { params: Pro
                 {venues.map((v) => (
                   <li key={v.slug}><Link href={`/venues/${v.slug}`}>
                     <b>{v.name}</b>
-                    <span>{[v.categories?.name_en || v.venue_type, v.neighborhood].filter(Boolean).join(' · ')}{v.rating != null && <> · <Star /> {v.rating.toFixed(1)}</>}</span>
+                    <span>{[tt(v.categories?.name_en || v.venue_type), v.neighborhood].filter(Boolean).join(' · ')}{v.rating != null && <> · <Star /> {v.rating.toFixed(1)}</>}</span>
                   </Link></li>
                 ))}
               </ul>

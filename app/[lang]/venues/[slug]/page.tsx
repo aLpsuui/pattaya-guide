@@ -5,6 +5,9 @@ import Link from '@/app/components/LocaleLink'
 import BlogScript from '@/app/components/BlogScript'
 import { SITE_URL } from '@/lib/site'
 import VenueIcons from './VenueIcons'
+import { getTranslated, translateMany } from '@/lib/i18n/translateContent'
+import { getDictionary } from '@/lib/i18n/dictionaries'
+import { hasLocale } from '@/lib/i18n/config'
 
 // Re-generate from the database at most once every 60s (ISR), so edits to a
 // venue and its child rows go live without a full rebuild.
@@ -13,9 +16,12 @@ export const revalidate = 60
 // Pre-render every active venue at build (SSG) so detail pages are served from
 // the edge cache (HIT) instead of dynamically rendered on each request. New
 // venues added later are generated on-demand + cached (dynamicParams default).
+// Only English is pre-rendered at build; Russian pages generate on-demand on
+// first visit (they translate + cache DB content, which we don't want to run
+// for every venue at build time — there are ~1000+ venues).
 export async function generateStaticParams() {
   const { data } = await supabase.from('venues').select('slug').eq('is_active', true).limit(2000)
-  return (data || []).map((v: { slug: string }) => ({ slug: v.slug }))
+  return (data || []).map((v: { slug: string }) => ({ lang: 'en', slug: v.slug }))
 }
 
 interface Photo { url: string; alt: string | null; caption: string | null; sort_order: number }
@@ -132,12 +138,19 @@ async function getRelated(categoryId: string | null, excludeSlug: string): Promi
   return (data as RelatedVenue[]) || []
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params
+export async function generateMetadata({ params }: { params: Promise<{ lang: string; slug: string }> }) {
+  const { lang, slug } = await params
   const v = await getVenue(slug)
   if (!v) return { title: 'Not Found', robots: { index: false } }
-  const canonical = `/venues/${v.slug}`
-  const description = v.description || v.tagline || undefined
+  const locale = hasLocale(lang) ? lang : 'en'
+  // The site is prefix-all (/en + /ru); the canonical is the locale-prefixed URL
+  // to match the sitemap's hreflang entries. Names/neighborhoods stay Latin.
+  const canonical = `/${locale}/venues/${v.slug}`
+  const [descTx, taglineTx] = await Promise.all([
+    getTranslated('venues', v.id, 'description', v.description, locale),
+    getTranslated('venues', v.id, 'tagline', v.tagline, locale),
+  ])
+  const description = descTx || taglineTx || undefined
   // SERPs truncate titles past ~70 chars; drop the neighborhood segment when
   // the full lockup would overflow (the name itself is the ranking signal).
   const fullTitle = `${v.name} - ${v.neighborhood || 'Pattaya'} | Go To Pattaya`
@@ -175,10 +188,16 @@ const Icon = ({ id, size = 16, cls = '' }: { id: string; size?: number; cls?: st
   <svg className={`pg-icon is-${size}${cls ? ' ' + cls : ''}`} aria-hidden="true"><use href={`#${SPRITE.has(id) ? id : 'pg-check'}`} /></svg>
 )
 
-export default async function VenuePage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params
+export default async function VenuePage({ params }: { params: Promise<{ lang: string; slug: string }> }) {
+  const { lang, slug } = await params
   const v = await getVenue(slug)
   if (!v) notFound()
+  const locale = hasLocale(lang) ? lang : 'en'
+
+  // Related venues share the same category; we only have the category slug here,
+  // so getRelatedBySlug resolves it to a category_id then queries siblings.
+  // Fetched up-front so their venue_type labels join the translation batch.
+  const relatedVenues = await getRelatedBySlug(v.categories?.slug || null, v.slug)
 
   // The DB category slug for Things to Do is the legacy 'thinks-to-do'; its
   // public route is /things-to-do. Linking the raw slug costs a 308 hop on
@@ -186,10 +205,42 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
   const categorySlug = v.categories?.slug
     ? (v.categories.slug === 'thinks-to-do' ? '/things-to-do' : `/${v.categories.slug}`)
     : '/'
+  // English category name — used verbatim in the JSON-LD breadcrumb (schema stays
+  // English so structured data matches the canonical English page).
   const categoryName = v.categories?.name_en || 'Pattaya'
   const mapsHref = `https://maps.google.com/?q=${encodeURIComponent(v.maps_query || v.name + ' Pattaya')}`
   const photos = v.venue_photos
   const gallery = photos.slice(0, 5)
+
+  // ---- i18n: static UI dict + all per-venue DB text translated in parallel ----
+  // Every getTranslated/translateMany promise below is created BEFORE the single
+  // await Promise.all, so they resolve concurrently (fast first /ru render). For
+  // locale 'en' each call returns its source synchronously (no API hit → build-safe).
+  const tg = (field: string, text: string | null | undefined) => getTranslated('venues', v.id, field, text, locale)
+  const cg = (id: string, field: string, text: string | null | undefined) => getTranslated('venues', id, field, text, locale)
+
+  const dictP = getDictionary(locale)
+  const typeMapP = translateMany('venue_types', 'label', [v.venue_type, ...relatedVenues.map((r) => r.venue_type)], locale)
+  const catMapP = translateMany('categories', 'name_en', [v.categories?.name_en], locale)
+  const taglineP = tg('tagline', v.tagline)
+  const menuIntroP = tg('menu_intro', v.menu_intro)
+  const menuNoteP = tg('menu_note', v.menu_note)
+  const aboutP = Promise.all((v.about || []).map((p, i) => tg(`about:${i}`, p)))
+  const quickFactsP = Promise.all(v.venue_quick_facts.map((f, i) => Promise.all([cg(`${v.id}:qf:${i}`, 'value', f.value), cg(`${v.id}:qf:${i}`, 'label', f.label)])))
+  const tagsP = Promise.all(v.venue_treatment_tags.map((tg2, i) => cg(`${v.id}:tag:${i}`, 'label', tg2.label)))
+  const facilitiesP = Promise.all(v.venue_facilities.map((f, i) => cg(`${v.id}:fac:${i}`, 'label', f.label)))
+  const highlightsP = Promise.all(v.venue_highlights.map((h, i) => cg(`${v.id}:hl:${i}`, 'label', h.label)))
+  const faqsP = Promise.all(v.venue_faqs.map((f, i) => Promise.all([cg(`${v.id}:faq:${i}`, 'q', f.question), cg(`${v.id}:faq:${i}`, 'a', f.answer)])))
+  const menuP = Promise.all(v.venue_menu_items.map((m, i) => Promise.all([cg(`${v.id}:menu:${i}`, 'section', m.section), cg(`${v.id}:menu:${i}`, 'name', m.name), cg(`${v.id}:menu:${i}`, 'detail', m.detail)])))
+
+  const [dict, typeMap, catMap, tagline, menuIntro, menuNote, about, quickFacts, tagLabels, facilityLabels, highlightLabels, faqTx, menuTx] =
+    await Promise.all([dictP, typeMapP, catMapP, taglineP, menuIntroP, menuNoteP, aboutP, quickFactsP, tagsP, facilitiesP, highlightsP, faqsP, menuP])
+
+  const t = (s: string) => dict?.[s] ?? s
+  const tt = (s: string | null | undefined) => (s ? (typeMap.get(s) ?? s) : s)
+  // Category + venue_type labels for on-page display (translated; JSON-LD keeps English).
+  const categoryLabel = v.categories?.name_en ? (catMap.get(v.categories.name_en) ?? categoryName) : 'Pattaya'
+  const venueTypeLabel = tt(v.venue_type)
 
   // Build the lightbox photo list (all photos) for the injected client script.
   const lbPhotos = photos.map(p => ({ src: p.url, cap: p.caption || p.alt || v.name }))
@@ -232,10 +283,6 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
       car.scrollBy({ left: btn.getAttribute('data-car') === 'next' ? amount : -amount, behavior: 'smooth' }); }); }); }
 })();
 `
-
-  // Related venues share the same category; we only have the category slug here,
-  // so getRelatedBySlug resolves it to a category_id then queries siblings.
-  const relatedVenues = await getRelatedBySlug(v.categories?.slug || null, v.slug)
 
   const sameAs = [v.website, v.facebook_url].filter(Boolean)
   const jsonLd = {
@@ -288,11 +335,11 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
       <VenueIcons />
 
       {/* 1 · BREADCRUMB */}
-      <nav className="det-yf__wrap det-yf__crumb crumb" aria-label="Breadcrumb">
-        <Link href="/">Home</Link>
+      <nav className="det-yf__wrap det-yf__crumb crumb" aria-label={t('Breadcrumb')}>
+        <Link href="/">{t('Home')}</Link>
         <Icon id="pg-chevron-right" />
-        <Link href={categorySlug}>{categoryName}</Link>
-        {v.venue_type && (<><Icon id="pg-chevron-right" /><Link href={categorySlug}>{v.venue_type}</Link></>)}
+        <Link href={categorySlug}>{categoryLabel}</Link>
+        {venueTypeLabel && (<><Icon id="pg-chevron-right" /><Link href={categorySlug}>{venueTypeLabel}</Link></>)}
         <Icon id="pg-chevron-right" />
         <span className="cur" aria-current="page">{v.name}</span>
       </nav>
@@ -301,22 +348,22 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
       <section className="det-yf__hero" aria-labelledby="det-h1">
         <div className="det-yf__wrap det-yf__hero-inner">
           <div className="det-yf__title"><h1 id="det-h1">{v.name}</h1></div>
-          {v.tagline && <p className="det-yf__tagline">{v.tagline}</p>}
+          {tagline && <p className="det-yf__tagline">{tagline}</p>}
           <div className="det-yf__meta">
             {v.rating != null && (
               <span className="rate"><Icon id="pg-star" cls="is-rating" />{v.rating.toFixed(1)}
-                {v.review_count != null && <span className="count"> · {v.review_count.toLocaleString()} reviews</span>}</span>
+                {v.review_count != null && <span className="count"> · {v.review_count.toLocaleString()} {t('reviews')}</span>}</span>
             )}
             {v.neighborhood && <span className="det-yf__metaitem"><Icon id="pg-pin" /> {v.neighborhood}</span>}
             {v.hours && <span className="pill pill--success"><Icon id="pg-clock" /> {v.hours}</span>}
-            {v.locally_verified && <span className="det-yf__verified"><Icon id="pg-local-verified" /> Locally verified</span>}
+            {v.locally_verified && <span className="det-yf__verified"><Icon id="pg-local-verified" /> {t('Locally verified')}</span>}
           </div>
         </div>
       </section>
 
       {/* 3 · GALLERY */}
       {gallery.length > 0 && (
-        <section className="det-yf__wrap" aria-label="Photo gallery">
+        <section className="det-yf__wrap" aria-label={t('Photo gallery')}>
           <div className="det-yf__gallery" id="det-gallery">
             {gallery.map((p, i) => (
               <button
@@ -324,13 +371,13 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
                 className={`det-yf__gitem${i === 0 ? ' det-yf__gitem--hero' : ''}${i === 4 ? ' det-yf__gitem--hidemobile' : ''}`}
                 type="button"
                 data-lb={i}
-                aria-label={`Open photo: ${p.alt || v.name}`}
+                aria-label={`${t('Open photo')}: ${p.alt || v.name}`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={p.url} alt={p.alt || v.name} loading={i === 0 ? undefined : 'lazy'}
                   width={i === 0 ? 800 : 400} height={i === 0 ? 600 : 300} />
                 {i === 4 && (v.gallery_more_count || 0) > 0 && (
-                  <span className="det-yf__gmore" aria-hidden="true">+{v.gallery_more_count} photos</span>
+                  <span className="det-yf__gmore" aria-hidden="true">+{v.gallery_more_count} {t('photos')}</span>
                 )}
               </button>
             ))}
@@ -346,22 +393,22 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
           {v.venue_quick_facts.length > 0 && (
             <section aria-labelledby="qf-h">
               <div className="det-yf__sechead">
-                <span className="kicker">At a glance</span>
-                <h2 id="qf-h">Quick facts</h2>
-                <p>The essentials before you go - what {v.name} offers and what it costs.</p>
+                <span className="kicker">{t('At a glance')}</span>
+                <h2 id="qf-h">{t('Quick facts')}</h2>
+                <p>{t('The essentials before you go - what')} {v.name} {t('offers and what it costs.')}</p>
               </div>
               <div className="det-yf__facts">
                 {v.venue_quick_facts.map((f, i) => (
                   <div className="det-yf__fact" key={i}>
                     <Icon id={f.icon} size={24} />
-                    <b>{f.value}</b><span>{f.label}</span>
+                    <b>{quickFacts[i][0]}</b><span>{quickFacts[i][1]}</span>
                   </div>
                 ))}
               </div>
               {v.venue_treatment_tags.length > 0 && (
-                <div className="det-yf__styles" aria-label="Treatments offered">
-                  {v.venue_treatment_tags.map((t, i) => (
-                    <span key={i} className={`pill pill--${t.color === 'cyan' ? 'cyan' : 'blue'}`}>{t.label}</span>
+                <div className="det-yf__styles" aria-label={t('Treatments offered')}>
+                  {v.venue_treatment_tags.map((tag, i) => (
+                    <span key={i} className={`pill pill--${tag.color === 'cyan' ? 'cyan' : 'blue'}`}>{tagLabels[i]}</span>
                   ))}
                 </div>
               )}
@@ -372,31 +419,32 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
           {v.venue_menu_items.length > 0 && (
             <section aria-labelledby="menu-h">
               <div className="det-yf__sechead">
-                <span className="kicker"><Icon id="pg-massage" /> Treatments</span>
-                <h2 id="menu-h">Menu &amp; prices</h2>
-                {v.menu_intro && <p>{v.menu_intro}</p>}
+                <span className="kicker"><Icon id="pg-massage" /> {t('Treatments')}</span>
+                <h2 id="menu-h">{t('Menu & prices')}</h2>
+                {menuIntro && <p>{menuIntro}</p>}
               </div>
               <div className="det-yf__tt-wrap">
                 <table className="det-yf__tt">
-                  <caption className="visually-hidden">{v.name} treatment menu and prices</caption>
+                  <caption className="visually-hidden">{v.name} {t('treatment menu and prices')}</caption>
                   <thead>
-                    <tr><th scope="col">Treatment</th><th scope="col">Duration</th><th scope="col">Price</th></tr>
+                    <tr><th scope="col">{t('Treatment')}</th><th scope="col">{t('Duration')}</th><th scope="col">{t('Price')}</th></tr>
                   </thead>
                   <tbody>
                     {v.venue_menu_items.map((m, i) => {
                       const prev = v.venue_menu_items[i - 1]
                       const showSection = m.section && (!prev || prev.section !== m.section)
                       return (
-                        <ItemRows key={i} showSection={!!showSection} section={m.section} m={m} />
+                        <ItemRows key={i} showSection={!!showSection} section={menuTx[i][0]} name={menuTx[i][1]}
+                          detail={menuTx[i][2]} isFeatured={m.is_featured} duration={m.duration} price={m.price} />
                       )
                     })}
                   </tbody>
                 </table>
               </div>
-              {v.menu_note && (
+              {menuNote && (
                 <div className="det-yf__ttnote alert alert--info" role="note">
                   <Icon id="pg-info" size={20} />
-                  <span>{v.menu_note}</span>
+                  <span>{menuNote}</span>
                 </div>
               )}
             </section>
@@ -406,14 +454,14 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
           {v.venue_facilities.length > 0 && (
             <section aria-labelledby="fac-h">
               <div className="det-yf__sechead">
-                <span className="kicker">On site</span>
-                <h2 id="fac-h">Facilities</h2>
+                <span className="kicker">{t('On site')}</span>
+                <h2 id="fac-h">{t('Facilities')}</h2>
               </div>
               <div className="det-yf__fac-grid">
                 {v.venue_facilities.map((f, i) => (
                   <div className="det-yf__fac-item" key={i}>
                     <span className="ic" aria-hidden="true"><Icon id={f.icon} size={20} /></span>
-                    <b>{f.label}</b>
+                    <b>{facilityLabels[i]}</b>
                   </div>
                 ))}
               </div>
@@ -424,11 +472,11 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
           {v.about && v.about.length > 0 && (
             <section aria-labelledby="about-h">
               <div className="det-yf__sechead">
-                <span className="kicker">The space</span>
-                <h2 id="about-h">About {v.name}</h2>
+                <span className="kicker">{t('The space')}</span>
+                <h2 id="about-h">{t('About')} {v.name}</h2>
               </div>
               <div className="det-yf__prose">
-                {v.about.map((para, i) => <p key={i}>{para}</p>)}
+                {about.map((para, i) => <p key={i}>{para}</p>)}
               </div>
             </section>
           )}
@@ -437,12 +485,12 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
           {v.venue_highlights.length > 0 && (
             <section aria-labelledby="bring-h">
               <div className="det-yf__sechead">
-                <span className="kicker">Good to know</span>
-                <h2 id="bring-h">Good to know</h2>
+                <span className="kicker">{t('Good to know')}</span>
+                <h2 id="bring-h">{t('Good to know')}</h2>
               </div>
               <ul className="det-yf__bring">
                 {v.venue_highlights.map((h, i) => (
-                  <li key={i}><Icon id="pg-check" size={20} /> {h.label}</li>
+                  <li key={i}><Icon id="pg-check" size={20} /> {highlightLabels[i]}</li>
                 ))}
               </ul>
             </section>
@@ -451,13 +499,13 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
           {/* 10 · GETTING THERE */}
           <section id="getting-there" aria-labelledby="get-h">
             <div className="det-yf__sechead">
-              <span className="kicker"><Icon id="pg-pin" /> Location</span>
-              <h2 id="get-h">Getting there</h2>
+              <span className="kicker"><Icon id="pg-pin" /> {t('Location')}</span>
+              <h2 id="get-h">{t('Getting there')}</h2>
             </div>
             <div className="det-yf__getting">
               <figure className="det-yf__mapfig">
                 <iframe
-                  title={`Map of ${v.name}`}
+                  title={`${t('Map of')} ${v.name}`}
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                   src={`https://www.google.com/maps?q=${encodeURIComponent(v.maps_query || v.address || `${v.name} Pattaya`)}&output=embed`}
@@ -467,19 +515,19 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
               <div className="det-yf__addr">
                 {v.address && (
                   <div className="det-yf__addr-row"><Icon id="pg-pin" size={20} />
-                    <span><b>Address</b>{v.address}</span></div>
+                    <span><b>{t('Address')}</b>{v.address}</span></div>
                 )}
                 {v.nearby && (
                   <div className="det-yf__addr-row"><Icon id="pg-near-me" size={20} />
-                    <span><b>Nearby</b>{v.nearby}</span></div>
+                    <span><b>{t('Nearby')}</b>{v.nearby}</span></div>
                 )}
                 {v.hours && (
                   <div className="det-yf__addr-row"><Icon id="pg-clock" size={20} />
-                    <span><b>Hours</b>{v.hours}{v.hours_note ? ` · ${v.hours_note}` : ''}</span></div>
+                    <span><b>{t('Hours')}</b>{v.hours}{v.hours_note ? ` · ${v.hours_note}` : ''}</span></div>
                 )}
                 <div className="det-yf__addr-actions">
                   <a className="btn btn--primary btn--sm" href={mapsHref} target="_blank" rel="noopener">
-                    <Icon id="pg-directions" /> Get directions</a>
+                    <Icon id="pg-directions" /> {t('Get directions')}</a>
                 </div>
               </div>
             </div>
@@ -489,15 +537,15 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
           {v.venue_faqs.length > 0 && (
             <section aria-labelledby="faq-h">
               <div className="det-yf__sechead">
-                <span className="kicker">Before you go</span>
-                <h2 id="faq-h">Frequently asked</h2>
+                <span className="kicker">{t('Before you go')}</span>
+                <h2 id="faq-h">{t('Frequently asked')}</h2>
               </div>
               <div className="det-yf__faq">
                 {v.venue_faqs.map((f, i) => (
                   <div className="acc" key={i}>
-                    <button className="q" type="button" aria-expanded="false">{f.question}
+                    <button className="q" type="button" aria-expanded="false">{faqTx[i][0]}
                       <svg className="pg-icon is-20 det-yf__pm" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /><path className="v" d="M12 5v14" /></svg></button>
-                    <div className="a"><div className="a-in">{f.answer}</div></div>
+                    <div className="a"><div className="a-in">{faqTx[i][1]}</div></div>
                   </div>
                 ))}
               </div>
@@ -523,7 +571,7 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
             {v.price_from != null && (
               <div className="det-yf__card-price">
                 <b>฿{v.price_from.toLocaleString()}</b>
-                <span className="per">{v.price_from_label || 'from'}</span>
+                <span className="per">{v.price_from_label || t('from')}</span>
               </div>
             )}
 
@@ -538,19 +586,19 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
                 <div className="row"><Icon id="pg-phone" size={20} /><span><a href={`tel:${v.phone.replace(/[^0-9+]/g, '')}`}>{v.phone}</a></span></div>
               )}
               {v.website && (
-                <div className="row"><Icon id="pg-globe" size={20} /><span><a href={v.website} target="_blank" rel="noopener">{v.website_label || 'Website'}</a></span></div>
+                <div className="row"><Icon id="pg-globe" size={20} /><span><a href={v.website} target="_blank" rel="noopener">{v.website_label || t('Website')}</a></span></div>
               )}
               {v.locally_verified && (
-                <div className="row"><Icon id="pg-local-verified" size={20} /><span>Locally verified by Go To Pattaya</span></div>
+                <div className="row"><Icon id="pg-local-verified" size={20} /><span>{t('Locally verified by Go To Pattaya')}</span></div>
               )}
             </div>
 
             <div className="det-yf__card-actions">
               <a className="btn btn--primary" href={mapsHref} target="_blank" rel="noopener">
-                <Icon id="pg-directions" size={20} /> Get directions</a>
+                <Icon id="pg-directions" size={20} /> {t('Get directions')}</a>
               {v.website && (
                 <a className="btn btn--secondary" href={v.website} target="_blank" rel="noopener">
-                  <Icon id="pg-globe" size={20} /> Visit website</a>
+                  <Icon id="pg-globe" size={20} /> {t('Visit website')}</a>
               )}
             </div>
           </div>
@@ -561,14 +609,14 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
       {relatedVenues.length > 0 && (
         <section className="det-yf__wrap det-yf__more" aria-labelledby="more-h" style={{ paddingBottom: 'var(--s8)' }}>
           <div className="det-yf__sechead">
-            <span className="kicker">Keep exploring</span>
-            <h2 id="more-h">More {categoryName.toLowerCase()}</h2>
-            <p>Other locally verified places around Pattaya.</p>
+            <span className="kicker">{t('Keep exploring')}</span>
+            <h2 id="more-h">{t('More')} {categoryLabel.toLowerCase()}</h2>
+            <p>{t('Other locally verified places around Pattaya.')}</p>
           </div>
           <div className="carousel-wrap">
-            <button className="car-btn car-prev" type="button" aria-label="Previous" data-car="prev">
+            <button className="car-btn car-prev" type="button" aria-label={t('Previous')} data-car="prev">
               <Icon id="pg-arrow-left" size={20} /></button>
-            <button className="car-btn car-next" type="button" aria-label="Next" data-car="next">
+            <button className="car-btn car-next" type="button" aria-label={t('Next')} data-car="next">
               <Icon id="pg-arrow-right" size={20} /></button>
             <div className="carousel" id="det-more">
               {relatedVenues.map(r => (
@@ -581,7 +629,7 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
                           style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', background: 'var(--grad-brand, #e2e8f0)', color: '#fff' }}>
                           <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="m4 17 4.5-4.5 3.5 3.5 3.5-3.5L20 16" /></svg>
                         </div>}
-                    <span className="det-yf__morecard__tag"><Icon id="pg-massage" /> {r.venue_type || 'Venue'}</span>
+                    <span className="det-yf__morecard__tag"><Icon id="pg-massage" /> {tt(r.venue_type) || t('Venue')}</span>
                   </div>
                   <div className="det-yf__morecard__body">
                     <h3>{r.name}</h3>
@@ -591,7 +639,7 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
                     )}
                     {r.neighborhood && <span className="det-yf__morecard__loc"><Icon id="pg-pin" /> {r.neighborhood}</span>}
                     {r.price_from != null && (
-                      <span className="det-yf__morecard__price">From ฿{r.price_from.toLocaleString()} {r.price_from_label && <span>· {r.price_from_label}</span>}</span>
+                      <span className="det-yf__morecard__price">{t('From')} ฿{r.price_from.toLocaleString()} {r.price_from_label && <span>· {r.price_from_label}</span>}</span>
                     )}
                   </div>
                 </Link>
@@ -602,10 +650,10 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
       )}
 
       {/* LIGHTBOX */}
-      <div className="det-yf__lb" id="det-lb" role="dialog" aria-modal="true" aria-label="Photo viewer">
-        <button className="det-yf__lbclose" type="button" data-lb-close aria-label="Close photo viewer">
+      <div className="det-yf__lb" id="det-lb" role="dialog" aria-modal="true" aria-label={t('Photo viewer')}>
+        <button className="det-yf__lbclose" type="button" data-lb-close aria-label={t('Close photo viewer')}>
           <Icon id="pg-close" size={24} /></button>
-        <button className="det-yf__lbnav det-yf__lbnav--prev" type="button" data-lb-prev aria-label="Previous photo">
+        <button className="det-yf__lbnav det-yf__lbnav--prev" type="button" data-lb-prev aria-label={t('Previous photo')}>
           <Icon id="pg-arrow-left" size={24} /></button>
         <figure>
           {/* src is set by the lightbox script on open; omitted here to avoid an empty-src warning */}
@@ -613,7 +661,7 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
           <img id="det-lb-img" alt="" />
           <figcaption id="det-lb-cap"></figcaption>
         </figure>
-        <button className="det-yf__lbnav det-yf__lbnav--next" type="button" data-lb-next aria-label="Next photo">
+        <button className="det-yf__lbnav det-yf__lbnav--next" type="button" data-lb-next aria-label={t('Next photo')}>
           <Icon id="pg-arrow-right" size={24} /></button>
       </div>
 
@@ -623,14 +671,18 @@ export default async function VenuePage({ params }: { params: Promise<{ slug: st
 }
 
 // Render a menu section header row (when the section changes) plus the item row.
-function ItemRows({ showSection, section, m }: { showSection: boolean; section: string | null; m: MenuItem }) {
+// section/name/detail arrive already translated; duration/price stay verbatim.
+function ItemRows({ showSection, section, name, detail, isFeatured, duration, price }: {
+  showSection: boolean; section: string | null; name: string; detail: string | null
+  isFeatured: boolean; duration: string | null; price: string | null
+}) {
   return (
     <>
       {showSection && <tr className="det-yf__cat"><td colSpan={3}>{section}</td></tr>}
       <tr>
-        <td>{m.is_featured ? <b>{m.name}</b> : m.name}{m.detail ? ` ${m.detail}` : ''}</td>
-        <td className="dur">{m.duration}</td>
-        <td className="price">{m.price}</td>
+        <td>{isFeatured ? <b>{name}</b> : name}{detail ? ` ${detail}` : ''}</td>
+        <td className="dur">{duration}</td>
+        <td className="price">{price}</td>
       </tr>
     </>
   )
