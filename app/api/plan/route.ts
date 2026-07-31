@@ -19,7 +19,12 @@ const API = 'https://api.anthropic.com/v1/messages'
 // structured itinerary (plus adaptive thinking), which can run ~25-35s — keep
 // the per-call cap comfortably above that so it isn't aborted mid-generation.
 const CALL_TIMEOUT_MS = 45000
-const MODEL = process.env.PLAN_MODEL || 'claude-sonnet-5'
+// Haiku 4.5: plan üretimi grounded bir görev (aramalar zaten gerçek mekanları
+// getiriyor), bu yüzden Haiku'nun hızı burada Sonnet kalitesinden daha değerli.
+// Sonnet 5 adaptive thinking + yavaş çıktıyla plan başına ~70sn sürüyordu; Haiku
+// (thinking varsayılan kapalı, 2-3x hızlı) ~25-30sn'ye indiriyor. Kalite gerekirse
+// PLAN_MODEL env ile 'claude-sonnet-5'e dönülebilir.
+const MODEL = process.env.PLAN_MODEL || 'claude-haiku-4-5'
 const KEY = process.env.ANTHROPIC_API_KEY || ''
 
 // ---- per-IP rate limit (in-memory, best-effort) ---------------------------
