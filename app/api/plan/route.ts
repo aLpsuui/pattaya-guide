@@ -11,10 +11,14 @@ import { supabase } from '@/lib/supabase'
 export const runtime = 'nodejs'
 // A full plan is several model turns, so give the function headroom beyond the
 // default. Each individual model call is separately capped (see CALL_TIMEOUT_MS).
-export const maxDuration = 60
+export const maxDuration = 90
 
 const API = 'https://api.anthropic.com/v1/messages'
-const CALL_TIMEOUT_MS = 22000
+// Sonnet batches its searches into one turn, so a plan is usually 2 calls
+// (search round + submit_plan). The submit_plan call generates a large
+// structured itinerary (plus adaptive thinking), which can run ~25-35s — keep
+// the per-call cap comfortably above that so it isn't aborted mid-generation.
+const CALL_TIMEOUT_MS = 45000
 const MODEL = process.env.PLAN_MODEL || 'claude-sonnet-5'
 const KEY = process.env.ANTHROPIC_API_KEY || ''
 
