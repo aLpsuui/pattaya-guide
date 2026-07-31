@@ -19,12 +19,11 @@ const API = 'https://api.anthropic.com/v1/messages'
 // structured itinerary (plus adaptive thinking), which can run ~25-35s — keep
 // the per-call cap comfortably above that so it isn't aborted mid-generation.
 const CALL_TIMEOUT_MS = 45000
-// Haiku 4.5: plan üretimi grounded bir görev (aramalar zaten gerçek mekanları
-// getiriyor), bu yüzden Haiku'nun hızı burada Sonnet kalitesinden daha değerli.
-// Sonnet 5 adaptive thinking + yavaş çıktıyla plan başına ~70sn sürüyordu; Haiku
-// (thinking varsayılan kapalı, 2-3x hızlı) ~25-30sn'ye indiriyor. Kalite gerekirse
-// PLAN_MODEL env ile 'claude-sonnet-5'e dönülebilir.
-const MODEL = process.env.PLAN_MODEL || 'claude-haiku-4-5'
+// Sonnet 5: Haiku 4.5 bu çok-adımlı grounded planlamada zayıf kaldı (mekan
+// bulamadığını iddia edip plan üretemedi). Sonnet kaliteli; hızı iki şeyle
+// düşürüyoruz: (1) adaptive thinking'i kapatıyoruz (aşağıda thinking:disabled),
+// (2) sistem promptu çıktıyı kısa tutturuyor. ~70sn → hedef ~30-40sn.
+const MODEL = process.env.PLAN_MODEL || 'claude-sonnet-5'
 const KEY = process.env.ANTHROPIC_API_KEY || ''
 
 // ---- per-IP rate limit (in-memory, best-effort) ---------------------------
@@ -51,9 +50,11 @@ HOW YOU WORK
 4. Spread choices sensibly across the days and, where possible, group places by area so each day flows geographically.
 5. When you have enough real venues, call submit_plan EXACTLY ONCE with the finished itinerary. Reference venues by their exact slug from the search results. Every itinerary item that names a place must use a real slug; use an empty venue_slug only for generic advice items (e.g. "sunset walk on the beach").
 
-STYLE
+STYLE - BE CONCISE (short output = faster response, keep it tight):
 - Write the summary, day titles, item titles, "why" notes and tips in the SAME language the traveller wrote in (English, Turkish, Русский, 中文, Thai, etc.).
-- Be specific and honest - say why each place fits THIS traveller. Keep "why" to one short sentence.
+- summary: ONE short sentence, max ~25 words.
+- Max 4 items per day. Each "why": max ~12 words, one crisp reason this place fits THIS traveller - no filler.
+- tips: at most 3, each one short line. Omit tips entirely if nothing genuinely useful to add.
 - Only plan Pattaya. If the request is unrelated to a Pattaya trip, return a plan with an empty days array and a summary that politely redirects.`
 
 const SEARCH_TOOL = {
@@ -216,7 +217,9 @@ export async function POST(req: NextRequest) {
         res = await fetch(API, {
           method: 'POST',
           headers: { 'x-api-key': KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-          body: JSON.stringify({ model: MODEL, max_tokens: 4000, system: SYSTEM, tools: [SEARCH_TOOL, PLAN_TOOL], messages }),
+          // thinking kapalı: adaptive thinking plan başına 15-25sn ekliyordu; bu
+        // grounded görevde (aramalar mekanları getiriyor) gerekli değil.
+        body: JSON.stringify({ model: MODEL, max_tokens: 4000, thinking: { type: 'disabled' }, system: SYSTEM, tools: [SEARCH_TOOL, PLAN_TOOL], messages }),
           signal: controller.signal,
         })
       } finally {
