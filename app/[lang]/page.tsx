@@ -212,6 +212,11 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
 
           <HeroSearch dict={dict} />
 
+          <Link href="/plan" className="hero-ai-cta" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.85rem', fontSize: '0.9rem', fontWeight: 600, color: '#fff', textDecoration: 'none' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3v2m0 14v2M5 12H3m18 0h-2M6.3 6.3 4.9 4.9m12.8 1.4 1.4-1.4M6.3 17.7l-1.4 1.4m12.8-1.4 1.4 1.4" /><circle cx="12" cy="12" r="4" /></svg>
+            <span>{t('New')}: <u style={{ textUnderlineOffset: '3px' }}>{t('Plan your trip with AI →')}</u></span>
+          </Link>
+
           <div className="hero-tags" role="list">
             <a href="#cats" className="qtag" role="listitem"><Icon name="eat" size={14} /> {t('Eat')}</a>
             <a href="#cats" className="qtag" role="listitem"><Icon name="beach" size={14} /> {t('Beaches')}</a>
