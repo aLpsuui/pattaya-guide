@@ -8,10 +8,12 @@ import { locales, defaultLocale } from '@/lib/i18n/config'
 //   2) locale-route the public site: prefix-all, so every public path lives
 //      under /en or /ru; unprefixed requests redirect to the visitor's locale.
 function pickLocale(req: NextRequest): string {
+  // Default everyone to English. Russian is served only when the visitor has
+  // explicitly chosen it via the language switcher (which sets the `locale`
+  // cookie) - we no longer auto-route Russian-language browsers to /ru, so the
+  // site's default entry is always English.
   const cookie = req.cookies.get('locale')?.value
   if (cookie && (locales as readonly string[]).includes(cookie)) return cookie
-  const accept = (req.headers.get('accept-language') || '').toLowerCase()
-  if (/(^|[,;\s])ru\b/.test(accept)) return 'ru'
   return defaultLocale
 }
 
