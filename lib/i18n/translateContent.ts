@@ -47,12 +47,18 @@ async function translate(text: string, isHtml: boolean): Promise<string | null> 
 
   const guidance = isHtml
     ? 'The input is an HTML fragment. Translate ONLY the human-readable text content into Russian. Keep every HTML tag, attribute, class, id, URL, href, src, inline style, and <script> block byte-for-byte unchanged. Do not add, remove, reorder, or reformat any markup.'
-    : 'Translate the input into Russian.'
+    : 'Translate the input into Russian. It may be a short string such as a title, heading, label or one-line description. Translate it as-is and output ONLY its direct Russian translation of equivalent length and scope. NEVER continue, expand, rewrite, summarise, or add any sentences, list items or paragraphs beyond the original — even if the input reads like an article headline.'
   const system =
     'You are a professional English→Russian translator for a Pattaya (Thailand) travel guide. ' +
     'Produce natural, fluent Russian aimed at travellers. Keep proper nouns, brand names, venue names, and place names in their original Latin form (do not transliterate). ' +
     guidance +
     ' Output ONLY the translation — no preamble, quotes, notes, or explanation.'
+
+  // Cap output length for plain (non-HTML) fields to the input's scale, so a
+  // short title/heading can never make the model "continue the article" and blow
+  // up to thousands of chars (a real bug we hit: 35 blog titles got the whole
+  // body). HTML fragments (blog bodies, area guides) keep the large budget.
+  const maxTokens = isHtml ? 32000 : Math.min(4000, Math.max(256, text.length * 2))
 
   try {
     const res = await fetch(API_URL, {
@@ -64,7 +70,7 @@ async function translate(text: string, isHtml: boolean): Promise<string | null> 
       },
       body: JSON.stringify({
         model: MODEL,
-        max_tokens: 32000,
+        max_tokens: maxTokens,
         stream: true,
         system,
         messages: [{ role: 'user', content: text }],

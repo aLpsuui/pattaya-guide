@@ -112,20 +112,21 @@ const TOPICS = [
 // ?topic=…) must point to itself, not collapse to page 1 - otherwise Google
 // treats pages 2-5 as duplicates of page 1 and under-crawls their links.
 export async function generateMetadata(
-  { searchParams }: { searchParams: Promise<{ page?: string; topic?: string }> },
+  { params, searchParams }: { params: Promise<{ lang: string }>; searchParams: Promise<{ page?: string; topic?: string }> },
 ): Promise<Metadata> {
-  const sp = await searchParams
+  const [{ lang }, sp] = await Promise.all([params, searchParams])
+  const locale = hasLocale(lang) ? lang : 'en'
   const topic = TOPICS.some((t) => t.key === sp.topic) ? sp.topic! : 'all'
   const all = await getBlogPosts()
   const filtered = topic === 'all' ? all : all.filter((p) => categoryToFilter(p.category) === topic)
   const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE))
   const page = Math.min(Math.max(1, parseInt(sp.page || '1', 10) || 1), totalPages)
 
-  const params = new URLSearchParams()
-  if (topic !== 'all') params.set('topic', topic)
-  if (page > 1) params.set('page', String(page))
-  const qs = params.toString()
-  const canonical = qs ? `/blog?${qs}` : '/blog'
+  const qsp = new URLSearchParams()
+  if (topic !== 'all') qsp.set('topic', topic)
+  if (page > 1) qsp.set('page', String(page))
+  const qs = qsp.toString()
+  const canonical = qs ? `/${locale}/blog?${qs}` : `/${locale}/blog`
 
   const base = TOPIC_META[topic] || { title: listTitle, description: listDescription }
   const title = page > 1 ? `${base.title} - Page ${page}` : base.title

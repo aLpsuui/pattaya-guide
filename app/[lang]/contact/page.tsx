@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from '@/app/components/LocaleLink'
 import './contact.css'
 import ContactForm from './ContactForm'
@@ -6,11 +7,15 @@ import { hasLocale } from '@/lib/i18n/config'
 
 const title = 'Contact Us | Go To Pattaya'
 const description = 'Get in touch with the Go To Pattaya team - corrections, listings and partnerships.'
-export const metadata = {
-  title,
-  description,
-  alternates: { canonical: '/contact' },
-  openGraph: { title, description },
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang } = await params
+  const locale = hasLocale(lang) ? lang : 'en'
+  return {
+    title,
+    description,
+    alternates: { canonical: `/${locale}/contact` },
+    openGraph: { title, description },
+  }
 }
 
 export default async function ContactPage({ params }: { params: Promise<{ lang: string }> }) {

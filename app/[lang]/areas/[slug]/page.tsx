@@ -100,15 +100,16 @@ export function generateStaticParams() {
   return AREAS.map((a) => ({ lang: 'en', slug: a.slug }))
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params
+export async function generateMetadata({ params }: { params: Promise<{ lang: string; slug: string }> }) {
+  const { lang, slug } = await params
+  const locale = hasLocale(lang) ? lang : 'en'
   const area = areaBySlug(slug)
   if (!area) return { title: 'Not Found', robots: { index: false } }
   const info = INFO[slug]
   return {
     title: `${area.name}, Pattaya - Area Guide | Go To Pattaya`,
     description: info?.blurb,
-    alternates: { canonical: `/areas/${slug}` },
+    alternates: { canonical: `/${locale}/areas/${slug}` },
     openGraph: { title: `${area.name}, Pattaya`, description: info?.blurb, url: `${SITE_URL}/areas/${slug}`, images: info?.hero ? [{ url: info.hero }] : undefined },
   }
 }

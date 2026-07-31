@@ -1,11 +1,17 @@
+import type { Metadata } from 'next'
 import './venue.css'
 import BlogScript from '@/app/components/BlogScript'
+import { hasLocale } from '@/lib/i18n/config'
 
-export const metadata = {
-  title: 'Siladon Spa Pattaya - Naklua Day Spa with Promo Packages | Go To Pattaya',
-  description:
-    'Siladon Spa Pattaya in Naklua - a professional, couple- and family-friendly day spa using natural local products, with tiered 2–5 hour signature packages and big flash-sale promos. Menu and directions.',
-  alternates: { canonical: '/wellness-and-beauty/siladon-spa-pattaya' },
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang } = await params
+  const locale = hasLocale(lang) ? lang : 'en'
+  return {
+    title: 'Siladon Spa Pattaya - Naklua Day Spa with Promo Packages | Go To Pattaya',
+    description:
+      'Siladon Spa Pattaya in Naklua - a professional, couple- and family-friendly day spa using natural local products, with tiered 2–5 hour signature packages and big flash-sale promos. Menu and directions.',
+    alternates: { canonical: `/${locale}/wellness-and-beauty/siladon-spa-pattaya` },
+  }
 }
 
 // Swap these for the real venue images when available.

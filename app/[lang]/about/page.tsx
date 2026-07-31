@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from '@/app/components/LocaleLink'
 import Icon from '@/app/components/Icon'
 import { getDictionary } from '@/lib/i18n/dictionaries'
@@ -8,11 +9,15 @@ const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 const title = 'About Go To Pattaya - The Honest Local Guide to Pattaya, Thailand'
 const description =
   'Who we are and how we work: an independent, locally-run directory of 500+ verified Pattaya places - no paid placements, updated weekly by editors who live here.'
-export const metadata = {
-  title,
-  description,
-  alternates: { canonical: '/about' },
-  openGraph: { title, description },
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang } = await params
+  const locale = hasLocale(lang) ? lang : 'en'
+  return {
+    title,
+    description,
+    alternates: { canonical: `/${locale}/about` },
+    openGraph: { title, description },
+  }
 }
 
 const stats = [

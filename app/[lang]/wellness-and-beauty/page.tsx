@@ -1,3 +1,5 @@
+import type { Metadata } from 'next'
+import { hasLocale } from '@/lib/i18n/config'
 import CategoryListing, { type CatConfig } from '@/app/components/CategoryListing'
 
 export const revalidate = 600
@@ -5,11 +7,15 @@ export const revalidate = 600
 const title = 'Spa, Massage & Wellness in Pattaya | Go To Pattaya'
 const description =
   'A locally verified guide to wellness in Pattaya - Thai and oil massage, day spas, luxury spa resorts, beauty and nail salons. Real prices, hours and directions for every venue.'
-export const metadata = {
-  title,
-  description,
-  alternates: { canonical: '/wellness-and-beauty' },
-  openGraph: { title, description },
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang } = await params
+  const locale = hasLocale(lang) ? lang : 'en'
+  return {
+    title,
+    description,
+    alternates: { canonical: `/${locale}/wellness-and-beauty` },
+    openGraph: { title, description },
+  }
 }
 
 const cfg: CatConfig = {

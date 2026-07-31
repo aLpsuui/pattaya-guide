@@ -1,14 +1,19 @@
+import type { Metadata } from 'next'
 import ExploreMap from '@/app/components/ExploreMap'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { hasLocale } from '@/lib/i18n/config'
 
 const title = 'Pattaya Map - Every venue & area on one map | Go To Pattaya'
 const description = 'Explore Pattaya on an interactive map: spas, venues and districts. Filter by areas or places and open any spot.'
-export const metadata = {
-  title,
-  description,
-  alternates: { canonical: '/map' },
-  openGraph: { title, description },
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang } = await params
+  const locale = hasLocale(lang) ? lang : 'en'
+  return {
+    title,
+    description,
+    alternates: { canonical: `/${locale}/map` },
+    openGraph: { title, description },
+  }
 }
 
 export default async function MapPage({ params }: { params: Promise<{ lang: string }> }) {

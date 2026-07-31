@@ -6,11 +6,21 @@ import HeroSearch from '@/app/components/HeroSearch'
 import ExploreMap from '@/app/components/ExploreMap'
 import DailyDealPopup, { type Deal } from '@/app/components/DailyDealPopup'
 import Star from '@/app/components/Star'
+import type { Metadata } from 'next'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { hasLocale } from '@/lib/i18n/config'
 import { translateMany } from '@/lib/i18n/translateContent'
 
 const ASSETS = 'https://cdn.gotopattaya.com/Assets'
+
+// Locale-aware canonical so /en and /ru each self-canonicalize (the root layout's
+// default '/' would otherwise point both to the unprefixed root -> /en, dropping
+// the Russian homepage from the index). Title/description inherit from the root.
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang } = await params
+  const locale = hasLocale(lang) ? lang : 'en'
+  return { alternates: { canonical: `/${locale}` } }
+}
 
 // Re-generate this page from the database at most once every 60s (ISR),
 // so newly published venues/blog posts appear without a full rebuild.

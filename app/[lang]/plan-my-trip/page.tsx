@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from '@/app/components/LocaleLink'
 import Icon from '@/app/components/Icon'
 import PlanForm from './PlanForm'
@@ -7,11 +8,15 @@ import { hasLocale } from '@/lib/i18n/config'
 const title = 'Plan My Trip to Pattaya - Build a Custom Itinerary | Go To Pattaya'
 const description =
   'Tell us your dates, interests and pace and get a custom Pattaya itinerary built from 500+ verified places - day by day, free and with no signup.'
-export const metadata = {
-  title,
-  description,
-  alternates: { canonical: '/plan-my-trip' },
-  openGraph: { title, description },
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang } = await params
+  const locale = hasLocale(lang) ? lang : 'en'
+  return {
+    title,
+    description,
+    alternates: { canonical: `/${locale}/plan-my-trip` },
+    openGraph: { title, description },
+  }
 }
 
 const perks = [

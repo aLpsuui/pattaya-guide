@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import './areas.css'
 import BlogScript from '@/app/components/BlogScript'
 import ExploreMap from '@/app/components/ExploreMap'
@@ -7,11 +8,15 @@ import { hasLocale } from '@/lib/i18n/config'
 
 const title = 'Areas of Pattaya - Find Your Neighborhood | Go To Pattaya'
 const description = "An orientation guide to Pattaya's neighborhoods - Central, Jomtien, Naklua, Pratumnak, Wong Amat and the islands. Compare vibes to decide where to stay."
-export const metadata = {
-  title,
-  description,
-  alternates: { canonical: '/areas' },
-  openGraph: { title, description },
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang } = await params
+  const locale = hasLocale(lang) ? lang : 'en'
+  return {
+    title,
+    description,
+    alternates: { canonical: `/${locale}/areas` },
+    openGraph: { title, description },
+  }
 }
 
 // Only pre-render English at build; Russian generates on first visit (it

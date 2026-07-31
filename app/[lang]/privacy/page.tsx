@@ -1,14 +1,19 @@
+import type { Metadata } from 'next'
 import Link from '@/app/components/LocaleLink'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { hasLocale } from '@/lib/i18n/config'
 
 const title = 'Privacy Policy | Go To Pattaya'
 const description = 'Our privacy policy: what data Go To Pattaya collects when you use our Pattaya guide, how we use and protect it, cookies, and your rights and choices.'
-export const metadata = {
-  title,
-  description,
-  alternates: { canonical: '/privacy' },
-  openGraph: { title, description },
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang } = await params
+  const locale = hasLocale(lang) ? lang : 'en'
+  return {
+    title,
+    description,
+    alternates: { canonical: `/${locale}/privacy` },
+    openGraph: { title, description },
+  }
 }
 
 export default async function PrivacyPage({ params }: { params: Promise<{ lang: string }> }) {
