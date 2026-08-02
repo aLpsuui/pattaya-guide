@@ -212,7 +212,8 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
       description: await getTranslated('blog_posts', p.id, 'description', p.description, locale),
     })),
   )
-  const blogCatMap = await translateMany('blog_posts', 'category', blogPosts.map((p) => p.category), locale)
+  // Category "tags" are a small fixed set → translate via the dictionary (t),
+  // so they're instant and don't need the translation API.
 
   return (
     <>
@@ -397,7 +398,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
             {blogPosts.map((post, i) => (
               <Link key={post.id} href={`/blog/${post.slug}`} className="post">
                 <div className="ph" style={{ backgroundImage: post.hero_image ? `url(${post.hero_image})` : 'var(--grad-brand)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
-                  <span className="pill pill-white">{blogCatMap.get(post.category) ?? post.category}</span>
+                  <span className="pill pill-white">{t(post.category)}</span>
                 </div>
                 <div className="pb">
                   <div className="pmeta">
