@@ -9,7 +9,7 @@ import Star from '@/app/components/Star'
 import type { Metadata } from 'next'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { hasLocale } from '@/lib/i18n/config'
-import { translateMany } from '@/lib/i18n/translateContent'
+import { translateMany, getTranslated } from '@/lib/i18n/translateContent'
 
 const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 
@@ -203,6 +203,17 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
   const tt = (s: string | null | undefined) => (s ? (typeMap.get(s) ?? catMap.get(s) ?? s) : s)
   const dealTr = deal ? { ...deal, venue_type: tt(deal.venue_type) ?? deal.venue_type, category: tt(deal.category) ?? deal.category } : null
 
+  // Homepage blog cards: translate title/description (already cached from the
+  // blog pages, so /ru shows Russian even without new API calls) plus the
+  // category pill. Falls back to English gracefully if a value isn't cached yet.
+  const blogTr = await Promise.all(
+    blogPosts.map(async (p) => ({
+      title: await getTranslated('blog_posts', p.id, 'title', p.title, locale),
+      description: await getTranslated('blog_posts', p.id, 'description', p.description, locale),
+    })),
+  )
+  const blogCatMap = await translateMany('blog_posts', 'category', blogPosts.map((p) => p.category), locale)
+
   return (
     <>
       {dealTr && <DailyDealPopup deal={dealTr} dict={dict} />}
@@ -383,10 +394,10 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
             <Link href="/blog" className="viewall">{t('All articles')} <Arrow /></Link>
           </div>
           <div className="blog-grid">
-            {blogPosts.map(post => (
+            {blogPosts.map((post, i) => (
               <Link key={post.id} href={`/blog/${post.slug}`} className="post">
                 <div className="ph" style={{ backgroundImage: post.hero_image ? `url(${post.hero_image})` : 'var(--grad-brand)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
-                  <span className="pill pill-white">{post.category}</span>
+                  <span className="pill pill-white">{blogCatMap.get(post.category) ?? post.category}</span>
                 </div>
                 <div className="pb">
                   <div className="pmeta">
@@ -394,8 +405,8 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
                     <i></i>
                     <span>{post.read_time} {t('min read')}</span>
                   </div>
-                  <h3>{post.title}</h3>
-                  <p className="excerpt">{post.description}</p>
+                  <h3>{blogTr[i].title}</h3>
+                  <p className="excerpt">{blogTr[i].description}</p>
                   <div className="author">
                     <div className="av">{post.author?.split(' ').map((n: string) => n[0]).join('')}</div>
                     <div><b>{post.author}</b></div>
