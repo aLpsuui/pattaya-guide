@@ -30,6 +30,10 @@ const securityHeaders = [
 ]
 
 const nextConfig: NextConfig = {
+  // The site root layout is a dynamic segment (app/[lang]/layout.tsx renders
+  // <html lang={lang}>), so there's no single layout to compose a top-level 404
+  // from - app/global-not-found.tsx handles unmatched URLs. Requires this flag.
+  experimental: { globalNotFound: true },
   async headers() {
     return [{ source: '/:path*', headers: securityHeaders }]
   },
