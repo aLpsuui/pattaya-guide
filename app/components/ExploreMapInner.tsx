@@ -54,10 +54,23 @@ function Flyer({ target }: { target: { lat: number; lng: number; zoom: number } 
   return null
 }
 
-export default function ExploreMapInner() {
+export default function ExploreMapInner({ dict, locale = 'en' }: { dict?: Record<string, string>; locale?: string }) {
   const [venues, setVenues] = useState<VenuePin[]>([])
   const [filter, setFilter] = useState<Filter>('all')
   const [focus, setFocus] = useState<{ lat: number; lng: number; zoom: number } | null>(null)
+  // Cached venue_type -> localized label (fetched client-side; anon-readable).
+  const [typeTr, setTypeTr] = useState<Map<string, string>>(new Map())
+
+  const t = (s: string) => dict?.[s] ?? s
+  // Venue types are data-driven (~130 values) so they come from the translation
+  // cache, not the dictionary. Guard against the rare over-long/garbled cache
+  // row (a pre-fix translation bug) by falling back to the English label.
+  const typeT = (s: string | null | undefined): string => {
+    if (!s) return s ?? ''
+    const ru = typeTr.get(s)
+    if (ru && ru.length <= 45) return ru
+    return dict?.[s] ?? s
+  }
 
   useEffect(() => {
     let on = true
@@ -76,6 +89,27 @@ export default function ExploreMapInner() {
     })()
     return () => { on = false }
   }, [])
+
+  // Load venue_type translations for the active locale (skip for English).
+  useEffect(() => {
+    if (locale === 'en') return
+    let on = true
+    ;(async () => {
+      const map = new Map<string, string>()
+      for (let from = 0; ; from += 1000) {
+        const { data } = await supabase
+          .from('content_translations')
+          .select('source_id, value')
+          .eq('source_table', 'venue_types').eq('locale', locale)
+          .range(from, from + 999)
+        const rows = (data as { source_id: string; value: string }[] | null) || []
+        for (const r of rows) if (r.source_id && r.value) map.set(r.source_id, r.value)
+        if (rows.length < 1000) break
+      }
+      if (on) setTypeTr(map)
+    })()
+    return () => { on = false }
+  }, [locale])
 
   const showAreas = filter === 'all' || filter === 'areas'
   const shownVenues = useMemo(() => {
@@ -103,17 +137,18 @@ export default function ExploreMapInner() {
   }, [showAreas, shownVenues])
 
   const vibeSlug = (v: string) => v.toLowerCase().replace(/[^a-z]/g, '')
+  const countUnit = filter === 'areas' ? 'areas' : filter === 'all' ? 'results' : 'places'
 
   return (
     <div className="exmap">
       <div className="exmap-bar">
-        <button className={`exm-chip${filter === 'all' ? ' on' : ''}`} onClick={() => setFilter('all')}>All</button>
+        <button className={`exm-chip${filter === 'all' ? ' on' : ''}`} onClick={() => setFilter('all')}>{t('All')}</button>
         <button className={`exm-chip exm-chip--area${filter === 'areas' ? ' on' : ''}`} onClick={() => setFilter('areas')}>
-          <span className="exm-cdot" style={{ background: '#e0911a' }} />Areas <span className="ct">{AREAS.length}</span>
+          <span className="exm-cdot" style={{ background: '#e0911a' }} />{t('Areas')} <span className="ct">{AREAS.length}</span>
         </button>
         {cats.map(c => (
           <button key={c.slug} className={`exm-chip${filter === c.slug ? ' on' : ''}`} onClick={() => setFilter(c.slug)}>
-            <span className="exm-cdot" style={{ background: catColor(c.slug) }} />{c.name} <span className="ct">{c.n}</span>
+            <span className="exm-cdot" style={{ background: catColor(c.slug) }} />{t(c.name)} <span className="ct">{c.n}</span>
           </button>
         ))}
       </div>
@@ -128,16 +163,16 @@ export default function ExploreMapInner() {
             <Flyer target={focus} />
             {showAreas && AREAS.map(a => (
               <Marker key={'am' + a.name} position={[a.lat, a.lng]} icon={iconFor(areaColor(a.name))}>
-                <Popup><b>{a.name}</b><br /><a href={`/areas/${a.slug}`}>Explore area →</a></Popup>
+                <Popup><b>{a.name}</b><br /><a href={`/areas/${a.slug}`}>{t('Explore area →')}</a></Popup>
               </Marker>
             ))}
             {shownVenues.map(v => (
               <Marker key={'vm' + v.slug} position={[v.lat, v.lng]} icon={iconFor(catColor(v.catSlug))}>
                 <Popup>
                   <b>{v.name}</b><br />
-                  <span style={{ color: '#5b6b7c' }}>{v.catName ? `${v.catName} · ` : ''}{v.type}{v.neighborhood ? ` · ${v.neighborhood}` : ''}</span><br />
-                  {v.price_from != null && <span>from ฿{v.price_from.toLocaleString()}<br /></span>}
-                  <a href={`/venues/${v.slug}`}>View details →</a>
+                  <span style={{ color: '#5b6b7c' }}>{v.catName ? `${t(v.catName)} · ` : ''}{typeT(v.type)}{v.neighborhood ? ` · ${v.neighborhood}` : ''}</span><br />
+                  {v.price_from != null && <span>{t('from')} ฿{v.price_from.toLocaleString()}<br /></span>}
+                  <a href={`/venues/${v.slug}`}>{t('View details →')}</a>
                 </Popup>
               </Marker>
             ))}
@@ -145,7 +180,7 @@ export default function ExploreMapInner() {
         </div>
 
         <aside className="exmap-list">
-          <div className="exmap-list-head">Showing <b>{list.length}</b> {filter === 'areas' ? 'areas' : filter === 'all' ? 'results' : 'places'}</div>
+          <div className="exmap-list-head">{t('Showing')} <b>{list.length}</b> {t(countUnit)}</div>
           <div className="exmap-list-scroll">
             {list.map(it => (
               <div key={it.key} className="exm-row" onClick={() => setFocus({ lat: it.lat, lng: it.lng, zoom: it.kind === 'area' ? 14 : 16 })}>
@@ -154,10 +189,10 @@ export default function ExploreMapInner() {
                   {it.href ? <a href={it.href} onClick={e => e.stopPropagation()}><b>{it.name}</b></a> : <b>{it.name}</b>}
                   {it.kind === 'area' && it.vibes?.length ? (
                     <div className="exm-vibes">
-                      {it.vibes.map(v => <span key={v} className={`exm-vibe exm-vibe--${vibeSlug(v)}`}>{v}</span>)}
+                      {it.vibes.map(v => <span key={v} className={`exm-vibe exm-vibe--${vibeSlug(v)}`}>{t(v)}</span>)}
                     </div>
                   ) : (
-                    <span>{it.meta}</span>
+                    <span>{typeT(it.meta)}</span>
                   )}
                 </div>
               </div>

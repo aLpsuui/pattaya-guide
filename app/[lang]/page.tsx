@@ -376,7 +376,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
               <p>{t('Filter by category or district. Save areas before you fly. See exactly which neighborhood each guide is in.')}</p>
             </div>
           </div>
-          <ExploreMap />
+          <ExploreMap dict={dict} locale={locale} />
           <div style={{ marginTop: 'var(--s4)' }}>
             <Link href="/map" className="btn btn-primary btn-sm">{t('Open full map')} <Arrow /></Link>
           </div>
