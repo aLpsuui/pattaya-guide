@@ -3,6 +3,7 @@ import { db, STORAGE_BASE } from '@/lib/admin/db'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { slugify } from '@/lib/admin/options'
+import { indexNowNotify } from '@/lib/indexnow'
 
 type State = { error: string }
 
@@ -54,6 +55,9 @@ export async function savePlace(_prev: State, fd: FormData): Promise<State> {
     : await db.from('venues').insert(row)
   if (res.error) return { error: res.error.message }
 
+  // Tell IndexNow the venue page changed (both locales) so Yandex re-crawls fast.
+  await indexNowNotify([`/venues/${slug}`])
+
   // Refresh the admin list AND the public venue page + homepage so the edit
   // shows live right away instead of waiting out the ISR window.
   revalidatePath('/admin/places')
@@ -67,7 +71,7 @@ export async function deletePlace(fd: FormData) {
   if (id) {
     const { data } = await db.from('venues').select('slug').eq('id', id).maybeSingle()
     await db.from('venues').delete().eq('id', id)
-    if (data?.slug) revalidatePath(`/venues/${data.slug}`)
+    if (data?.slug) { revalidatePath(`/venues/${data.slug}`); await indexNowNotify([`/venues/${data.slug}`]) }
   }
   revalidatePath('/admin/places')
   revalidatePath('/')

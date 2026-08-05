@@ -3,6 +3,7 @@ import { db, STORAGE_BASE } from '@/lib/admin/db'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { slugify } from '@/lib/admin/options'
+import { indexNowNotify } from '@/lib/indexnow'
 
 type State = { error: string }
 
@@ -61,6 +62,9 @@ export async function saveBlog(_prev: State, fd: FormData): Promise<State> {
     : await db.from('blog_posts').insert(row)
   if (res.error) return { error: res.error.message }
 
+  // Tell IndexNow the blog page changed (both locales) so Yandex re-crawls fast.
+  await indexNowNotify([`/blog/${slug}`])
+
   // Refresh the admin list AND the public pages so the edit shows live right
   // away instead of waiting out the blog pages' 1h ISR window.
   revalidatePath('/admin/blog')
@@ -75,7 +79,7 @@ export async function deleteBlog(fd: FormData) {
   if (id) {
     const { data } = await db.from('blog_posts').select('slug').eq('id', id).maybeSingle()
     await db.from('blog_posts').delete().eq('id', id)
-    if (data?.slug) revalidatePath(`/blog/${data.slug}`)
+    if (data?.slug) { revalidatePath(`/blog/${data.slug}`); await indexNowNotify([`/blog/${data.slug}`]) }
   }
   revalidatePath('/admin/blog')
   revalidatePath('/blog')
