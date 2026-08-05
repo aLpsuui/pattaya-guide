@@ -115,7 +115,9 @@ export default function Footer({ logoUrl, dict }: { logoUrl?: string | null; dic
         </div>
 
         <div className="footer-bottom">
-          <span>© 2026 Go To Pattaya · Made in Pattaya 🇹🇭</span>
+          <span>© 2026 Go To Pattaya · {t('All rights reserved')} · {t('Made in Thailand')} 🇹🇭 · {t('Made by')}{' '}
+            <a href="https://www.tapt.studio/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px' }}>tapt.studio</a>
+          </span>
           <div className="legal">
             <Link href="/privacy">{t('Privacy')}</Link>
             <Link href="/terms">{t('Terms')}</Link>
