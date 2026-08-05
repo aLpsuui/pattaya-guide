@@ -8,8 +8,9 @@ export default function robots(): MetadataRoute.Robots {
     return { rules: [{ userAgent: '*', disallow: '/' }] }
   }
   return {
+    // Note: no `host` directive - Yandex deprecated it in 2018 and ignores it.
+    // The sitemap URL stays /sitemap.xml (now a <sitemapindex> for en + ru).
     rules: [{ userAgent: '*', allow: '/' }],
     sitemap: `${SITE_URL}/sitemap.xml`,
-    host: SITE_URL,
   }
 }

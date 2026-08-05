@@ -48,7 +48,11 @@ export async function proxy(req: NextRequest) {
   const locale = pickLocale(req)
   const url = req.nextUrl.clone()
   url.pathname = `/${locale}${pathname === '/' ? '' : pathname}`
-  return NextResponse.redirect(url)
+  // 308 Permanent (not 307): the prefix-all structure is fixed, so the root and
+  // every prefix-less legacy URL permanently live at their /<locale> path. Yandex
+  // treats 307 as temporary and won't use it for mirror/canonical consolidation;
+  // 308 lets it fold the old prefix-less URLs into the canonical locale URL.
+  return NextResponse.redirect(url, 308)
 }
 
 export const config = {
