@@ -10,7 +10,7 @@ import type { Metadata } from 'next'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { hasLocale } from '@/lib/i18n/config'
 import { translateMany, getTranslated } from '@/lib/i18n/translateContent'
-import { cardImg } from '@/lib/img'
+import { cardImg, tileImg } from '@/lib/img'
 
 const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 
@@ -264,7 +264,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
           <div className="cats-grid">
             {categories.map(cat => (
               <Link key={cat.name} href={cat.href} className={`cat${cat.feat ? ' cat-feat' : ''}`}>
-                <div className="bg" style={{ backgroundImage: `url(${ASSETS}/${cat.img})` }}></div>
+                <div className="bg" style={{ backgroundImage: `url(${tileImg(`${ASSETS}/${cat.img}`)})` }}></div>
                 <div className="cat-ic"><Icon name={cat.icon} size={22} style={{ color: '#fff' }} /></div>
                 <b>{t(cat.name)}</b>
                 <div className="meta">{t(cat.meta)}</div>
@@ -288,7 +288,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
           <div className="plan-grid">
             {planCards.map(card => (
               <a key={card.title} href={card.href} className="plan-card">
-                <div className="bg" style={{ backgroundImage: `url(${ASSETS}/${card.img})` }}></div>
+                <div className="bg" style={{ backgroundImage: `url(${tileImg(`${ASSETS}/${card.img}`)})` }}></div>
                 <span className="pill">{t(card.pill)}</span>
                 <h3>{t(card.title)}</h3>
                 <p>{t(card.text)}</p>
@@ -355,7 +355,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
           <div className="dist-grid">
             {districts.map(d => (
               <a key={d.name} href={d.href} className={`dist ${d.cls}`}>
-                <div className="dist-bg" style={{ backgroundImage: `url(${ASSETS}/${d.img})` }}></div>
+                <div className="dist-bg" style={{ backgroundImage: `url(${tileImg(`${ASSETS}/${d.img}`)})` }}></div>
                 <div className="dist-content">
                   <span className="pill pill-glass">{t(d.pill)}</span>
                   <h3>{t(d.name)}</h3>
@@ -398,7 +398,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
           <div className="blog-grid">
             {blogPosts.map((post, i) => (
               <Link key={post.id} href={`/blog/${post.slug}`} className="post">
-                <div className="ph" style={{ backgroundImage: post.hero_image ? `url(${post.hero_image})` : 'var(--grad-brand)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                <div className="ph" style={{ backgroundImage: post.hero_image ? `url(${tileImg(post.hero_image)})` : 'var(--grad-brand)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
                   <span className="pill pill-white">{t(post.category)}</span>
                 </div>
                 <div className="pb">
