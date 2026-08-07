@@ -8,7 +8,7 @@ import VenueIcons from './VenueIcons'
 import { getTranslated, translateMany } from '@/lib/i18n/translateContent'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { hasLocale } from '@/lib/i18n/config'
-import { localeAlternates, clampDescription, pageTitle } from '@/lib/seo'
+import { localeAlternates, clampDescription, pageTitle, ogDefaultImages } from '@/lib/seo'
 import { cardImg } from '@/lib/img'
 
 // Re-generate from the database at most once every 60s (ISR), so edits to a
@@ -67,6 +67,7 @@ interface Venue {
   longitude: number | null
   gallery_more_count: number | null
   image_url: string | null
+  updated_at: string | null
   categories: { name_en: string; slug: string } | null
   venue_photos: Photo[]
   venue_menu_items: MenuItem[]
@@ -95,7 +96,7 @@ const SELECT = `
   tagline, description, about, address, neighborhood, nearby, hours, hours_note,
   phone, website, website_label, facebook_url, maps_query, price_from, price_from_label,
   menu_intro, menu_note, map_road_label, map_soi_label, map_pin_label,
-  latitude, longitude, gallery_more_count, image_url,
+  latitude, longitude, gallery_more_count, image_url, updated_at,
   categories(name_en, slug),
   venue_photos(url, alt, caption, sort_order),
   venue_menu_items(section, name, detail, duration, price, is_featured, sort_order),
@@ -165,13 +166,15 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       title: v.name,
       description,
       url: `${SITE_URL}${canonical}`,
-      images: v.image_url ? [{ url: v.image_url }] : undefined,
+      // Venues without a photo fall back to the branded OG card so shares/rich
+      // results never render imageless (was undefined → closes the audit gap).
+      images: v.image_url ? [{ url: v.image_url }] : ogDefaultImages,
     },
     twitter: {
       card: 'summary_large_image',
       title: v.name,
       description,
-      images: v.image_url ? [v.image_url] : undefined,
+      images: v.image_url ? [v.image_url] : ogDefaultImages.map(i => i.url),
     },
   }
 }
@@ -243,6 +246,10 @@ export default async function VenuePage({ params }: { params: Promise<{ lang: st
   // Category + venue_type labels for on-page display (translated; JSON-LD keeps English).
   const categoryLabel = v.categories?.name_en ? (catMap.get(v.categories.name_en) ?? categoryName) : 'Pattaya'
   const venueTypeLabel = tt(v.venue_type)
+  // Visible freshness signal (matches JSON-LD dateModified): "Last verified · Month Year".
+  const verifiedDate = v.updated_at
+    ? new Intl.DateTimeFormat(locale === 'ru' ? 'ru-RU' : 'en-US', { year: 'numeric', month: 'long' }).format(new Date(v.updated_at))
+    : null
 
   // Build the lightbox photo list (all photos) for the injected client script.
   const lbPhotos = photos.map(p => ({ src: p.url, cap: p.caption || p.alt || v.name }))
@@ -287,18 +294,38 @@ export default async function VenuePage({ params }: { params: Promise<{ lang: st
 `
 
   const sameAs = [v.website, v.facebook_url].filter(Boolean)
+  // JSON-LD @id/url point at the locale-prefixed canonical (was locale-less
+  // /venues/, which 308-redirects) so structured data matches the page URL.
+  const pageUrl = `${SITE_URL}/${locale}/venues/${v.slug}`
+  // Map the category to a specific schema.org LocalBusiness/Place subtype so the
+  // markup is more than a generic LocalBusiness (helps Google classify the entity).
+  const SCHEMA_TYPE: Record<string, string> = {
+    'eat-and-drinks': 'Restaurant',
+    'nightlife': 'BarOrPub',
+    'wellness-and-beauty': 'HealthAndBeautyBusiness',
+    'yoga-and-fitness': 'ExerciseGym',
+    'thinks-to-do': 'TouristAttraction',
+    'things-to-do': 'TouristAttraction',
+  }
+  const businessType = SCHEMA_TYPE[v.categories?.slug || ''] || 'LocalBusiness'
+  // FAQPage from the visible FAQ accordion (translated text = what the user sees,
+  // per Google's "markup must match visible content" rule).
+  const faqEntries = faqTx.filter(([q, a]) => q && a)
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
       {
-        '@type': 'LocalBusiness',
-        '@id': `${SITE_URL}/venues/${v.slug}#business`,
+        '@type': businessType,
+        '@id': `${pageUrl}#business`,
         name: v.name,
         description: v.description || v.tagline || undefined,
-        image: photos.map(p => p.url),
-        url: `${SITE_URL}/venues/${v.slug}`,
+        image: photos.length ? photos.map(p => p.url) : ogDefaultImages.map(i => i.url),
+        url: pageUrl,
         telephone: v.phone || undefined,
         priceRange: v.price_range || undefined,
+        // Freshness signal: when we last verified/updated the listing. Matches the
+        // visible "Last verified" line in the info card.
+        dateModified: v.updated_at || undefined,
         address: v.address
           ? {
               '@type': 'PostalAddress',
@@ -321,11 +348,22 @@ export default async function VenuePage({ params }: { params: Promise<{ lang: st
       {
         '@type': 'BreadcrumbList',
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
-          { '@type': 'ListItem', position: 2, name: categoryName, item: `${SITE_URL}${categorySlug}` },
-          { '@type': 'ListItem', position: 3, name: v.name, item: `${SITE_URL}/venues/${v.slug}` },
+          { '@type': 'ListItem', position: 1, name: t('Home'), item: `${SITE_URL}/${locale}` },
+          { '@type': 'ListItem', position: 2, name: categoryLabel, item: `${SITE_URL}/${locale}${categorySlug}` },
+          { '@type': 'ListItem', position: 3, name: v.name, item: pageUrl },
         ],
       },
+      ...(faqEntries.length
+        ? [{
+            '@type': 'FAQPage',
+            '@id': `${pageUrl}#faq`,
+            mainEntity: faqEntries.map(([q, a]) => ({
+              '@type': 'Question',
+              name: q,
+              acceptedAnswer: { '@type': 'Answer', text: a },
+            })),
+          }]
+        : []),
     ],
   }
 
@@ -590,6 +628,9 @@ export default async function VenuePage({ params }: { params: Promise<{ lang: st
               )}
               {v.locally_verified && (
                 <div className="row"><Icon id="pg-local-verified" size={20} /><span>{t('Locally verified by Go To Pattaya')}</span></div>
+              )}
+              {verifiedDate && (
+                <div className="row"><Icon id="pg-calendar" size={20} /><span>{t('Last verified')} · <time dateTime={v.updated_at!}>{verifiedDate}</time></span></div>
               )}
             </div>
 
