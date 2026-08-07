@@ -156,8 +156,8 @@ export default async function CategoryListing({ cfg, lang }: { cfg: CatConfig; l
       {
         '@type': 'BreadcrumbList',
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
-          { '@type': 'ListItem', position: 2, name: catName, item: `${SITE_URL}${cfg.path || `/${cfg.slug}`}` },
+          { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/${locale}` },
+          { '@type': 'ListItem', position: 2, name: catName, item: `${SITE_URL}/${locale}${cfg.path || `/${cfg.slug}`}` },
         ],
       },
       {
@@ -167,7 +167,7 @@ export default async function CategoryListing({ cfg, lang }: { cfg: CatConfig; l
         itemListElement: venues.slice(0, 25).map((v, i) => ({
           '@type': 'ListItem',
           position: i + 1,
-          url: `${SITE_URL}/venues/${v.slug}`,
+          url: `${SITE_URL}/${locale}/venues/${v.slug}`,
           name: v.name,
         })),
       },
@@ -293,7 +293,7 @@ export default async function CategoryListing({ cfg, lang }: { cfg: CatConfig; l
               </summary>
               <ul className="cat-index">
                 {venues.filter((v) => v.slug).map((v) => (
-                  <li key={v.id}><a href={`/venues/${v.slug}`}>{v.name}</a></li>
+                  <li key={v.id}><a href={`/${locale}/venues/${v.slug}`}>{v.name}</a></li>
                 ))}
               </ul>
             </details>

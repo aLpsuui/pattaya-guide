@@ -9,6 +9,7 @@ import { getTranslated, translateMany } from '@/lib/i18n/translateContent'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { hasLocale } from '@/lib/i18n/config'
 import { localeAlternates, clampDescription, pageTitle } from '@/lib/seo'
+import { cardImg } from '@/lib/img'
 
 // Re-generate from the database at most once every 60s (ISR), so edits to a
 // venue and its child rows go live without a full rebuild.
@@ -373,7 +374,7 @@ export default async function VenuePage({ params }: { params: Promise<{ lang: st
                 aria-label={`${t('Open photo')}: ${p.alt || v.name}`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={p.url} alt={p.alt || v.name} loading={i === 0 ? undefined : 'lazy'}
+                <img src={i === 0 ? p.url : (cardImg(p.url) || p.url)} alt={p.alt || v.name} loading={i === 0 ? undefined : 'lazy'}
                   width={i === 0 ? 800 : 400} height={i === 0 ? 600 : 300} />
                 {i === 4 && (v.gallery_more_count || 0) > 0 && (
                   <span className="det-yf__gmore" aria-hidden="true">+{v.gallery_more_count} {t('photos')}</span>
@@ -623,7 +624,7 @@ export default async function VenuePage({ params }: { params: Promise<{ lang: st
                   <div className="det-yf__morecard__media">
                     {r.image_url
                       ? // eslint-disable-next-line @next/next/no-img-element
-                        <img src={r.image_url} alt={r.name} loading="lazy" width={560} height={420} />
+                        <img src={cardImg(r.image_url) || r.image_url} alt={r.name} loading="lazy" width={560} height={420} />
                       : <div className="det-yf__morecard__ph" aria-hidden="true"
                           style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', background: 'var(--grad-brand, #e2e8f0)', color: '#fff' }}>
                           <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5" /><circle cx="8.5" cy="9.5" r="1.6" /><path d="m4 17 4.5-4.5 3.5 3.5 3.5-3.5L20 16" /></svg>

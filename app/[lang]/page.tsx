@@ -10,6 +10,7 @@ import type { Metadata } from 'next'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { hasLocale } from '@/lib/i18n/config'
 import { translateMany, getTranslated } from '@/lib/i18n/translateContent'
+import { cardImg } from '@/lib/img'
 
 const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 
@@ -169,7 +170,7 @@ const Arrow = () => (
 function VenueCard({ v, dark = false, tt = (s) => s }: { v: Venue; dark?: boolean; tt?: (s: string | null | undefined) => string | null | undefined }) {
   return (
     <Link href={`/venues/${v.slug}`} className="place">
-      <div className="ph" style={{ backgroundImage: v.image_url ? `url(${v.image_url})` : 'var(--grad-brand)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+      <div className="ph" style={{ backgroundImage: v.image_url ? `url(${cardImg(v.image_url)})` : 'var(--grad-brand)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <span className="tagpill">{tt(v.categories?.name_en || v.venue_type)}</span>
       </div>
       <div className="pb">
