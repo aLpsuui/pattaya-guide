@@ -4,10 +4,11 @@ import Link from '@/app/components/LocaleLink'
 import Icon from '@/app/components/Icon'
 import Star from '@/app/components/Star'
 
-// Card thumbnails use a 500px webp variant on R2 (generated in batch) - ~90%
-// smaller than the full-res original that would otherwise fill a ~300px card.
-const cardImg = (u: string | null): string | undefined =>
-  u ? (/cdn\.gotopattaya\.com\/Venues\/.+\.webp$/i.test(u) ? u.replace(/\.webp$/i, '-500.webp') : u) : undefined
+// NOTE: the CDN only has -500 derivatives for ~40% of venue images, so the old
+// blind `-500` swap 404'd most category thumbnails. Serve the original until real
+// derivatives exist for every image (see lib/img.ts cardImg for the shared no-op
+// and the planned Supabase-served optimization).
+const cardImg = (u: string | null): string | undefined => u || undefined
 
 // Client directory: receives a compact venue array and renders the filter rail
 // + results grid entirely in React. Only the first `limit` filtered cards are
