@@ -22,14 +22,15 @@ const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params
   const locale = hasLocale(lang) ? lang : 'en'
-  // Translate the homepage title/description for RU (previously it inherited the
-  // root layout's static English metadata, so /ru shipped an English title - the
-  // single most visible RU-metadata gap in the audit). getTranslated returns the
-  // English source verbatim for /en and on any translation failure.
-  const [title, description] = await Promise.all([
-    getTranslated('static', 'home', 'title', 'Go To Pattaya - Your complete guide to Pattaya', locale),
-    getTranslated('static', 'home', 'description', SITE_DESCRIPTION, locale),
-  ])
+  // Homepage title/description come from the static dictionary (not on-demand
+  // getTranslated): the RU homepage previously inherited the root layout's
+  // English metadata, and a build with no ANTHROPIC_API_KEY can't warm an
+  // on-demand translation - so the RU strings are baked into ru.json and read
+  // via t(), guaranteed present without any runtime/ISR dependency.
+  const dict = await getDictionary(locale)
+  const t = (s: string) => dict?.[s] ?? s
+  const title = t('Go To Pattaya - Your complete guide to Pattaya')
+  const description = t(SITE_DESCRIPTION)
   // Emit hreflang on the homepages too (the audit flagged /en + /ru as the only
   // pages missing it). altLanguages('') -> en:/en, ru:/ru, x-default:/en.
   return { title, description, alternates: { canonical: `/${locale}`, languages: altLanguages('') } }
