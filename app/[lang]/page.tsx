@@ -12,6 +12,7 @@ import { hasLocale } from '@/lib/i18n/config'
 import { translateMany, getTranslated } from '@/lib/i18n/translateContent'
 import { cardImg, tileImg } from '@/lib/img'
 import { altLanguages } from '@/lib/seo'
+import { SITE_DESCRIPTION } from '@/lib/site'
 
 const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 
@@ -21,9 +22,17 @@ const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params
   const locale = hasLocale(lang) ? lang : 'en'
+  // Translate the homepage title/description for RU (previously it inherited the
+  // root layout's static English metadata, so /ru shipped an English title - the
+  // single most visible RU-metadata gap in the audit). getTranslated returns the
+  // English source verbatim for /en and on any translation failure.
+  const [title, description] = await Promise.all([
+    getTranslated('static', 'home', 'title', 'Go To Pattaya - Your complete guide to Pattaya', locale),
+    getTranslated('static', 'home', 'description', SITE_DESCRIPTION, locale),
+  ])
   // Emit hreflang on the homepages too (the audit flagged /en + /ru as the only
   // pages missing it). altLanguages('') -> en:/en, ru:/ru, x-default:/en.
-  return { alternates: { canonical: `/${locale}`, languages: altLanguages('') } }
+  return { title, description, alternates: { canonical: `/${locale}`, languages: altLanguages('') } }
 }
 
 // Re-generate this page from the database at most once every 60s (ISR),

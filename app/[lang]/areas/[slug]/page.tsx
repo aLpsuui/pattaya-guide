@@ -109,7 +109,10 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   const info = INFO[slug]
   const dict = await getDictionary(locale)
   const t = (s: string) => dict?.[s] ?? s
-  const desc = clampDescription(info?.blurb)
+  // The area blurb is a code-defined English string; translate it for RU (was
+  // shipping English meta descriptions on every /ru/areas page - audit finding).
+  const blurbTx = info?.blurb ? await getTranslated('static', `area:${slug}:blurb`, 'text', info.blurb, locale) : undefined
+  const desc = clampDescription(blurbTx || info?.blurb)
   return {
     title: `${area.name}, Pattaya - ${t('Area Guide')} | Go To Pattaya`,
     description: desc,
