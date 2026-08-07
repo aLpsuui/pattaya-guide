@@ -30,14 +30,14 @@ const SB_PUBLIC = 'https://hjkcmxfmismliskipedz.supabase.co/storage/v1/object/pu
 export function venueCardImg(u: string | null | undefined): string | undefined {
   if (!u) return undefined
   const m = u.match(/^https:\/\/cdn\.gotopattaya\.com\/Venues\/(.+)\.webp$/i)
-  if (!m || /-\d+$/.test(m[1])) return u
+  if (!m) return u // only cdn Venues originals map to a derivative
   return `${SB_PUBLIC}/venues/${m[1]}-500.webp`
 }
 
 export function tileImg(u: string | null | undefined): string | undefined {
   if (!u) return undefined
   const m = u.match(/^https:\/\/cdn\.gotopattaya\.com\/(Assets|Blogs)\/(.+)\.webp$/i)
-  if (!m || /-\d+$/.test(m[2])) return u // not a convertible tile, or already sized
+  if (!m) return u // only cdn Assets/Blogs originals map to a derivative
   const bucket = m[1].toLowerCase() === 'assets' ? 'assets' : 'blog'
   return `${SB_PUBLIC}/${bucket}/${m[2]}-800.webp`
 }
