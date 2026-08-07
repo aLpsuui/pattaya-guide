@@ -4,17 +4,20 @@ import './contact.css'
 import ContactForm from './ContactForm'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { hasLocale } from '@/lib/i18n/config'
+import { localeAlternates, ogDefaultImages } from '@/lib/seo'
 
 const title = 'Contact Us | Go To Pattaya'
 const description = 'Get in touch with the Go To Pattaya team - corrections, listings and partnerships.'
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params
   const locale = hasLocale(lang) ? lang : 'en'
+  const dict = await getDictionary(locale)
+  const t = (s: string) => dict?.[s] ?? s
   return {
-    title,
-    description,
-    alternates: { canonical: `/${locale}/contact` },
-    openGraph: { title, description },
+    title: t(title),
+    description: t(description),
+    alternates: localeAlternates(locale, '/contact'),
+    openGraph: { title: t(title), description: t(description), images: ogDefaultImages },
   }
 }
 

@@ -8,6 +8,7 @@ import Link from '@/app/components/LocaleLink'
 import Icon from '@/app/components/Icon'
 import Star from '@/app/components/Star'
 import { AREAS, areaBySlug } from '@/lib/areas'
+import { localeAlternates, clampDescription } from '@/lib/seo'
 import { SITE_URL } from '@/lib/site'
 import BlogScript from '@/app/components/BlogScript'
 import guidesData from './area-guides.json'
@@ -106,11 +107,14 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   const area = areaBySlug(slug)
   if (!area) return { title: 'Not Found', robots: { index: false } }
   const info = INFO[slug]
+  const dict = await getDictionary(locale)
+  const t = (s: string) => dict?.[s] ?? s
+  const desc = clampDescription(info?.blurb)
   return {
-    title: `${area.name}, Pattaya - Area Guide | Go To Pattaya`,
-    description: info?.blurb,
-    alternates: { canonical: `/${locale}/areas/${slug}` },
-    openGraph: { title: `${area.name}, Pattaya`, description: info?.blurb, url: `${SITE_URL}/areas/${slug}`, images: info?.hero ? [{ url: info.hero }] : undefined },
+    title: `${area.name}, Pattaya - ${t('Area Guide')} | Go To Pattaya`,
+    description: desc,
+    alternates: localeAlternates(locale, `/areas/${slug}`),
+    openGraph: { title: `${area.name}, Pattaya`, description: desc, url: `${SITE_URL}/${locale}/areas/${slug}`, images: info?.hero ? [{ url: info.hero }] : undefined },
   }
 }
 

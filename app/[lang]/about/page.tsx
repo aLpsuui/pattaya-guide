@@ -3,6 +3,7 @@ import Link from '@/app/components/LocaleLink'
 import Icon from '@/app/components/Icon'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { hasLocale } from '@/lib/i18n/config'
+import { localeAlternates, ogDefaultImages } from '@/lib/seo'
 
 const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 
@@ -12,11 +13,13 @@ const description =
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params
   const locale = hasLocale(lang) ? lang : 'en'
+  const dict = await getDictionary(locale)
+  const t = (s: string) => dict?.[s] ?? s
   return {
-    title,
-    description,
-    alternates: { canonical: `/${locale}/about` },
-    openGraph: { title, description },
+    title: t(title),
+    description: t(description),
+    alternates: localeAlternates(locale, '/about'),
+    openGraph: { title: t(title), description: t(description), images: ogDefaultImages },
   }
 }
 

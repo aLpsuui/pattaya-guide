@@ -10,6 +10,7 @@ import { getSiteSettings } from '@/lib/siteSettings'
 import { locales, hasLocale } from '@/lib/i18n/config'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, INDEXABLE, GA_ID } from '@/lib/site'
+import { ogDefaultImages } from '@/lib/seo'
 
 // This is the site's ROOT layout: it lives under the [lang] segment so it can
 // render <html lang={lang}> server-side (Yandex weights the lang attribute and
@@ -30,11 +31,13 @@ export const metadata: Metadata = {
     title: 'Go To Pattaya - Your complete guide to Pattaya',
     description: SITE_DESCRIPTION,
     locale: 'en_US',
+    images: ogDefaultImages,
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Go To Pattaya - Your complete guide to Pattaya',
     description: SITE_DESCRIPTION,
+    images: ogDefaultImages,
   },
   icons: { icon: '/favicon.ico' },
 }
@@ -52,6 +55,12 @@ const jsonLd = {
       logo: { '@type': 'ImageObject', url: `${SITE_URL}/icon-512.png`, width: 512, height: 512 },
       description: SITE_DESCRIPTION,
       areaServed: { '@type': 'City', name: 'Pattaya', addressCountry: 'TH' },
+      sameAs: [
+        'https://www.instagram.com/gotopattayacom',
+        'https://www.facebook.com/profile.php?id=61591161493028',
+        'https://x.com/gotopattayacom',
+        'https://www.linkedin.com/company/go-to-pattaya',
+      ],
     },
     {
       '@type': 'WebSite',

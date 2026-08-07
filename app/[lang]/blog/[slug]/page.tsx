@@ -4,6 +4,7 @@ import BlogScript from '@/app/components/BlogScript'
 import { SITE_URL } from '@/lib/site'
 import { hasLocale } from '@/lib/i18n/config'
 import { getTranslated } from '@/lib/i18n/translateContent'
+import { localeAlternates, clampDescription, pageTitle } from '@/lib/seo'
 import { BLOG_TEMPLATE_SCRIPT } from './blogTemplate'
 import './blog-template.css'
 
@@ -153,9 +154,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   ])
   const canonical = `/${locale}/blog/${post.slug}`
   return {
-    title: `${title} | Go To Pattaya`,
-    description,
-    alternates: { canonical },
+    title: pageTitle(title),
+    description: clampDescription(description),
+    alternates: localeAlternates(locale, `/blog/${post.slug}`),
     openGraph: {
       type: 'article',
       title,

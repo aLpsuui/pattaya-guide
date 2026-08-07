@@ -8,6 +8,7 @@ import VenueIcons from './VenueIcons'
 import { getTranslated, translateMany } from '@/lib/i18n/translateContent'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { hasLocale } from '@/lib/i18n/config'
+import { localeAlternates, clampDescription, pageTitle } from '@/lib/seo'
 
 // Re-generate from the database at most once every 60s (ISR), so edits to a
 // venue and its child rows go live without a full rebuild.
@@ -150,14 +151,14 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     getTranslated('venues', v.id, 'description', v.description, locale),
     getTranslated('venues', v.id, 'tagline', v.tagline, locale),
   ])
-  const description = descTx || taglineTx || undefined
-  // SERPs truncate titles past ~70 chars; drop the neighborhood segment when
-  // the full lockup would overflow (the name itself is the ranking signal).
-  const fullTitle = `${v.name} - ${v.neighborhood || 'Pattaya'} | Go To Pattaya`
+  const description = clampDescription(descTx || taglineTx)
+  // pageTitle drops the " | Go To Pattaya" suffix when the base already fills the
+  // ~60-char SERP budget (name + neighborhood are the ranking signal).
+  const title = pageTitle(`${v.name} - ${v.neighborhood || 'Pattaya'}`)
   return {
-    title: fullTitle.length > 70 ? `${v.name} | Go To Pattaya` : fullTitle,
+    title,
     description,
-    alternates: { canonical },
+    alternates: localeAlternates(locale, `/venues/${v.slug}`),
     openGraph: {
       type: 'website',
       title: v.name,
@@ -310,13 +311,11 @@ export default async function VenuePage({ params }: { params: Promise<{ lang: st
           ? { '@type': 'GeoCoordinates', latitude: v.latitude, longitude: v.longitude }
           : undefined,
         sameAs: sameAs.length ? sameAs : undefined,
-        // M-3: only surface an aggregateRating when the sample is meaningful
-        // (>= 5 ratings). Suppresses thin/one-off counts that read as spammy
-        // structured markup and keeps rich-result stars only where they're
-        // genuinely backed.
-        aggregateRating: v.rating && v.review_count && v.review_count >= 5
-          ? { '@type': 'AggregateRating', ratingValue: v.rating, reviewCount: v.review_count, bestRating: 5, worstRating: 1 }
-          : undefined,
+        // No aggregateRating in JSON-LD: the ratings come from Google Maps, not
+        // first-party reviews we collect and display, so marking them up is
+        // self-serving per Google's review-snippet policy. The rating still
+        // shows in the visible page (with its source), just not as rich-result
+        // markup - closing a site-wide structured-data risk.
       },
       {
         '@type': 'BreadcrumbList',

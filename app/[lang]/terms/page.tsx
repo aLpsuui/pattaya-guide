@@ -2,17 +2,20 @@ import type { Metadata } from 'next'
 import Link from '@/app/components/LocaleLink'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { hasLocale } from '@/lib/i18n/config'
+import { localeAlternates, ogDefaultImages } from '@/lib/seo'
 
 const title = 'Terms of Use | Go To Pattaya'
 const description = 'The terms of use for Go To Pattaya - the rules for using our Pattaya travel guide, directory and content, plus liability, links and contact details.'
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params
   const locale = hasLocale(lang) ? lang : 'en'
+  const dict = await getDictionary(locale)
+  const t = (s: string) => dict?.[s] ?? s
   return {
-    title,
-    description,
-    alternates: { canonical: `/${locale}/terms` },
-    openGraph: { title, description },
+    title: t(title),
+    description: t(description),
+    alternates: localeAlternates(locale, '/terms'),
+    openGraph: { title: t(title), description: t(description), images: ogDefaultImages },
   }
 }
 

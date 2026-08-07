@@ -5,17 +5,20 @@ import ExploreMap from '@/app/components/ExploreMap'
 import { getTranslated } from '@/lib/i18n/translateContent'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { hasLocale } from '@/lib/i18n/config'
+import { localeAlternates, ogDefaultImages } from '@/lib/seo'
 
 const title = 'Areas of Pattaya - Find Your Neighborhood | Go To Pattaya'
 const description = "An orientation guide to Pattaya's neighborhoods - Central, Jomtien, Naklua, Pratumnak, Wong Amat and the islands. Compare vibes to decide where to stay."
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params
   const locale = hasLocale(lang) ? lang : 'en'
+  const dict = await getDictionary(locale)
+  const t = (s: string) => dict?.[s] ?? s
   return {
-    title,
-    description,
-    alternates: { canonical: `/${locale}/areas` },
-    openGraph: { title, description },
+    title: t(title),
+    description: t(description),
+    alternates: localeAlternates(locale, '/areas'),
+    openGraph: { title: t(title), description: t(description), images: ogDefaultImages },
   }
 }
 

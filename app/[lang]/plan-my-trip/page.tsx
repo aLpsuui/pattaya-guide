@@ -4,6 +4,7 @@ import Icon from '@/app/components/Icon'
 import PlanForm from './PlanForm'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { hasLocale } from '@/lib/i18n/config'
+import { localeAlternates, ogDefaultImages } from '@/lib/seo'
 
 const title = 'Plan My Trip to Pattaya - Build a Custom Itinerary | Go To Pattaya'
 const description =
@@ -11,11 +12,13 @@ const description =
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params
   const locale = hasLocale(lang) ? lang : 'en'
+  const dict = await getDictionary(locale)
+  const t = (s: string) => dict?.[s] ?? s
   return {
-    title,
-    description,
-    alternates: { canonical: `/${locale}/plan-my-trip` },
-    openGraph: { title, description },
+    title: t(title),
+    description: t(description),
+    alternates: localeAlternates(locale, '/plan-my-trip'),
+    openGraph: { title: t(title), description: t(description), images: ogDefaultImages },
   }
 }
 

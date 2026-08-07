@@ -4,6 +4,8 @@ import { unstable_cache } from 'next/cache'
 import Link from '@/app/components/LocaleLink'
 import { hasLocale } from '@/lib/i18n/config'
 import { getTranslated } from '@/lib/i18n/translateContent'
+import { getDictionary } from '@/lib/i18n/dictionaries'
+import { altLanguages } from '@/lib/seo'
 
 interface BlogPost {
   id: string
@@ -128,13 +130,16 @@ export async function generateMetadata(
   const qs = qsp.toString()
   const canonical = qs ? `/${locale}/blog?${qs}` : `/${locale}/blog`
 
+  const dict = await getDictionary(locale)
+  const t = (s: string) => dict?.[s] ?? s
   const base = TOPIC_META[topic] || { title: listTitle, description: listDescription }
-  const title = page > 1 ? `${base.title} - Page ${page}` : base.title
-  const description = page > 1 ? `${base.description} (Page ${page})` : base.description
+  const bt = t(base.title), bd = t(base.description)
+  const title = page > 1 ? `${bt} - Page ${page}` : bt
+  const description = page > 1 ? `${bd} (Page ${page})` : bd
   return {
     title,
     description,
-    alternates: { canonical },
+    alternates: { canonical, languages: altLanguages(qs ? `/blog?${qs}` : '/blog') },
     openGraph: { title, description },
   }
 }
