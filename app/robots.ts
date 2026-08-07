@@ -10,7 +10,19 @@ export default function robots(): MetadataRoute.Robots {
   return {
     // Note: no `host` directive - Yandex deprecated it in 2018 and ignores it.
     // The sitemap URL stays /sitemap.xml (now a <sitemapindex> for en + ru).
-    rules: [{ userAgent: '*', allow: '/' }],
+    // Explicit allow rows for the major AI answer-engine crawlers make intent
+    // unambiguous (they all fall under `*` already, but naming them helps
+    // discovery and signals we welcome citation).
+    rules: [
+      { userAgent: '*', allow: '/' },
+      { userAgent: 'GPTBot', allow: '/' },
+      { userAgent: 'OAI-SearchBot', allow: '/' },
+      { userAgent: 'ChatGPT-User', allow: '/' },
+      { userAgent: 'PerplexityBot', allow: '/' },
+      { userAgent: 'ClaudeBot', allow: '/' },
+      { userAgent: 'Claude-Web', allow: '/' },
+      { userAgent: 'Google-Extended', allow: '/' },
+    ],
     sitemap: `${SITE_URL}/sitemap.xml`,
   }
 }
