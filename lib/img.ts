@@ -21,6 +21,19 @@ export function cardImg(u: string | null | undefined): string | undefined {
 // public storage (already preconnected in the root layout). Only the homepage's
 // fixed tile/blog set has derivatives, so apply this ONLY at those render points.
 const SB_PUBLIC = 'https://hjkcmxfmismliskipedz.supabase.co/storage/v1/object/public'
+
+// Homepage venue-card 500px derivatives. The CDN only has -500 for ~40% of
+// venues (why the blind cardImg swap was reverted to a no-op), so we generated
+// -500s for the homepage's fixed editor's-picks + adventure venues and serve
+// them from Supabase. Apply ONLY where every venue is in that generated set
+// (the homepage VenueCard); anywhere else the -500 may not exist -> 404.
+export function venueCardImg(u: string | null | undefined): string | undefined {
+  if (!u) return undefined
+  const m = u.match(/^https:\/\/cdn\.gotopattaya\.com\/Venues\/(.+)\.webp$/i)
+  if (!m || /-\d+$/.test(m[1])) return u
+  return `${SB_PUBLIC}/venues/${m[1]}-500.webp`
+}
+
 export function tileImg(u: string | null | undefined): string | undefined {
   if (!u) return undefined
   const m = u.match(/^https:\/\/cdn\.gotopattaya\.com\/(Assets|Blogs)\/(.+)\.webp$/i)
