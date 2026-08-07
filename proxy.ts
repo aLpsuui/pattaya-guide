@@ -59,5 +59,9 @@ export const config = {
   // Everything EXCEPT Next internals, /api, and paths with a file extension
   // (sitemap.xml, robots.txt, images, llms.txt, verification html, favicon…).
   // /admin IS included so the auth gate keeps running.
-  matcher: ['/((?!_next|api|.*\\.).*)'],
+  // `opengraph-image` is a root-level metadata route with NO extension, so it
+  // would otherwise be caught here and 308-redirected to /en/opengraph-image
+  // (which doesn't exist → 404), breaking the branded OG fallback card. Exclude
+  // it so it serves directly at /opengraph-image.
+  matcher: ['/((?!_next|api|opengraph-image|.*\\.).*)'],
 }

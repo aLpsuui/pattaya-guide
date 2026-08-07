@@ -1,5 +1,26 @@
 import type { Metadata, Viewport } from 'next'
+import { Plus_Jakarta_Sans, Manrope } from 'next/font/google'
 import '../globals.css'
+
+// Self-hosted fonts (next/font). Replaces the render-blocking cross-origin
+// <link> to fonts.googleapis.com: Next inlines the @font-face, serves the woff2
+// same-origin (/_next/static), preloads them and adds size-adjust — cutting the
+// FCP/LCP render delay from the external CSS + gstatic dependency chain.
+// Jakarta (display) = Latin only (the family has no Cyrillic subset; RU headings
+// already fell back to a system font). Manrope (body) includes Cyrillic so RU
+// body copy keeps its typeface.
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-jakarta',
+  display: 'swap',
+})
+const manrope = Manrope({
+  subsets: ['latin', 'cyrillic'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-manrope',
+  display: 'swap',
+})
 import { notFound } from 'next/navigation'
 import Analytics from '../components/Analytics'
 import Navbar from '@/app/components/Navbar'
@@ -96,21 +117,15 @@ export default async function LangRootLayout({
   const [{ logo_url }, dict] = await Promise.all([getSiteSettings(), getDictionary(lang)])
 
   return (
-    <html lang={lang}>
+    <html lang={lang} className={`${jakarta.variable} ${manrope.variable}`}>
       <head>
-        {/* Warm up the image hosts so the first venue/hero images start sooner. */}
+        {/* Warm up the image hosts so the first venue/hero images start sooner.
+            Fonts are self-hosted via next/font now (no fonts.googleapis.com /
+            gstatic round-trip), so those preconnects are gone. */}
         <link rel="preconnect" href="https://cdn.gotopattaya.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://hjkcmxfmismliskipedz.supabase.co" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://cdn.gotopattaya.com" />
         <link rel="dns-prefetch" href="https://hjkcmxfmismliskipedz.supabase.co" />
-        {/* Fonts: preconnect (incl. gstatic) + a head stylesheet so they load in
-            parallel instead of chaining behind the CSS bundle's @import. */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap"
-        />
       </head>
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
