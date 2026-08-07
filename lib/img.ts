@@ -5,7 +5,12 @@
 // non-webp URLs pass through unchanged.
 export function cardImg(u: string | null | undefined): string | undefined {
   if (!u) return undefined
-  return /cdn\.gotopattaya\.com\/Venues\/.+\.webp$/i.test(u) ? u.replace(/\.webp$/i, '-500.webp') : u
+  // NOTE: the CDN only has -500 derivatives for SOME venue images, not all — a
+  // blind `-500` swap 404'd ~60% of venue photos (broken galleries/cards). Until
+  // every venue image has a real derivative, serve the original untouched. The
+  // proper optimization is generating -500s + serving them from Supabase (see
+  // tileImg for that pattern); do that as a batch, then re-enable the swap here.
+  return u
 }
 
 // Homepage tile/card images from the Assets & Blogs folders (category/plan/
