@@ -5,6 +5,7 @@ import { SITE_URL } from '@/lib/site'
 import { hasLocale } from '@/lib/i18n/config'
 import { getTranslated } from '@/lib/i18n/translateContent'
 import { localeAlternates, clampDescription, pageTitle } from '@/lib/seo'
+import { getAuthorByName, authorPersonId } from '@/lib/authors'
 import { BLOG_TEMPLATE_SCRIPT } from './blogTemplate'
 import './blog-template.css'
 
@@ -105,7 +106,7 @@ function unwrapDeadBlogLinks(html: string, publishedSlugs: Set<string>): string 
   )
 }
 
-function rewriteHtml(html: string, author?: string | null, publishedSlugs?: Set<string>): string {
+function rewriteHtml(html: string, author?: string | null, publishedSlugs?: Set<string>, authorHref?: string): string {
   // All authored image folders map flat into the Supabase `blog` bucket.
   let out = html
     .replace(/\.\.\/yeni-blog-gorselleri\//g, IMG_BASE + '/')
@@ -116,6 +117,11 @@ function rewriteHtml(html: string, author?: string | null, publishedSlugs?: Set<
   // always requests the format that's actually uploaded.
   out = out.replace(/(https:\/\/cdn\.gotopattaya\.com\/Blogs\/[^"]+?)\.(?:png|jpe?g)(?=")/gi, '$1.webp')
   if (author) out = normalizeAuthor(out, author)
+  // Link the visible byline name to the author profile page (a real internal
+  // link to the Person entity — the strongest crawlable author signal).
+  if (authorHref) {
+    out = out.replace(/(<div class="who">\s*<b>)([^<]+)(<\/b>)/, `$1<a href="${authorHref}">$2</a>$3`)
+  }
   out = out.replace(/href="([^"]+\.html)"/g, (_m, file: string) => {
     if (ROUTE_MAP[file]) return `href="${ROUTE_MAP[file]}"`
     const blog = file.match(/^blog-(.+)\.html$/)
@@ -188,6 +194,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ lang:
     getTranslated('blog_posts', post.id, 'page_html', post.page_html, locale),
   ])
 
+  // Link the byline to a registered author profile (shared Person @id + author
+  // page URL) when we know them, so every article resolves to one credentialed
+  // entity instead of a bare name string.
+  const knownAuthor = getAuthorByName(post.author)
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -198,7 +208,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ lang:
         image: post.hero_image ? [post.hero_image] : undefined,
         datePublished: post.published_at || undefined,
         dateModified: post.updated_at_post || post.published_at || undefined,
-        author: post.author
+        author: knownAuthor
+          ? { '@type': 'Person', '@id': authorPersonId(knownAuthor), name: knownAuthor.name, url: `${SITE_URL}/${locale}/author/${knownAuthor.slug}` }
+          : post.author
           ? { '@type': 'Person', name: post.author, jobTitle: post.author_title?.split('·')[0].trim() || undefined }
           : undefined,
         publisher: { '@id': `${SITE_URL}/#organization` },
@@ -236,7 +248,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ lang:
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(finalJsonLd) }}
       />
-      {pageHtml && <div dangerouslySetInnerHTML={{ __html: rewriteHtml(pageHtml, post.author, publishedSlugs) }} />}
+      {pageHtml && <div dangerouslySetInnerHTML={{ __html: rewriteHtml(pageHtml, post.author, publishedSlugs, knownAuthor ? `/${locale}/author/${knownAuthor.slug}` : undefined) }} />}
       <BlogScript script={BLOG_TEMPLATE_SCRIPT} />
     </>
   )
