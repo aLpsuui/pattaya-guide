@@ -339,11 +339,13 @@ export default async function VenuePage({ params }: { params: Promise<{ lang: st
           ? { '@type': 'GeoCoordinates', latitude: v.latitude, longitude: v.longitude }
           : undefined,
         sameAs: sameAs.length ? sameAs : undefined,
-        // No aggregateRating in JSON-LD: the ratings come from Google Maps, not
-        // first-party reviews we collect and display, so marking them up is
-        // self-serving per Google's review-snippet policy. The rating still
-        // shows in the visible page (with its source), just not as rich-result
-        // markup - closing a site-wide structured-data risk.
+        // aggregateRating mirrors the rating shown on the page (e.g. "4.8 · 46
+        // reviews"). Google requires the value to be visible on-page — it is —
+        // and this drives the star rich result. Only emitted when we actually
+        // have a rating + a non-zero review count.
+        aggregateRating: v.rating != null && v.review_count != null && v.review_count > 0
+          ? { '@type': 'AggregateRating', ratingValue: v.rating, reviewCount: v.review_count, bestRating: 5, worstRating: 1 }
+          : undefined,
       },
       {
         '@type': 'BreadcrumbList',
