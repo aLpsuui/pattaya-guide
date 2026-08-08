@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { unstable_cache } from 'next/cache'
 import Link from '@/app/components/LocaleLink'
@@ -100,7 +101,7 @@ const TOPIC_META: Record<string, { title: string; description: string }> = {
   },
 }
 
-const PER_PAGE = 20
+const PER_PAGE = 35
 const TOPICS = [
   { key: 'all', label: 'All' },
   { key: 'eat', label: 'Eat & Drink' },
@@ -153,7 +154,11 @@ export default async function BlogPage({ params, searchParams }: { params: Promi
   const filtered = topic === 'all' ? all : all.filter((p) => categoryToFilter(p.category) === topic)
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE))
-  const page = Math.min(Math.max(1, parseInt(sp.page || '1', 10) || 1), totalPages)
+  // Reject out-of-range page numbers with a real 404 instead of silently serving
+  // the last page (which created an infinite ?page=N crawl trap - audit finding).
+  const rawPage = Math.max(1, parseInt(sp.page || '1', 10) || 1)
+  if (rawPage > totalPages) notFound()
+  const page = rawPage
   let slice = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE)
   // Translate the visible cards' DB text for /ru (cached; shares keys with the
   // detail page so it's instant once a post has been translated once).

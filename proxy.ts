@@ -41,6 +41,21 @@ export async function proxy(req: NextRequest) {
     return NextResponse.redirect(url)
   }
 
+  // --- 1b) Merge duplicate venue slugs (301) ---
+  // The same business was seeded twice under a bare and a "-pattaya" slug; the
+  // duplicate reads as thin/duplicate content. Fold each into the canonical one.
+  const VENUE_MERGE: Record<string, string> = {
+    'manta-marina-pattaya': 'manta-marina',
+    'real-divers-pattaya': 'real-divers',
+    'great-grand-sweet-destination-pattaya': 'great-grand-sweet-destination',
+  }
+  const vm = pathname.match(/^(\/(?:en|ru))?\/venues\/([^/]+)\/?$/)
+  if (vm && VENUE_MERGE[vm[2]]) {
+    const url = req.nextUrl.clone()
+    url.pathname = `${vm[1] || ''}/venues/${VENUE_MERGE[vm[2]]}`
+    return NextResponse.redirect(url, 301)
+  }
+
   // --- 2) Public locale routing ---
   const hasPrefix = locales.some((l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`))
   if (hasPrefix) return NextResponse.next()
