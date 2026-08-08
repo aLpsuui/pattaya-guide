@@ -6,7 +6,7 @@ import { hasLocale } from '@/lib/i18n/config'
 import { getTranslated } from '@/lib/i18n/translateContent'
 import { localeAlternates, clampDescription, pageTitle } from '@/lib/seo'
 import { getAuthorByName, authorPersonId } from '@/lib/authors'
-import { isUntranslatedRu, cyrillicRatio } from '@/lib/i18n/cyrillic'
+import { isUntranslatedRu } from '@/lib/i18n/cyrillic'
 import { BLOG_TEMPLATE_SCRIPT } from './blogTemplate'
 import './blog-template.css'
 
@@ -163,15 +163,11 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   // Keep a still-English RU page out of the index (it would read as a duplicate
   // of the EN page and drag down site-wide crawl demand). Self-heals once the
   // translation lands. follow:true so its internal links still pass equity.
-  // The title/description can be translated while the article BODY is still
-  // English, so judge on the body too (getTranslated warms + caches it when a
-  // translation is possible; returns the English source otherwise).
-  let bodyUntranslated = false
-  if (locale === 'ru' && post.page_html) {
-    const bodyRu = await getTranslated('blog_posts', post.id, 'page_html', post.page_html, locale)
-    bodyUntranslated = cyrillicRatio(bodyRu.replace(/<[^>]+>/g, ' ')) < 0.3
-  }
-  const untranslated = isUntranslatedRu(locale, title, description) || bodyUntranslated
+  // NOTE: judged on title+description only - translating the full page_html here
+  // to also check the body made metadata generation hang when the translation
+  // API is unavailable, so the body-level check lives in the page component's
+  // cached render path instead (see the noindex meta emitted there).
+  const untranslated = isUntranslatedRu(locale, title, description)
   return {
     title: pageTitle(title),
     description: clampDescription(description),
