@@ -4,6 +4,7 @@ import Icon from '@/app/components/Icon'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { hasLocale } from '@/lib/i18n/config'
 import { localeAlternates, ogDefaultImages } from '@/lib/seo'
+import { SITE_URL } from '@/lib/site'
 
 const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 
@@ -53,8 +54,21 @@ export default async function AboutPage({ params }: { params: Promise<{ lang: st
   const dict = await getDictionary(locale)
   const t = (s: string) => dict?.[s] ?? s
 
+  const aboutLd = {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    '@id': `${SITE_URL}/${locale}/about#page`,
+    url: `${SITE_URL}/${locale}/about`,
+    name: t(title),
+    description: t(description),
+    isPartOf: { '@id': `${SITE_URL}/#website` },
+    about: { '@id': `${SITE_URL}/#organization` },
+    inLanguage: locale,
+  }
+
   return (
     <div className="about-page">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutLd) }} />
       {/* HERO */}
       <section className="page-hero">
         <div className="container inner">

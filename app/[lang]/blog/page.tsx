@@ -6,6 +6,7 @@ import { hasLocale } from '@/lib/i18n/config'
 import { getTranslated } from '@/lib/i18n/translateContent'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { altLanguages } from '@/lib/seo'
+import { SITE_URL } from '@/lib/site'
 
 interface BlogPost {
   id: string
@@ -189,8 +190,29 @@ export default async function BlogPage({ params, searchParams }: { params: Promi
     return out
   })()
 
+  // CollectionPage + ItemList so the blog index is a first-class listing entity
+  // (the audit flagged the list page as having only Organization/WebSite schema).
+  const blogLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    '@id': `${SITE_URL}/${locale}/blog#page`,
+    url: `${SITE_URL}/${locale}/blog`,
+    name: 'Pattaya Blog',
+    isPartOf: { '@id': `${SITE_URL}/#website` },
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: slice.map((p, i) => ({
+        '@type': 'ListItem',
+        position: (page - 1) * PER_PAGE + i + 1,
+        url: `${SITE_URL}/${locale}/blog/${p.slug}`,
+        name: p.title,
+      })),
+    },
+  }
+
   return (
     <main id="main">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogLd) }} />
       {/* PAGE HERO */}
       <section className="page-hero">
         <div className="container inner">

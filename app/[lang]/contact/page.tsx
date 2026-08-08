@@ -5,6 +5,7 @@ import ContactForm from './ContactForm'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { hasLocale } from '@/lib/i18n/config'
 import { localeAlternates, ogDefaultImages } from '@/lib/seo'
+import { SITE_URL } from '@/lib/site'
 
 const title = 'Contact Us | Go To Pattaya'
 const description = 'Get in touch with the Go To Pattaya team - corrections, listings and partnerships.'
@@ -27,8 +28,20 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
   const dict = await getDictionary(locale)
   const t = (s: string) => dict?.[s] ?? s
 
+  const contactLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ContactPage',
+    '@id': `${SITE_URL}/${locale}/contact#page`,
+    url: `${SITE_URL}/${locale}/contact`,
+    name: t(title),
+    description: t(description),
+    isPartOf: { '@id': `${SITE_URL}/#website` },
+    inLanguage: locale,
+  }
+
   return (
     <div className="about-page">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(contactLd) }} />
       <section className="page-hero">
         <div className="container inner">
           <nav className="crumb" aria-label="Breadcrumb">
@@ -44,7 +57,8 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
 
       <section className="section">
         <div className="container" style={{ maxWidth: 760 }}>
-          <div className="grid g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: 'var(--s4)' }}>
+          <h2 style={{ fontSize: 'var(--text-h4)' }}>{t('Email us directly')}</h2>
+          <div className="grid g3" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: 'var(--s4)', marginTop: 'var(--s3)' }}>
             <div className="feature">
               <h3>{t('General & corrections')}</h3>
               <p><a href="mailto:hello@gotopattaya.com" style={{ color: 'var(--ocean)', fontWeight: 600 }}>hello@gotopattaya.com</a></p>
