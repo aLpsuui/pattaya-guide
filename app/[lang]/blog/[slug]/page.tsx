@@ -6,6 +6,7 @@ import { hasLocale } from '@/lib/i18n/config'
 import { getTranslated } from '@/lib/i18n/translateContent'
 import { localeAlternates, clampDescription, pageTitle } from '@/lib/seo'
 import { getAuthorByName, authorPersonId } from '@/lib/authors'
+import { isUntranslatedRu } from '@/lib/i18n/cyrillic'
 import { BLOG_TEMPLATE_SCRIPT } from './blogTemplate'
 import './blog-template.css'
 
@@ -159,9 +160,14 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     getTranslated('blog_posts', post.id, 'description', post.description, locale),
   ])
   const canonical = `/${locale}/blog/${post.slug}`
+  // Keep a still-English RU page out of the index (it would read as a duplicate
+  // of the EN page and drag down site-wide crawl demand). Self-heals once the
+  // translation lands. follow:true so its internal links still pass equity.
+  const untranslated = isUntranslatedRu(locale, title, description)
   return {
     title: pageTitle(title),
     description: clampDescription(description),
+    robots: untranslated ? { index: false, follow: true } : undefined,
     alternates: localeAlternates(locale, `/blog/${post.slug}`),
     openGraph: {
       type: 'article',

@@ -9,6 +9,7 @@ import { getTranslated, translateMany } from '@/lib/i18n/translateContent'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { hasLocale } from '@/lib/i18n/config'
 import { localeAlternates, clampDescription, pageTitle, ogDefaultImages } from '@/lib/seo'
+import { isUntranslatedRu } from '@/lib/i18n/cyrillic'
 import { cardImg } from '@/lib/img'
 
 // Re-generate from the database at most once every 60s (ISR), so edits to a
@@ -157,9 +158,13 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   // pageTitle drops the " | Go To Pattaya" suffix when the base already fills the
   // ~60-char SERP budget (name + neighborhood are the ranking signal).
   const title = pageTitle(`${v.name} - ${v.neighborhood || 'Pattaya'}`)
+  // Venue names/neighbourhoods stay Latin by design, so judge the RU translation
+  // by the description/tagline; noindex while it's still English (duplicate of EN).
+  const untranslated = isUntranslatedRu(locale, descTx, taglineTx)
   return {
     title,
     description,
+    robots: untranslated ? { index: false, follow: true } : undefined,
     alternates: localeAlternates(locale, `/venues/${v.slug}`),
     openGraph: {
       type: 'website',

@@ -15,6 +15,7 @@ import guidesData from './area-guides.json'
 import { getTranslated, translateMany } from '@/lib/i18n/translateContent'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { hasLocale } from '@/lib/i18n/config'
+import { isUntranslatedRu } from '@/lib/i18n/cyrillic'
 
 export const revalidate = 300
 
@@ -116,6 +117,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   return {
     title: `${area.name}, Pattaya - ${t('Area Guide')} | Go To Pattaya`,
     description: desc,
+    robots: isUntranslatedRu(locale, blurbTx) ? { index: false, follow: true } : undefined,
     alternates: localeAlternates(locale, `/areas/${slug}`),
     openGraph: { title: `${area.name}, Pattaya`, description: desc, url: `${SITE_URL}/${locale}/areas/${slug}`, images: info?.hero ? [{ url: info.hero }] : undefined },
   }
