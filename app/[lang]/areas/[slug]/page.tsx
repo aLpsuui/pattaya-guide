@@ -156,22 +156,23 @@ export default async function AreaDetailPage({ params }: { params: Promise<{ lan
   const tt = (s: string | null | undefined) => (s ? (typeMap.get(s) ?? catMap.get(s) ?? s) : s)
 
   const faq = guide ? extractFaq(guide.html) : []
+  const areaUrl = `${SITE_URL}/${locale}/areas/${slug}`
   const graph: Record<string, unknown>[] = [
     {
       '@type': 'BreadcrumbList',
       itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
-        { '@type': 'ListItem', position: 2, name: 'Areas', item: `${SITE_URL}/areas` },
-        { '@type': 'ListItem', position: 3, name: area.name, item: `${SITE_URL}/areas/${slug}` },
+        { '@type': 'ListItem', position: 1, name: t('Home'), item: `${SITE_URL}/${locale}` },
+        { '@type': 'ListItem', position: 2, name: t('Areas'), item: `${SITE_URL}/${locale}/areas` },
+        { '@type': 'ListItem', position: 3, name: area.name, item: areaUrl },
       ],
     },
     {
       '@type': 'Place',
-      '@id': `${SITE_URL}/areas/${slug}#place`,
+      '@id': `${areaUrl}#place`,
       name: `${area.name}, Pattaya`,
       description: info?.blurb || undefined,
       image: info?.hero || undefined,
-      url: `${SITE_URL}/areas/${slug}`,
+      url: areaUrl,
       containedInPlace: {
         '@type': 'City',
         name: 'Pattaya',
@@ -179,10 +180,26 @@ export default async function AreaDetailPage({ params }: { params: Promise<{ lan
       },
     },
   ]
+  // ItemList of the places listed on this area hub - tells Google the page is a
+  // curated listing (audit Faz 3.12). URLs locale-prefixed to match canonical.
+  if (venues.length) {
+    graph.push({
+      '@type': 'ItemList',
+      '@id': `${areaUrl}#places`,
+      name: `${t('Places in')} ${area.name}`,
+      numberOfItems: venues.length,
+      itemListElement: venues.slice(0, 40).map((v, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        url: `${SITE_URL}/${locale}/venues/${v.slug}`,
+        name: v.name,
+      })),
+    })
+  }
   if (faq.length) {
     graph.push({
       '@type': 'FAQPage',
-      '@id': `${SITE_URL}/areas/${slug}#faq`,
+      '@id': `${areaUrl}#faq`,
       mainEntity: faq.map((f) => ({
         '@type': 'Question',
         name: f.q,
