@@ -239,7 +239,15 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
       {/* HERO */}
       <section className="hero">
         <div className="hero-media">
-          <div className="hero-bg"></div>
+          {/* LCP image as a real <img fetchpriority=high> (was a CSS background,
+              which paints later in the render chain and is invisible to Google
+              Images). Mobile gets the 800px source, desktop the 1600px. */}
+          <picture>
+            <source media="(max-width:768px)" srcSet={`${ASSETS}/hero-pattaya-800.webp`} />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="hero-bg" src={`${ASSETS}/hero-pattaya-1600.webp`} alt="Aerial view of Pattaya beach and bay"
+              fetchPriority="high" decoding="async" width={1600} height={900} />
+          </picture>
           <div className="hero-overlay"></div>
         </div>
         <div className="container hero-inner">
