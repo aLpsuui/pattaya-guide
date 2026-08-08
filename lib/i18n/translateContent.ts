@@ -60,9 +60,17 @@ async function translate(text: string, isHtml: boolean): Promise<string | null> 
   // body). HTML fragments (blog bodies, area guides) keep the large budget.
   const maxTokens = isHtml ? 32000 : Math.min(4000, Math.max(256, text.length * 2))
 
+  // Bound the request so a very large body (e.g. a 40 KB blog article) can never
+  // hang the page render past the serverless function budget: on timeout we abort
+  // and fall back to the English source. Big HTML bodies are translated out of
+  // band (a background/batch job that writes straight to the cache); this on-
+  // demand path only needs to keep small/medium fields flowing without stalling.
+  const ctrl = new AbortController()
+  const timer = setTimeout(() => ctrl.abort(), 45000)
   try {
     const res = await fetch(API_URL, {
       method: 'POST',
+      signal: ctrl.signal,
       headers: {
         'content-type': 'application/json',
         'x-api-key': apiKey,
@@ -107,6 +115,8 @@ async function translate(text: string, isHtml: boolean): Promise<string | null> 
     return out.trim() || null
   } catch {
     return null
+  } finally {
+    clearTimeout(timer)
   }
 }
 
