@@ -43,6 +43,17 @@ const AREA_GUIDE_SCRIPT = String.raw`
 const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 const guides = guidesData as Record<string, { name: string; html: string }>
 
+// The authored guide HTML links to other pages with locale-less paths
+// ("/areas/naklua", "/eat-and-drinks") - each of those 308-redirects and burns
+// crawl budget. Prefix every internal href with the active locale (skip already
+// prefixed, hashes, external, /api, /admin). Query strings + hashes are kept.
+function localizeLinks(html: string, locale: string): string {
+  return html.replace(/href="(\/[^/"][^"#]*)/g, (m, path: string) => {
+    if (/^\/(en|ru)(\/|$)/.test(path) || path.startsWith('/api') || path.startsWith('/admin')) return m
+    return `href="/${locale}${path}`
+  })
+}
+
 // The bespoke area guides carry a FAQ accordion as authored HTML (not
 // structured data). R-4: pull the Q&A pairs out so we can emit FAQPage schema
 // - same rich-result opportunity the blog posts already get.
@@ -188,7 +199,7 @@ export default async function AreaDetailPage({ params }: { params: Promise<{ lan
         // Rich editorial area guide (bespoke .det-area design). translate="no"
         // keeps Google Translate from breaking the CSS grids (e.g. quick numbers).
         <>
-          <div translate="no" dangerouslySetInnerHTML={{ __html: guideHtml }} />
+          <div translate="no" dangerouslySetInnerHTML={{ __html: localizeLinks(guideHtml, locale) }} />
           <BlogScript script={AREA_GUIDE_SCRIPT} />
         </>
       ) : (
@@ -243,7 +254,7 @@ export default async function AreaDetailPage({ params }: { params: Promise<{ lan
           ) : (
             <p className="adx-empty">
               <Icon name="pin" size={32} style={{ color: 'var(--text-faint)' }} /><br />
-              {t('We don’t have individual places listed for')} {t(area.name)} {t('yet - explore it on the')} <a href="/areas#areas-map">{t('map')}</a>.
+              {t('We don’t have individual places listed for')} {t(area.name)} {t('yet - explore it on the')} <Link href="/areas#areas-map">{t('map')}</Link>.
             </p>
           )}
 

@@ -280,7 +280,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
               <h2>{t('Six categories. Every kind of day.')}</h2>
               <p>{t('Six categories cover every kind of day in Pattaya. Re-checked weekly - if a place closes or changes, the page updates within days.')}</p>
             </div>
-            <a href="/map" className="viewall">{t('All categories')} <Arrow /></a>
+            <Link href="/map" className="viewall">{t('All categories')} <Arrow /></Link>
           </div>
           <div className="cats-grid">
             {categories.map(cat => (
@@ -304,17 +304,17 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
               <h2>{t("Start here if you're visiting Pattaya.")}</h2>
               <p>{t('Four detailed guides covering the questions every first-time visitor asks before booking - month, transport, district and the small things that catch people out.')}</p>
             </div>
-            <a href="/plan-my-trip" className="viewall">{t('All planning guides')} <Arrow /></a>
+            <Link href="/plan-my-trip" className="viewall">{t('All planning guides')} <Arrow /></Link>
           </div>
           <div className="plan-grid">
             {planCards.map(card => (
-              <a key={card.title} href={card.href} className="plan-card">
+              <Link key={card.title} href={card.href} className="plan-card">
                 <div className="bg" style={{ backgroundImage: `url(${tileImg(`${ASSETS}/${card.img}`)})` }}></div>
                 <span className="pill">{t(card.pill)}</span>
                 <h3>{t(card.title)}</h3>
                 <p>{t(card.text)}</p>
                 <span className="arrow">{t(card.arrow)} <Arrow /></span>
-              </a>
+              </Link>
             ))}
           </div>
         </div>
@@ -329,7 +329,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
               <h2>{t('The 10 best places in Pattaya')}</h2>
               <p>{t('Hand-picked by our editorial team. Every place visited in person, photographed by us, re-checked weekly.')}</p>
             </div>
-            <a href="/map" className="viewall">{t('View all places')} <Arrow /></a>
+            <Link href="/map" className="viewall">{t('View all places')} <Arrow /></Link>
           </div>
           <div className="carousel-wrap">
             <CarButton target="topCar" dir={-1} label="Previous" />
@@ -350,7 +350,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
               <h2>{t('Adrenaline & adventure')}</h2>
               <p>{t('Sky dives, paramotors, jet skis, PADI courses and bungee - every operator licensed in Thailand and re-checked every 30 days for safety standards.')}</p>
             </div>
-            <a href="/things-to-do" className="viewall">{t('All adventures')} <Arrow /></a>
+            <Link href="/things-to-do" className="viewall">{t('All adventures')} <Arrow /></Link>
           </div>
           <div className="carousel-wrap">
             <CarButton target="extremeCar" dir={-1} label="Previous" />
@@ -375,14 +375,14 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
           </div>
           <div className="dist-grid">
             {districts.map(d => (
-              <a key={d.name} href={d.href} className={`dist ${d.cls}`}>
+              <Link key={d.name} href={d.href} className={`dist ${d.cls}`}>
                 <div className="dist-bg" style={{ backgroundImage: `url(${tileImg(`${ASSETS}/${d.img}`)})` }}></div>
                 <div className="dist-content">
                   <span className="pill pill-glass">{t(d.pill)}</span>
                   <h3>{t(d.name)}</h3>
                   <p>{t(d.desc)}</p>
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
         </div>
