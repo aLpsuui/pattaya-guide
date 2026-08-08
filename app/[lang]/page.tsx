@@ -187,7 +187,7 @@ function VenueCard({ v, dark = false, tt = (s) => s }: { v: Venue; dark?: boolea
         <span className="tagpill">{tt(v.categories?.name_en || v.venue_type)}</span>
       </div>
       <div className="pb">
-        <h4>{v.name}</h4>
+        <h3>{v.name}</h3>
         <div className="meta"><span>{tt(v.venue_type)}</span>{v.address && <span>· {v.address.slice(0, 25)}</span>}</div>
         <div className="rate">
           <div className="left"><Star /> {v.rating?.toFixed(1)} {v.review_count != null && <span className="count">({v.review_count.toLocaleString()})</span>}</div>
