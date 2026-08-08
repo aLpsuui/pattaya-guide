@@ -56,6 +56,14 @@ async function paths(): Promise<Spec[]> {
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 
+// Normalise every lastmod to full ISO 8601 (W3C datetime). Blog published_at is a
+// DATE column ('2026-06-10'), venue updated_at a timestamptz - the audit flagged
+// the mixed date-only / datetime formats; Google only trusts a consistent format.
+function isoLastmod(v: string): string {
+  const d = new Date(v)
+  return isNaN(d.getTime()) ? v : d.toISOString()
+}
+
 // Full <urlset> XML for one locale, with reciprocal hreflang on every <url>.
 export async function localeSitemapXml(locale: 'en' | 'ru'): Promise<string> {
   const specs = await paths()
@@ -67,7 +75,7 @@ export async function localeSitemapXml(locale: 'en' | 'ru'): Promise<string> {
       `<xhtml:link rel="alternate" hreflang="en" href="${esc(en)}"/>` +
       `<xhtml:link rel="alternate" hreflang="ru" href="${esc(ru)}"/>` +
       `<xhtml:link rel="alternate" hreflang="x-default" href="${esc(en)}"/>` +
-      `<lastmod>${s.lastmod}</lastmod><changefreq>${s.changefreq}</changefreq><priority>${s.priority}</priority></url>`
+      `<lastmod>${isoLastmod(s.lastmod)}</lastmod><changefreq>${s.changefreq}</changefreq><priority>${s.priority}</priority></url>`
   }).join('')
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">${urls}</urlset>`
 }
