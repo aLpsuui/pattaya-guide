@@ -54,7 +54,7 @@ export const getNavMenu = unstable_cache(
         .map((g) => ({
           label: g.label,
           count: catRows.filter((r) => groupKeyForType(p.key, r.venue_type) === g.key).length,
-          href: `${href}?type=${g.key}`,
+          href: `${href}/${g.key}`,
         }))
         .filter((s) => s.count > 0)
       out.push({ ...p, href, subs })

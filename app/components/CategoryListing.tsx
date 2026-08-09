@@ -1,4 +1,6 @@
+import type { CSSProperties } from 'react'
 import { supabase } from '@/lib/supabase'
+import Link from '@/app/components/LocaleLink'
 import Icon from '@/app/components/Icon'
 import Star from '@/app/components/Star'
 import CategoryDirectory, { VItem } from '@/app/components/CategoryDirectory'
@@ -7,6 +9,10 @@ import { hasLocale } from '@/lib/i18n/config'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { translateMany } from '@/lib/i18n/translateContent'
 import { groupsForCategory, groupKeyForType } from '@/lib/venueGroups'
+
+// A dedicated subcategory view (e.g. /eat-and-drinks/cafes): filters the listing
+// to one venueGroups bucket and swaps the hero copy for that subcategory.
+export interface SubView { key: string; label: string; h1: string; em?: string; lead: string }
 
 const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 
@@ -42,6 +48,15 @@ export interface CatConfig {
 }
 
 const img = (s: string) => (s.startsWith('http') ? s : `${ASSETS}/${s}`)
+
+// Pill style for the subcategory switcher chips (self-contained, no new CSS).
+const chipStyle = (on: boolean): CSSProperties => ({
+  display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 14px', borderRadius: 999,
+  fontSize: 14, fontWeight: 600, textDecoration: 'none', lineHeight: 1,
+  border: '1.5px solid ' + (on ? 'transparent' : 'var(--border-color, #dbe3ea)'),
+  background: on ? 'var(--brand, #034487)' : 'var(--surface, #fff)',
+  color: on ? '#fff' : 'var(--text-muted, #46586b)',
+})
 const slugify = (t: string | null) => (t || 'other').toLowerCase().replace(/&/g, ' ').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'other'
 
 // Canonical Pattaya area buckets from a messy neighborhood string.
@@ -67,10 +82,12 @@ function areaOf(nb: string | null): { slug: string; label: string } | null {
   return { slug: slugify(nb), label: nb.trim() }
 }
 
-export default async function CategoryListing({ cfg, lang }: { cfg: CatConfig; lang: string }) {
+export default async function CategoryListing({ cfg, lang, sub }: { cfg: CatConfig; lang: string; sub?: SubView }) {
   const locale = hasLocale(lang) ? lang : 'en'
   const dict = await getDictionary(locale)
   const t = (s: string) => dict?.[s] ?? s
+  const basePath = cfg.path || `/${cfg.slug}`
+  const vgroups = groupsForCategory(cfg.slug)
   const { data } = await supabase
     .from('venues')
     .select('id, slug, name, rating, review_count, venue_type, price_range, address, neighborhood, image_url, categories!inner(slug)')
@@ -78,11 +95,19 @@ export default async function CategoryListing({ cfg, lang }: { cfg: CatConfig; l
     .eq('categories.slug', cfg.slug)
     .order('rating', { ascending: false, nullsFirst: false })
     .order('review_count', { ascending: false, nullsFirst: false })
-  const venues = (data || []) as unknown as Venue[]
+  const allVenues = (data || []) as unknown as Venue[]
   // Lead with photographed venues (stable - keeps the rating order within each
   // group) so the grid + editor's picks look image-rich; photo-less ones fall
   // to the end rather than being hidden.
-  venues.sort((a, b) => (a.image_url ? 0 : 1) - (b.image_url ? 0 : 1))
+  allVenues.sort((a, b) => (a.image_url ? 0 : 1) - (b.image_url ? 0 : 1))
+  // On a subcategory page, narrow the listing to that one group.
+  const venues = sub ? allVenues.filter((v) => groupKeyForType(cfg.slug, v.venue_type) === sub.key) : allVenues
+  // Sibling subcategory links (computed over the FULL category, not the filtered set).
+  const siblings = sub
+    ? vgroups
+        .map((g) => ({ key: g.key, label: t(g.label), href: `${basePath}/${g.key}`, n: allVenues.filter((v) => groupKeyForType(cfg.slug, v.venue_type) === g.key).length }))
+        .filter((s) => s.n > 0)
+    : []
   // Translate venue_type labels (shared/deduped); venue NAMES stay Latin. Used
   // for the card tags/cuisine and the raw-type filter labels below.
   const typeMap = await translateMany('venue_types', 'label', venues.map((v) => v.venue_type), locale)
@@ -93,10 +118,11 @@ export default async function CategoryListing({ cfg, lang }: { cfg: CatConfig; l
   const typeLabel = cfg.typeLabel || 'Type'
   const typeIcon = cfg.typeIcon || 'filter'
   // Translated hero/copy strings (English source stays in cfg for SEO/JSON-LD).
-  const kicker = t(cfg.kicker)
-  const h1 = t(cfg.h1)
-  const em = cfg.em ? t(cfg.em) : undefined
-  const lead = t(cfg.lead)
+  // On a subcategory page the hero swaps to that subcategory's copy.
+  const h1 = t(sub ? sub.h1 : cfg.h1)
+  const emSrc = sub ? sub.em : cfg.em
+  const em = emSrc ? t(emSrc) : undefined
+  const lead = t(sub ? sub.lead : cfg.lead)
   const searchPlaceholder = t(cfg.searchPlaceholder)
   const badge = t(cfg.badge || 'Locally verified · weekly')
 
@@ -104,7 +130,6 @@ export default async function CategoryListing({ cfg, lang }: { cfg: CatConfig; l
   // The clean groups come from lib/venueGroups (shared with the nav menu) so a
   // submenu item and its filter button here are always the same bucket. Falls
   // back to a page-local primaryGroups config, then to raw venue_type.
-  const vgroups = groupsForCategory(cfg.slug)
   const familyOf = (v: Venue): string => {
     if (vgroups.length) return groupKeyForType(cfg.slug, v.venue_type) || 'other'
     if (cfg.primaryGroups) {
@@ -134,6 +159,8 @@ export default async function CategoryListing({ cfg, lang }: { cfg: CatConfig; l
     primaries = [...counts.entries()].sort((a, b) => b[1].n - a[1].n).slice(0, 10)
       .map(([slug, e]) => ({ slug, label: tt(e.label) as string, n: e.n }))
   }
+  // On a subcategory page the type is fixed - hide the type facet entirely.
+  if (sub) primaries = []
 
   // ---- AREA facet (multi select) ---------------------------------------
   const areaCounts = new Map<string, { label: string; n: number }>()
@@ -160,19 +187,18 @@ export default async function CategoryListing({ cfg, lang }: { cfg: CatConfig; l
 
   // ---- structured data: breadcrumb + listing ---------------------------
   const catName = cfg.kicker.split('·')[0].trim() || cfg.h1
+  const crumbs: object[] = [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/${locale}` },
+    { '@type': 'ListItem', position: 2, name: catName, item: `${SITE_URL}/${locale}${basePath}` },
+  ]
+  if (sub) crumbs.push({ '@type': 'ListItem', position: 3, name: sub.label, item: `${SITE_URL}/${locale}${basePath}/${sub.key}` })
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
-      {
-        '@type': 'BreadcrumbList',
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/${locale}` },
-          { '@type': 'ListItem', position: 2, name: catName, item: `${SITE_URL}/${locale}${cfg.path || `/${cfg.slug}`}` },
-        ],
-      },
+      { '@type': 'BreadcrumbList', itemListElement: crumbs },
       {
         '@type': 'ItemList',
-        name: `${catName} in Pattaya`,
+        name: `${sub ? sub.label : catName} in Pattaya`,
         numberOfItems: total,
         itemListElement: venues.slice(0, 25).map((v, i) => ({
           '@type': 'ListItem',
@@ -192,14 +218,19 @@ export default async function CategoryListing({ cfg, lang }: { cfg: CatConfig; l
       <section className="eat-hero">
         <div className="container eat-hero__inner">
           <div className="eat-hero__copy">
-            <div className="eat-hero__meta">
-              <span><b>{total || '-'}</b> {t(unit)}</span><span className="dot" aria-hidden="true"></span>
-              <span>{t('Updated')} <b>{t('weekly')}</b></span><span className="dot" aria-hidden="true"></span>
-              <span>{t('Locally verified')}</span>
-            </div>
-            <p className="kicker">{kicker}</p>
             <h1>{em ? <>{h1.split(em)[0]}<span>{em}</span>{h1.split(em)[1]}</> : h1}</h1>
             <p className="eat-hero__lead">{lead}</p>
+
+            {sub && siblings.length > 0 && (
+              <nav aria-label="Subcategories" style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 18 }}>
+                <Link href={basePath} style={chipStyle(false)}>{t('All')}</Link>
+                {siblings.map((s) => (
+                  <Link key={s.key} href={s.href} aria-current={s.key === sub?.key ? 'page' : undefined} style={chipStyle(s.key === sub?.key)}>
+                    {s.label} <span style={{ opacity: 0.6, fontWeight: 500 }}>{s.n}</span>
+                  </Link>
+                ))}
+              </nav>
+            )}
 
             <div className="search" role="search">
               <Icon name="search" size={20} style={{ color: 'var(--text-faint)' }} />
@@ -250,6 +281,7 @@ export default async function CategoryListing({ cfg, lang }: { cfg: CatConfig; l
               unitSingular={unitSingular}
               total={total}
               dict={dict}
+              hideTypeRail={!!sub}
             />
           )}
         </div>

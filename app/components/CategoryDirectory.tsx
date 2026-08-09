@@ -33,11 +33,12 @@ interface Props {
   unitSingular: string
   total: number
   dict?: Record<string, string>
+  hideTypeRail?: boolean   // dedicated subcategory page: the type is fixed, so hide the type facet
 }
 
 const STEP = 18
 
-export default function CategoryDirectory({ venues, primaries, areas, typeLabel, typeIcon, unit, unitSingular, total, dict }: Props) {
+export default function CategoryDirectory({ venues, primaries, areas, typeLabel, typeIcon, unit, unitSingular, total, dict, hideTypeRail }: Props) {
   const t = (s: string) => dict?.[s] ?? s
   const [primary, setPrimary] = useState('all')
   const [areaSet, setAreaSet] = useState<Set<string>>(new Set())
@@ -142,6 +143,7 @@ export default function CategoryDirectory({ venues, primaries, areas, typeLabel,
           </div>
 
           {/* primary TYPE (single) */}
+          {!hideTypeRail && (
           <div className="fgroup">
             <p className="fgroup__t" aria-hidden="true">{t(typeLabel)}</p>
             <div className="ftype" role="group" aria-label={`${t(typeLabel)} ${t('(choose one)')}`}>
@@ -155,6 +157,7 @@ export default function CategoryDirectory({ venues, primaries, areas, typeLabel,
               ))}
             </div>
           </div>
+          )}
 
           {/* AREA (multi) */}
           {areas.length > 1 && (

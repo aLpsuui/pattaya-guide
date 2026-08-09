@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 import { hasLocale } from '@/lib/i18n/config'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { localeAlternates, ogDefaultImages } from '@/lib/seo'
-import CategoryListing, { type CatConfig } from '@/app/components/CategoryListing'
+import CategoryListing from '@/app/components/CategoryListing'
+import { CONFIGS } from '@/lib/categoryConfigs'
 
 export const revalidate = 600
 
@@ -22,20 +23,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   }
 }
 
-const cfg: CatConfig = {
-  slug: 'wellness-and-beauty',
-  kicker: 'Wellness & Beauty · Pattaya',
-  h1: 'Relax, restore and be pampered',
-  em: 'restore',
-  lead: 'From honest neighbourhood Thai-massage shops to luxury spa resorts and beauty salons - a locally verified guide to where Pattaya unwinds, with real prices and hours.',
-  heroImg: 'pattaya-wellness-1.webp',
-  heroImg2: 'best-restaurants-pattaya.webp',
-  badge: 'Locally verified · weekly',
-  searchPlaceholder: 'Search spa, massage, beauty…',
-  unit: 'venues',
-}
-
 export default async function WellnessPage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params
-  return <CategoryListing cfg={cfg} lang={lang} />
+  return <CategoryListing cfg={CONFIGS['wellness-and-beauty']} lang={lang} />
 }

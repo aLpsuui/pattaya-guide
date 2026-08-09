@@ -3,6 +3,15 @@ import { supabase } from '@/lib/supabase'
 import { SITE_URL } from '@/lib/site'
 import { AREAS } from '@/lib/areas'
 import { AUTHORS } from '@/lib/authors'
+import { CATEGORY_GROUPS } from '@/lib/venueGroups'
+
+// Public URL path per DB category slug (matches the route folders).
+const CAT_PATH: Record<string, string> = {
+  'eat-and-drinks': '/eat-and-drinks',
+  'thinks-to-do': '/things-to-do',
+  'nightlife': '/nightlife',
+  'yoga-and-fitness': '/yoga-and-fitness',
+}
 
 // Shared sitemap data for the split, index-based sitemap. /sitemap.xml is a
 // <sitemapindex> (app/sitemap.xml/route.ts) pointing at /sitemap-en.xml and
@@ -31,6 +40,13 @@ async function paths(): Promise<Spec[]> {
   ]
 
   for (const a of AREAS) specs.push({ path: `/areas/${a.slug}`, lastmod: now, changefreq: 'monthly', priority: 0.7 })
+
+  // Subcategory landing pages (e.g. /eat-and-drinks/cafes) — one per venueGroups bucket.
+  for (const [slug, path] of Object.entries(CAT_PATH)) {
+    for (const g of CATEGORY_GROUPS[slug] || []) {
+      specs.push({ path: `${path}/${g.key}`, lastmod: now, changefreq: 'weekly', priority: 0.8 })
+    }
+  }
 
   for (const a of AUTHORS) specs.push({ path: `/author/${a.slug}`, lastmod: now, changefreq: 'monthly', priority: 0.4 })
 

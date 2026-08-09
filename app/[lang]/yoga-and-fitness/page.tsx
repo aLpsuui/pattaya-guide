@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 import { hasLocale } from '@/lib/i18n/config'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { localeAlternates, ogDefaultImages } from '@/lib/seo'
-import CategoryListing, { type CatConfig } from '@/app/components/CategoryListing'
+import CategoryListing from '@/app/components/CategoryListing'
+import { CONFIGS } from '@/lib/categoryConfigs'
 
 export const revalidate = 600
 
@@ -22,20 +23,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   }
 }
 
-const cfg: CatConfig = {
-  slug: 'yoga-and-fitness',
-  kicker: 'Gym, Muay Thai & Yoga · Pattaya',
-  h1: 'Train hard, recover well in Pattaya',
-  em: 'Train hard',
-  lead: "From world-famous Muay Thai camps to 24-hour fitness gyms, yoga and pilates studios and climbing walls - find where to train, with real prices and the city's highest-rated coaches.",
-  heroImg: 'pattaya-muay-thai-1.webp',
-  heroImg2: 'pattaya-yoga-1.webp',
-  badge: 'Locally verified · weekly',
-  searchPlaceholder: 'Search gyms, Muay Thai, yoga…',
-  unit: 'venues',
-}
-
 export default async function YogaFitnessPage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params
-  return <CategoryListing cfg={cfg} lang={lang} />
+  return <CategoryListing cfg={CONFIGS['yoga-and-fitness']} lang={lang} />
 }
