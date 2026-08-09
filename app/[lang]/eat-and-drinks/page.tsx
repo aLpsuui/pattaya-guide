@@ -33,11 +33,6 @@ const cfg: CatConfig = {
   unit: 'places',
   typeLabel: 'Type',
   typeIcon: 'eat',
-  primaryGroups: [
-    { slug: 'cafe', label: 'Cafés & Coffee', icon: 'coffee', match: ['coffee', 'café', 'cafe', 'roaster', 'espresso', 'brew', 'bakery', 'dessert', 'patisserie', 'tea'] },
-    { slug: 'bar', label: 'Bars & Rooftops', icon: 'bars', match: ['bar', 'pub', 'rooftop', 'lounge', 'beer', 'brewery', 'cocktail', 'wine', 'tavern'] },
-    { slug: 'restaurant', label: 'Restaurants', icon: 'eat', match: ['restaurant', 'thai', 'indian', 'grill', 'bbq', 'seafood', 'steak', 'italian', 'cuisine', 'eatery', 'diner', 'buffet', 'bistro', 'kitchen', 'food', 'ramen', 'sushi', 'pizza', 'burger'] },
-  ],
 }
 
 export default async function EatDrinksPage({ params }: { params: Promise<{ lang: string }> }) {

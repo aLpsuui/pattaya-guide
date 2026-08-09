@@ -6,6 +6,7 @@ import { SITE_URL } from '@/lib/site'
 import { hasLocale } from '@/lib/i18n/config'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { translateMany } from '@/lib/i18n/translateContent'
+import { groupsForCategory, groupKeyForType } from '@/lib/venueGroups'
 
 const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 
@@ -100,7 +101,12 @@ export default async function CategoryListing({ cfg, lang }: { cfg: CatConfig; l
   const badge = t(cfg.badge || 'Locally verified · weekly')
 
   // ---- primary TYPE rail (single select) -------------------------------
+  // The clean groups come from lib/venueGroups (shared with the nav menu) so a
+  // submenu item and its filter button here are always the same bucket. Falls
+  // back to a page-local primaryGroups config, then to raw venue_type.
+  const vgroups = groupsForCategory(cfg.slug)
   const familyOf = (v: Venue): string => {
+    if (vgroups.length) return groupKeyForType(cfg.slug, v.venue_type) || 'other'
     if (cfg.primaryGroups) {
       const t = (v.venue_type || '').toLowerCase()
       for (const g of cfg.primaryGroups) if (g.match.some((m) => t.includes(m))) return g.slug
@@ -110,7 +116,11 @@ export default async function CategoryListing({ cfg, lang }: { cfg: CatConfig; l
   }
 
   let primaries: { slug: string; label: string; icon?: string; n: number }[]
-  if (cfg.primaryGroups) {
+  if (vgroups.length) {
+    primaries = vgroups
+      .map((g) => ({ slug: g.key, label: t(g.label), icon: g.icon, n: venues.filter((v) => familyOf(v) === g.key).length }))
+      .filter((p) => p.n > 0)
+  } else if (cfg.primaryGroups) {
     primaries = cfg.primaryGroups
       .map((g) => ({ slug: g.slug, label: t(g.label), icon: g.icon, n: venues.filter((v) => familyOf(v) === g.slug).length }))
       .filter((p) => p.n > 0)

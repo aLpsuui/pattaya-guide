@@ -28,6 +28,7 @@ import Footer from '@/app/components/Footer'
 import MobileTabBar from '@/app/components/MobileTabBar'
 import ChatWidget from '@/app/components/ChatWidgetLazy'
 import { getSiteSettings } from '@/lib/siteSettings'
+import { getNavMenu } from '@/lib/navMenu'
 import { locales, hasLocale } from '@/lib/i18n/config'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, INDEXABLE, GA_ID } from '@/lib/site'
@@ -114,7 +115,7 @@ export default async function LangRootLayout({
   const { lang } = await params
   if (!hasLocale(lang)) notFound()
 
-  const [{ logo_url }, dict] = await Promise.all([getSiteSettings(), getDictionary(lang)])
+  const [{ logo_url }, dict, menu] = await Promise.all([getSiteSettings(), getDictionary(lang), getNavMenu()])
 
   return (
     <html lang={lang} className={`${jakarta.variable} ${manrope.variable}`}>
@@ -130,7 +131,7 @@ export default async function LangRootLayout({
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         <a href="#main" className="skip-link">Skip to content</a>
-        <Navbar logoUrl={logo_url} dict={dict} />
+        <Navbar logoUrl={logo_url} dict={dict} menu={menu} />
         <main id="main">{children}</main>
         <Footer dict={dict} logoUrl={logo_url} />
         <MobileTabBar dict={dict} />

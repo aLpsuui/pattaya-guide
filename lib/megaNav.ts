@@ -19,6 +19,7 @@ export type MegaData = Record<string, MegaEntry>
 const NAV = [
   { slug: 'eat-and-drinks', pillar: 'Eat & Drink' },
   { slug: 'thinks-to-do', pillar: 'Things to Do' },
+  { slug: 'nightlife', pillar: 'Nightlife' },
   { slug: 'yoga-and-fitness', pillar: 'Yoga & Fitness' },
   { slug: 'wellness-and-beauty', pillar: 'Wellness & Beauty' },
   { slug: 'areas', pillar: 'Areas & Neighbourhoods' },

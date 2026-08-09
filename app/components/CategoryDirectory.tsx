@@ -47,6 +47,12 @@ export default function CategoryDirectory({ venues, primaries, areas, typeLabel,
   const [railOpen, setRailOpen] = useState(false)
   const [areaCollapsed, setAreaCollapsed] = useState(false)
 
+  // Preselect a type when the nav menu deep-links here (e.g. /eat-and-drinks?type=cafes).
+  useEffect(() => {
+    const type = new URLSearchParams(window.location.search).get('type')
+    if (type && primaries.some((p) => p.slug === type)) setPrimary(type)
+  }, [primaries])
+
   // Bridge the server-rendered hero search box into this component.
   useEffect(() => {
     const input = document.getElementById('eatSearch') as HTMLInputElement | null
