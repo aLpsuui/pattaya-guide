@@ -389,6 +389,9 @@ export default async function VenuePage({ params }: { params: Promise<{ lang: st
         <span className="cur" aria-current="page">{v.name}</span>
       </nav>
 
+      {/* Preload the LCP gallery image (the hero photo) so it's discovered and
+          fetched at high priority instead of after layout - cuts mobile LCP. */}
+      {gallery[0] && <link rel="preload" as="image" href={gallery[0].url} fetchPriority="high" />}
       {/* 2 · HERO / TITLE */}
       <section className="det-yf__hero" aria-labelledby="det-h1">
         <div className="det-yf__wrap det-yf__hero-inner">
@@ -420,6 +423,7 @@ export default async function VenuePage({ params }: { params: Promise<{ lang: st
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={i === 0 ? p.url : (cardImg(p.url) || p.url)} alt={p.alt || v.name} loading={i === 0 ? undefined : 'lazy'}
+                  fetchPriority={i === 0 ? 'high' : undefined} decoding={i === 0 ? undefined : 'async'}
                   width={i === 0 ? 800 : 400} height={i === 0 ? 600 : 300} />
                 {i === 4 && (v.gallery_more_count || 0) > 0 && (
                   <span className="det-yf__gmore" aria-hidden="true">+{v.gallery_more_count} {t('photos')}</span>
