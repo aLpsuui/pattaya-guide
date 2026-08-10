@@ -9,6 +9,7 @@ import { hasLocale } from '@/lib/i18n/config'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { translateMany } from '@/lib/i18n/translateContent'
 import { groupsForCategory, groupKeyForType } from '@/lib/venueGroups'
+import { SUBEXTRA } from '@/lib/categoryConfigs'
 
 // A dedicated subcategory view (e.g. /eat-and-drinks/cafes): filters the listing
 // to one venueGroups bucket and swaps the hero copy for that subcategory.
@@ -108,6 +109,9 @@ export default async function CategoryListing({ cfg, lang, sub }: { cfg: CatConf
         .map((g) => ({ key: g.key, label: t(g.label), href: `${basePath}/${g.key}`, n: allVenues.filter((v) => groupKeyForType(cfg.slug, v.venue_type) === g.key).length }))
         .filter((s) => s.n > 0)
     : []
+  // Long-form editorial + FAQ for thin subcategory pages (bilingual inline).
+  const li: 'en' | 'ru' = locale === 'ru' ? 'ru' : 'en'
+  const extra = sub ? SUBEXTRA[`${cfg.slug}/${sub.key}`] : undefined
   // Translate venue_type labels (shared/deduped); venue NAMES stay Latin. Used
   // for the card tags/cuisine and the raw-type filter labels below.
   const typeMap = await translateMany('venue_types', 'label', venues.map((v) => v.venue_type), locale)
@@ -192,23 +196,31 @@ export default async function CategoryListing({ cfg, lang, sub }: { cfg: CatConf
     { '@type': 'ListItem', position: 2, name: catName, item: `${SITE_URL}/${locale}${basePath}` },
   ]
   if (sub) crumbs.push({ '@type': 'ListItem', position: 3, name: sub.label, item: `${SITE_URL}/${locale}${basePath}/${sub.key}` })
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@graph': [
-      { '@type': 'BreadcrumbList', itemListElement: crumbs },
-      {
-        '@type': 'ItemList',
-        name: `${sub ? sub.label : catName} in Pattaya`,
-        numberOfItems: total,
-        itemListElement: venues.slice(0, 25).map((v, i) => ({
-          '@type': 'ListItem',
-          position: i + 1,
-          url: `${SITE_URL}/${locale}/venues/${v.slug}`,
-          name: v.name,
-        })),
-      },
-    ],
+  const graph: object[] = [
+    { '@type': 'BreadcrumbList', itemListElement: crumbs },
+    {
+      '@type': 'ItemList',
+      name: `${sub ? sub.label : catName} in Pattaya`,
+      numberOfItems: total,
+      itemListElement: venues.slice(0, 25).map((v, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        url: `${SITE_URL}/${locale}/venues/${v.slug}`,
+        name: v.name,
+      })),
+    },
+  ]
+  if (extra?.faqs.length) {
+    graph.push({
+      '@type': 'FAQPage',
+      mainEntity: extra.faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q[li],
+        acceptedAnswer: { '@type': 'Answer', text: f.a[li] },
+      })),
+    })
   }
+  const jsonLd = { '@context': 'https://schema.org', '@graph': graph }
 
   return (
     <div className="eat-page">
@@ -286,6 +298,31 @@ export default async function CategoryListing({ cfg, lang, sub }: { cfg: CatConf
           )}
         </div>
       </section>
+
+      {/* Editorial + FAQ (thin subcategory pages) - long-form, unique, bilingual */}
+      {extra && (
+        <section className="sec sec--tight" aria-labelledby="sub-about-h">
+          <div className="container">
+            <div style={{ maxWidth: '68ch', margin: '0 auto' }}>
+              <h2 id="sub-about-h">{li === 'ru' ? 'Что нужно знать' : 'What to know'}</h2>
+              {extra.intro[li].map((p, i) => (
+                <p key={i} style={{ fontSize: 16.5, lineHeight: 1.75, color: 'var(--text-muted)' }}>{p}</p>
+              ))}
+              {extra.faqs.length > 0 && (
+                <>
+                  <h2 style={{ marginTop: 40 }}>{li === 'ru' ? 'Частые вопросы' : 'Frequently asked questions'}</h2>
+                  {extra.faqs.map((f, i) => (
+                    <details key={i} style={{ borderTop: '1px solid var(--border-color, #e2e8f0)', padding: '14px 0' }}>
+                      <summary style={{ cursor: 'pointer', fontWeight: 700, fontSize: 16 }}>{f.q[li]}</summary>
+                      <p style={{ margin: '10px 0 0', color: 'var(--text-muted)', lineHeight: 1.7 }}>{f.a[li]}</p>
+                    </details>
+                  ))}
+                </>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* HOW WE RANK - trust */}
       <section className="sec sec--alt sec--tight" aria-labelledby="rank-h">

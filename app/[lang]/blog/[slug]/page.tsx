@@ -107,7 +107,7 @@ function unwrapDeadBlogLinks(html: string, publishedSlugs: Set<string>): string 
   )
 }
 
-function rewriteHtml(html: string, author?: string | null, publishedSlugs?: Set<string>, authorHref?: string): string {
+function rewriteHtml(html: string, locale: string, author?: string | null, publishedSlugs?: Set<string>, authorHref?: string): string {
   // All authored image folders map flat into the Supabase `blog` bucket.
   let out = html
     .replace(/\.\.\/yeni-blog-gorselleri\//g, IMG_BASE + '/')
@@ -130,6 +130,11 @@ function rewriteHtml(html: string, author?: string | null, publishedSlugs?: Set<
     return `href="/${file.replace(/\.html$/, '')}"`
   })
   if (publishedSlugs) out = unwrapDeadBlogLinks(out, publishedSlugs)
+  // Prefix every root-relative internal link with the active locale. The authored
+  // HTML and all the rewrites above are locale-less, so without this each internal
+  // link 308-redirects to /en and drops the reader's language (and burns crawl
+  // budget). Skip links already carrying /en or /ru, and protocol-relative //urls.
+  out = out.replace(/href="\/(?!(?:en|ru)(?:\/|")|\/)/g, `href="/${locale}/`)
   return out
 }
 
@@ -258,7 +263,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ lang:
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(finalJsonLd) }}
       />
-      {pageHtml && <div dangerouslySetInnerHTML={{ __html: rewriteHtml(pageHtml, post.author, publishedSlugs, knownAuthor ? `/${locale}/author/${knownAuthor.slug}` : undefined) }} />}
+      {pageHtml && <div dangerouslySetInnerHTML={{ __html: rewriteHtml(pageHtml, locale, post.author, publishedSlugs, knownAuthor ? `/${locale}/author/${knownAuthor.slug}` : undefined) }} />}
       <BlogScript script={BLOG_TEMPLATE_SCRIPT} />
     </>
   )
