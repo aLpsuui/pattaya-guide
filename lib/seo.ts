@@ -34,6 +34,36 @@ export function clampDescription(s: string | null | undefined, max = 155): strin
   return (sp > max - 30 ? cut.slice(0, sp) : cut).replace(/[\s,;:.\-–—]+$/, '') + '…'
 }
 
+// Transliterate Pattaya place names Latin -> Cyrillic for Russian titles/labels.
+// Applied ONLY to the place/neighborhood portion of a title, never to a venue
+// name (proper nouns stay Latin) and never to the brand "Go To Pattaya".
+// Order matters: multi-word "… Pattaya" variants before the bare "Pattaya".
+const RU_PLACES: [RegExp, string][] = [
+  [/Central Pattaya/g, 'Центральная Паттайя'],
+  [/North Pattaya/g, 'Северная Паттайя'],
+  [/South Pattaya/g, 'Южная Паттайя'],
+  [/Na Jomtien/g, 'На-Джомтьен'],
+  [/Jomtien/g, 'Джомтьен'],
+  [/Naklua/g, 'Наклуа'],
+  [/Pratumnak Hill/g, 'Пратамнак'],
+  [/Prat[au]mnak/g, 'Пратамнак'],
+  [/Phra Tamnak/g, 'Пратамнак'],
+  [/Wong ?Amat/g, 'Вонг Амат'],
+  [/Walking Street/g, 'Уолкинг-стрит'],
+  [/Beach Road/g, 'Бич-роуд'],
+  [/Soi Buakhao/g, 'Сой Буакхао'],
+  [/Thappraya/g, 'Тхаппрайя'],
+  [/Bang Lamung/g, 'Банг Ламунг'],
+  [/Sattahip/g, 'Саттахип'],
+  [/Chon ?[Bb]uri/g, 'Чонбури'],
+  [/Pattaya/g, 'Паттайя'],
+]
+export function ruPlace(s: string): string {
+  let out = s
+  for (const [re, ru] of RU_PLACES) out = out.replace(re, ru)
+  return out
+}
+
 // Build a page title, dropping the " | Go To Pattaya" suffix when the base is
 // already long enough that the full lockup would overflow ~60 chars.
 const BRAND = ' | Go To Pattaya'

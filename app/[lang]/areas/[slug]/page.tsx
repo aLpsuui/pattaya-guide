@@ -8,7 +8,7 @@ import Link from '@/app/components/LocaleLink'
 import Icon from '@/app/components/Icon'
 import Star from '@/app/components/Star'
 import { AREAS, areaBySlug } from '@/lib/areas'
-import { localeAlternates, clampDescription } from '@/lib/seo'
+import { localeAlternates, clampDescription, ruPlace } from '@/lib/seo'
 import { SITE_URL } from '@/lib/site'
 import BlogScript from '@/app/components/BlogScript'
 import guidesData from './area-guides.json'
@@ -125,12 +125,14 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   // shipping English meta descriptions on every /ru/areas page - audit finding).
   const blurbTx = info?.blurb ? await getTranslated('static', `area:${slug}:blurb`, 'text', info.blurb, locale) : undefined
   const desc = clampDescription(blurbTx || info?.blurb)
+  // Place names -> Cyrillic for RU (area.name + the "Pattaya" city tag); brand stays Latin.
+  const areaLabel = locale === 'ru' ? ruPlace(`${area.name}, Pattaya`) : `${area.name}, Pattaya`
   return {
-    title: `${area.name}, Pattaya - ${t('Area Guide')} | Go To Pattaya`,
+    title: `${areaLabel} - ${t('Area Guide')} | Go To Pattaya`,
     description: desc,
     robots: isUntranslatedRu(locale, blurbTx) ? { index: false, follow: true } : undefined,
     alternates: localeAlternates(locale, `/areas/${slug}`),
-    openGraph: { title: `${area.name}, Pattaya`, description: desc, url: `${SITE_URL}/${locale}/areas/${slug}`, images: info?.hero ? [{ url: info.hero }] : undefined },
+    openGraph: { title: areaLabel, description: desc, url: `${SITE_URL}/${locale}/areas/${slug}`, images: info?.hero ? [{ url: info.hero }] : undefined },
   }
 }
 
