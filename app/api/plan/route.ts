@@ -226,8 +226,10 @@ export async function POST(req: NextRequest) {
         clearTimeout(timer)
       }
       if (!res.ok) {
+        const errText = await res.text().catch(() => '')
+        console.error('[plan] anthropic error', res.status, errText.slice(0, 400))
         const status = res.status === 400 ? 503 : 502
-        return Response.json({ error: 'model_error', message: 'The AI planner is temporarily unavailable. Please try again later.' }, { status })
+        return Response.json({ error: 'model_error', message: 'The AI planner is temporarily unavailable. Please try again later.', debug: { up: res.status, body: errText.slice(0, 400) } }, { status })
       }
       const data = await res.json()
       const content: Block[] = data.content || []
@@ -259,8 +261,9 @@ export async function POST(req: NextRequest) {
     }
     // Loop exhausted without a plan.
     return Response.json(minimalPlan('', collected))
-  } catch {
-    return Response.json({ error: 'model_error', message: 'The AI planner is temporarily unavailable. Please try again later.' }, { status: 502 })
+  } catch (e) {
+    console.error('[plan] exception', String((e as Error)?.message || e))
+    return Response.json({ error: 'model_error', message: 'The AI planner is temporarily unavailable. Please try again later.', debug: { ex: String((e as Error)?.message || e).slice(0, 400) } }, { status: 502 })
   }
 }
 
