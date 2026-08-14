@@ -56,6 +56,18 @@ export async function proxy(req: NextRequest) {
     return NextResponse.redirect(url, 301)
   }
 
+  // --- 1c) AI trip planner temporarily removed ---
+  // The /plan AI planner is pulled from the site while it's rebuilt separately;
+  // send visitors (and any old links) to the working /plan-my-trip form instead.
+  // 307 (temporary) so it can come back at /plan later without a stuck 301.
+  const pm = pathname.match(/^(\/(?:en|ru))?\/plan\/?$/)
+  if (pm) {
+    const url = req.nextUrl.clone()
+    url.pathname = `${pm[1] || `/${pickLocale(req)}`}/plan-my-trip`
+    url.search = ''
+    return NextResponse.redirect(url, 307)
+  }
+
   // --- 2) Public locale routing ---
   const hasPrefix = locales.some((l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`))
   if (hasPrefix) return NextResponse.next()
