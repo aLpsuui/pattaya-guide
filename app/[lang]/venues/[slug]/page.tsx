@@ -12,6 +12,26 @@ import { localeAlternates, clampDescription, pageTitle, ogDefaultImages, ruPlace
 import { isUntranslatedRu } from '@/lib/i18n/cyrillic'
 import { cardImg } from '@/lib/img'
 
+// Some `website` values are stored without a protocol ("www.ozohotels.com/…")
+// or protocol-relative ("//site.com"), which the browser resolves as a
+// same-origin relative path -> in-site 404. Prepend https:// ONLY to bare
+// domains; leave values that already carry a scheme (http:, https:, tel:,
+// mailto:) untouched so a phone/email stored here isn't turned into
+// "https://tel:+66…". Returns null for empty values.
+const safeUrl = (u: string | null): string | null => {
+  if (!u) return null
+  let t = u.trim()
+  if (!t) return null
+  // "https:////host" (malformed extra slashes) -> exactly two after the scheme.
+  t = t.replace(/^(https?:)\/+/i, '$1//')
+  // protocol-relative "//host" -> https://host
+  if (/^\/\//.test(t)) return `https:${t}`
+  // already carries a scheme (http, https, tel, mailto, …) -> leave untouched
+  if (/^[a-z][a-z0-9+.-]*:/i.test(t)) return t
+  // bare domain -> https://
+  return `https://${t.replace(/^\/+/, '')}`
+}
+
 // Re-generate from the database at most once every 60s (ISR), so edits to a
 // venue and its child rows go live without a full rebuild.
 export const revalidate = 60
@@ -129,17 +149,40 @@ async function getVenue(slug: string): Promise<Venue | null> {
   return v
 }
 
-async function getRelated(categoryId: string | null, excludeSlug: string): Promise<RelatedVenue[]> {
+// A matchable area token from a (possibly compound) neighborhood string, so
+// "Central Pattaya · Bang Lamung" and "Central Pattaya" group together.
+function areaKey(nb: string | null): string | null {
+  if (!nb) return null
+  const m = nb.match(/central|jomtien|naklua|pratumnak|pratamnak|wong ?amat|wongamat|walking|north|south|bang lamung|sattahip|thappraya|buakhao|beach road/i)
+  return m ? m[0] : (nb.split(/[·,|/]/)[0].trim() || null)
+}
+
+// Related venues: SAME AREA first (so each page links to its real neighbours -
+// dynamic, contextual internal links instead of the same global top-4 on every
+// page), then fill up to 6 with the category's top venues.
+const REL_COLS = 'id, slug, name, rating, review_count, image_url, venue_type, neighborhood, price_from, price_from_label'
+async function getRelated(categoryId: string | null, neighborhood: string | null, excludeSlug: string): Promise<RelatedVenue[]> {
   if (!categoryId) return []
-  const { data } = await supabase
-    .from('venues')
-    .select('id, slug, name, rating, review_count, image_url, venue_type, neighborhood, price_from, price_from_label')
-    .eq('is_active', true)
-    .eq('category_id', categoryId)
-    .neq('slug', excludeSlug)
-    .order('rating', { ascending: false })
-    .limit(4)
-  return (data as RelatedVenue[]) || []
+  const out: RelatedVenue[] = []
+  const seen = new Set<string>()
+  const take = (rows: RelatedVenue[] | null) => {
+    for (const r of rows || []) { if (out.length >= 6) break; if (r.slug && !seen.has(r.slug)) { seen.add(r.slug); out.push(r) } }
+  }
+  const key = areaKey(neighborhood)
+  if (key) {
+    const { data } = await supabase.from('venues').select(REL_COLS)
+      .eq('is_active', true).eq('category_id', categoryId).neq('slug', excludeSlug)
+      .ilike('neighborhood', `%${key}%`)
+      .order('rating', { ascending: false, nullsFirst: false }).order('review_count', { ascending: false, nullsFirst: false }).limit(6)
+    take(data as RelatedVenue[])
+  }
+  if (out.length < 6) {
+    const { data } = await supabase.from('venues').select(REL_COLS)
+      .eq('is_active', true).eq('category_id', categoryId).neq('slug', excludeSlug)
+      .order('rating', { ascending: false, nullsFirst: false }).order('review_count', { ascending: false, nullsFirst: false }).limit(12)
+    take(data as RelatedVenue[])
+  }
+  return out
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string; slug: string }> }) {
@@ -210,7 +253,7 @@ export default async function VenuePage({ params }: { params: Promise<{ lang: st
   // Related venues share the same category; we only have the category slug here,
   // so getRelatedBySlug resolves it to a category_id then queries siblings.
   // Fetched up-front so their venue_type labels join the translation batch.
-  const relatedVenues = await getRelatedBySlug(v.categories?.slug || null, v.slug)
+  const relatedVenues = await getRelatedBySlug(v.categories?.slug || null, v.neighborhood, v.slug)
 
   // The DB category slug for Things to Do is the legacy 'thinks-to-do'; its
   // public route is /things-to-do. Linking the raw slug costs a 308 hop on
@@ -301,7 +344,7 @@ export default async function VenuePage({ params }: { params: Promise<{ lang: st
 })();
 `
 
-  const sameAs = [v.website, v.facebook_url].filter(Boolean)
+  const sameAs = [safeUrl(v.website), v.facebook_url].filter(Boolean)
   // JSON-LD @id/url point at the locale-prefixed canonical (was locale-less
   // /venues/, which 308-redirects) so structured data matches the page URL.
   const pageUrl = `${SITE_URL}/${locale}/venues/${v.slug}`
@@ -638,7 +681,7 @@ export default async function VenuePage({ params }: { params: Promise<{ lang: st
                 <div className="row"><Icon id="pg-phone" size={20} /><span><a href={`tel:${v.phone.replace(/[^0-9+]/g, '')}`}>{v.phone}</a></span></div>
               )}
               {v.website && (
-                <div className="row"><Icon id="pg-globe" size={20} /><span><a href={v.website} target="_blank" rel="noopener">{v.website_label || t('Website')}</a></span></div>
+                <div className="row"><Icon id="pg-globe" size={20} /><span><a href={safeUrl(v.website)!} target="_blank" rel="noopener">{v.website_label || t('Website')}</a></span></div>
               )}
               {v.locally_verified && (
                 <div className="row"><Icon id="pg-local-verified" size={20} /><span>{t('Locally verified by Go To Pattaya')}</span></div>
@@ -652,7 +695,7 @@ export default async function VenuePage({ params }: { params: Promise<{ lang: st
               <a className="btn btn--primary" href={mapsHref} target="_blank" rel="noopener">
                 <Icon id="pg-directions" size={20} /> {t('Get directions')}</a>
               {v.website && (
-                <a className="btn btn--secondary" href={v.website} target="_blank" rel="noopener">
+                <a className="btn btn--secondary" href={safeUrl(v.website)!} target="_blank" rel="noopener">
                   <Icon id="pg-globe" size={20} /> {t('Visit website')}</a>
               )}
             </div>
@@ -743,10 +786,10 @@ function ItemRows({ showSection, section, name, detail, isFeatured, duration, pr
   )
 }
 
-async function getRelatedBySlug(categorySlug: string | null, excludeSlug: string): Promise<RelatedVenue[]> {
+async function getRelatedBySlug(categorySlug: string | null, neighborhood: string | null, excludeSlug: string): Promise<RelatedVenue[]> {
   if (!categorySlug) return []
   const { data: cat } = await supabase.from('categories').select('id').eq('slug', categorySlug).single()
   const categoryId = (cat as { id: string } | null)?.id
   if (!categoryId) return []
-  return getRelated(categoryId, excludeSlug)
+  return getRelated(categoryId, neighborhood, excludeSlug)
 }

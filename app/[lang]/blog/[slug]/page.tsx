@@ -135,6 +135,9 @@ function rewriteHtml(html: string, locale: string, author?: string | null, publi
   // link 308-redirects to /en and drops the reader's language (and burns crawl
   // budget). Skip links already carrying /en or /ru, and protocol-relative //urls.
   out = out.replace(/href="\/(?!(?:en|ru)(?:\/|")|\/)/g, `href="/${locale}/`)
+  // Root link: "/" became "/<locale>/" above; drop the trailing slash so the
+  // home link is the canonical "/<locale>" and doesn't 308 (audit P1-4).
+  out = out.replace(new RegExp(`href="/${locale}/"`, 'g'), `href="/${locale}"`)
   return out
 }
 

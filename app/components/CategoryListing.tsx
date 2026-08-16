@@ -263,7 +263,7 @@ export default async function CategoryListing({ cfg, lang, sub }: { cfg: CatConf
               {/* Real <img> (not a CSS background) so it's the discoverable, high-priority
                   LCP element - the background-image version rendered ~10s late on mobile. */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={img(cfg.heroImg)} alt="" fetchPriority="high" decoding="async" width={900} height={675}
+              <img src={img(cfg.heroImg)} alt={h1} fetchPriority="high" decoding="async" width={900} height={675}
                 style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
             </div>
             {cfg.heroImg2 && <div className="eat-hero__img sub" style={{ backgroundImage: `url('${img(cfg.heroImg2)}')` }}></div>}
