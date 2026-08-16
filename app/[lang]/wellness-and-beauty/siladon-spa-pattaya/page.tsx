@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './venue.css'
 import BlogScript from '@/app/components/BlogScript'
 import { hasLocale } from '@/lib/i18n/config'
+import { localizeHtml } from '@/lib/localizeHtml'
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params
@@ -504,10 +505,12 @@ const SCRIPT = String.raw`
 })();
 `
 
-export default function SiladonSpaPattayaPage() {
+export default async function SiladonSpaPattayaPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params
+  const locale = hasLocale(lang) ? lang : 'en'
   return (
     <>
-      <div dangerouslySetInnerHTML={{ __html: HTML }} />
+      <div dangerouslySetInnerHTML={{ __html: localizeHtml(HTML, locale) }} />
       <BlogScript script={SCRIPT} />
     </>
   )

@@ -9,6 +9,7 @@ import Icon from '@/app/components/Icon'
 import Star from '@/app/components/Star'
 import { AREAS, areaBySlug } from '@/lib/areas'
 import { localeAlternates, clampDescription, ruPlace } from '@/lib/seo'
+import { localizeHtml } from '@/lib/localizeHtml'
 import { SITE_URL } from '@/lib/site'
 import BlogScript from '@/app/components/BlogScript'
 import guidesData from './area-guides.json'
@@ -48,10 +49,7 @@ const guides = guidesData as Record<string, { name: string; html: string }>
 // crawl budget. Prefix every internal href with the active locale (skip already
 // prefixed, hashes, external, /api, /admin). Query strings + hashes are kept.
 function localizeLinks(html: string, locale: string): string {
-  return html.replace(/href="(\/[^/"][^"#]*)/g, (m, path: string) => {
-    if (/^\/(en|ru)(\/|$)/.test(path) || path.startsWith('/api') || path.startsWith('/admin')) return m
-    return `href="/${locale}${path}`
-  })
+  return localizeHtml(html, locale)
 }
 
 // The bespoke area guides carry a FAQ accordion as authored HTML (not
