@@ -109,6 +109,12 @@ function unwrapDeadBlogLinks(html: string, publishedSlugs: Set<string>): string 
 }
 
 const escRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+// Let a name match its entity-encoded form in the HTML ("&" -> "&amp;",
+// apostrophes -> &#39;/&rsquo;), so "Yunomori Onsen & Spa" matches "…&amp; Spa".
+const namePattern = (name: string) => escRe(name)
+  .replace(/&/g, '&(?:amp;)?')
+  .replace(/['’]/g, "(?:['’]|&#39;|&rsquo;|&#8217;)")
+const normName = (s: string) => s.replace(/&amp;/g, '&').replace(/&#39;|&rsquo;|&#8217;/g, "'").replace(/’/g, "'").trim()
 
 // Auto-link the FIRST mention of each venue in the post body to its detail page
 // (audit P0-3: 98 posts had ~1 venue link total). Only touches text nodes inside
@@ -118,8 +124,8 @@ const escRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 // words). Emits already locale-prefixed hrefs, so it runs AFTER rewriteHtml.
 function autolinkVenues(html: string, venues: VenueLink[], locale: string, max = 10): string {
   if (!venues.length) return html
-  const nameToSlug = new Map(venues.map((v) => [v.name, v.slug]))
-  const re = new RegExp(`\\b(${venues.map((v) => escRe(v.name)).join('|')})\\b`, 'g')
+  const nameToSlug = new Map(venues.map((v) => [normName(v.name), v.slug]))
+  const re = new RegExp(`\\b(${venues.map((v) => namePattern(v.name)).join('|')})\\b`, 'g')
   const seen = new Set<string>()
   let count = 0
   // Keep existing <a>…</a> blocks intact; only link inside the parts between them.
@@ -127,8 +133,8 @@ function autolinkVenues(html: string, venues: VenueLink[], locale: string, max =
   for (let i = 0; i < parts.length; i += 2) {
     // Link only within text nodes (between '>' and '<'), never inside a tag.
     parts[i] = parts[i].replace(/>([^<]+)</g, (_m, text: string) => {
-      const linked = text.replace(re, (whole: string, name: string) => {
-        const slug = nameToSlug.get(name)
+      const linked = text.replace(re, (whole: string) => {
+        const slug = nameToSlug.get(normName(whole))
         if (!slug || seen.has(slug) || count >= max) return whole
         seen.add(slug); count++
         return `<a href="/${locale}/venues/${slug}">${whole}</a>`
