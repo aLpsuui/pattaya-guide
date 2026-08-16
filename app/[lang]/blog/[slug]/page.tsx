@@ -7,6 +7,7 @@ import { getTranslated } from '@/lib/i18n/translateContent'
 import { localeAlternates, clampDescription, pageTitle } from '@/lib/seo'
 import { getAuthorByName, authorPersonId } from '@/lib/authors'
 import { isUntranslatedRu } from '@/lib/i18n/cyrillic'
+import { getVenueLinks, type VenueLink } from '@/lib/venueLinks'
 import { BLOG_TEMPLATE_SCRIPT } from './blogTemplate'
 import './blog-template.css'
 
@@ -105,6 +106,37 @@ function unwrapDeadBlogLinks(html: string, publishedSlugs: Set<string>): string 
     /<a\b[^>]*href="\/blog\/([^"/?#]+)"[^>]*>([\s\S]*?)<\/a>/g,
     (full, slug: string, inner: string) => (publishedSlugs.has(slug) ? full : inner),
   )
+}
+
+const escRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+// Auto-link the FIRST mention of each venue in the post body to its detail page
+// (audit P0-3: 98 posts had ~1 venue link total). Only touches text nodes inside
+// non-anchor regions, one link per venue, capped per post, so it never nests
+// links, over-links, or rewrites an existing anchor's text. Case-sensitive match
+// on the exact name keeps proper-noun precision (no false positives on common
+// words). Emits already locale-prefixed hrefs, so it runs AFTER rewriteHtml.
+function autolinkVenues(html: string, venues: VenueLink[], locale: string, max = 10): string {
+  if (!venues.length) return html
+  const nameToSlug = new Map(venues.map((v) => [v.name, v.slug]))
+  const re = new RegExp(`\\b(${venues.map((v) => escRe(v.name)).join('|')})\\b`, 'g')
+  const seen = new Set<string>()
+  let count = 0
+  // Keep existing <a>…</a> blocks intact; only link inside the parts between them.
+  const parts = html.split(/(<a\b[^>]*>[\s\S]*?<\/a>)/i)
+  for (let i = 0; i < parts.length; i += 2) {
+    // Link only within text nodes (between '>' and '<'), never inside a tag.
+    parts[i] = parts[i].replace(/>([^<]+)</g, (_m, text: string) => {
+      const linked = text.replace(re, (whole: string, name: string) => {
+        const slug = nameToSlug.get(name)
+        if (!slug || seen.has(slug) || count >= max) return whole
+        seen.add(slug); count++
+        return `<a href="/${locale}/venues/${slug}">${whole}</a>`
+      })
+      return `>${linked}<`
+    })
+  }
+  return parts.join('')
 }
 
 function rewriteHtml(html: string, locale: string, author?: string | null, publishedSlugs?: Set<string>, authorHref?: string): string {
@@ -206,10 +238,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ lang:
   if (!post) notFound()
   const publishedSlugs = await getPublishedSlugs()
   const locale = hasLocale(lang) ? lang : 'en'
-  const [title, description, pageHtml] = await Promise.all([
+  const [title, description, pageHtml, venueLinks] = await Promise.all([
     getTranslated('blog_posts', post.id, 'title', post.title, locale),
     getTranslated('blog_posts', post.id, 'description', post.description, locale),
     getTranslated('blog_posts', post.id, 'page_html', post.page_html, locale),
+    getVenueLinks(),
   ])
 
   // Link the byline to a registered author profile (shared Person @id + author
@@ -266,7 +299,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ lang:
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(finalJsonLd) }}
       />
-      {pageHtml && <div dangerouslySetInnerHTML={{ __html: rewriteHtml(pageHtml, locale, post.author, publishedSlugs, knownAuthor ? `/${locale}/author/${knownAuthor.slug}` : undefined) }} />}
+      {pageHtml && <div dangerouslySetInnerHTML={{ __html: autolinkVenues(rewriteHtml(pageHtml, locale, post.author, publishedSlugs, knownAuthor ? `/${locale}/author/${knownAuthor.slug}` : undefined), venueLinks, locale) }} />}
       <BlogScript script={BLOG_TEMPLATE_SCRIPT} />
     </>
   )
