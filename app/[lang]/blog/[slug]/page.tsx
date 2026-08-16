@@ -8,6 +8,7 @@ import { localeAlternates, clampDescription, pageTitle } from '@/lib/seo'
 import { getAuthorByName, authorPersonId } from '@/lib/authors'
 import { isUntranslatedRu } from '@/lib/i18n/cyrillic'
 import { getVenueLinks, type VenueLink } from '@/lib/venueLinks'
+import blogVenueLinks from '@/lib/blogVenueLinks.json'
 import { BLOG_TEMPLATE_SCRIPT } from './blogTemplate'
 import './blog-template.css'
 
@@ -122,12 +123,10 @@ const normName = (s: string) => s.replace(/&amp;/g, '&').replace(/&#39;|&rsquo;|
 // links, over-links, or rewrites an existing anchor's text. Case-sensitive match
 // on the exact name keeps proper-noun precision (no false positives on common
 // words). Emits already locale-prefixed hrefs, so it runs AFTER rewriteHtml.
-function autolinkVenues(html: string, venues: VenueLink[], locale: string, max = 10): string {
+function autolinkVenues(html: string, venues: VenueLink[], locale: string, max = 12, seen = new Set<string>(), counter = { n: 0 }): string {
   if (!venues.length) return html
   const nameToSlug = new Map(venues.map((v) => [normName(v.name), v.slug]))
   const re = new RegExp(`\\b(${venues.map((v) => namePattern(v.name)).join('|')})\\b`, 'g')
-  const seen = new Set<string>()
-  let count = 0
   // Keep existing <a>…</a> blocks intact; only link inside the parts between them.
   const parts = html.split(/(<a\b[^>]*>[\s\S]*?<\/a>)/i)
   for (let i = 0; i < parts.length; i += 2) {
@@ -135,12 +134,42 @@ function autolinkVenues(html: string, venues: VenueLink[], locale: string, max =
     parts[i] = parts[i].replace(/>([^<]+)</g, (_m, text: string) => {
       const linked = text.replace(re, (whole: string) => {
         const slug = nameToSlug.get(normName(whole))
-        if (!slug || seen.has(slug) || count >= max) return whole
-        seen.add(slug); count++
+        if (!slug || seen.has(slug) || counter.n >= max) return whole
+        seen.add(slug); counter.n++
         return `<a href="/${locale}/venues/${slug}">${whole}</a>`
       })
       return `>${linked}<`
     })
+  }
+  return parts.join('')
+}
+
+// Curated mention → venue-slug links (audit P0-3, full coverage): an LLM read
+// every published post against the venue directory and produced a per-post list
+// of {mention, slug} pairs — verbatim mentions, one confident branch only,
+// ambiguous chains skipped. See lib/blogVenueLinks.json. This links the first
+// occurrence of each curated mention (entity-tolerant, inside text nodes only),
+// sharing the seen-set + cap with autolinkVenues so nothing is linked twice and
+// the two passes together stay under `max`. Runs BEFORE the name matcher so the
+// editorial wording the author actually used wins over a generic name match.
+const CURATED = blogVenueLinks as Record<string, { mention: string; slug: string }[]>
+function linkCurated(html: string, pairs: { mention: string; slug: string }[], locale: string, seen: Set<string>, counter: { n: number }, max = 12): string {
+  if (!pairs.length) return html
+  const parts = html.split(/(<a\b[^>]*>[\s\S]*?<\/a>)/i)
+  for (const { mention, slug } of pairs) {
+    if (seen.has(slug) || counter.n >= max) continue
+    const re = new RegExp(namePattern(mention))
+    let done = false
+    for (let i = 0; i < parts.length && !done; i += 2) {
+      parts[i] = parts[i].replace(/>([^<]+)</g, (m: string, text: string) => {
+        if (done) return m
+        const mm = text.match(re)
+        if (!mm) return m
+        const at = mm.index ?? 0
+        done = true; seen.add(slug); counter.n++
+        return `>${text.slice(0, at)}<a href="/${locale}/venues/${slug}">${mm[0]}</a>${text.slice(at + mm[0].length)}<`
+      })
+    }
   }
   return parts.join('')
 }
@@ -305,7 +334,15 @@ export default async function BlogPostPage({ params }: { params: Promise<{ lang:
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(finalJsonLd) }}
       />
-      {pageHtml && <div dangerouslySetInnerHTML={{ __html: autolinkVenues(rewriteHtml(pageHtml, locale, post.author, publishedSlugs, knownAuthor ? `/${locale}/author/${knownAuthor.slug}` : undefined), venueLinks, locale) }} />}
+      {pageHtml && <div dangerouslySetInnerHTML={{ __html: (() => {
+        const rewritten = rewriteHtml(pageHtml, locale, post.author, publishedSlugs, knownAuthor ? `/${locale}/author/${knownAuthor.slug}` : undefined)
+        const seen = new Set<string>()
+        const counter = { n: 0 }
+        // Curated LLM links first (author's own wording), then fill with the
+        // name matcher for any venue not yet linked — one shared cap of 12.
+        const curated = linkCurated(rewritten, CURATED[post.slug] || [], locale, seen, counter, 12)
+        return autolinkVenues(curated, venueLinks, locale, 12, seen, counter)
+      })() }} />}
       <BlogScript script={BLOG_TEMPLATE_SCRIPT} />
     </>
   )
