@@ -58,7 +58,11 @@ counts matched exactly) → `sdk down` (all rows gone, site_settings restored):
       (published posts 2d/7d in the past, is_published=true; draft has null)
 - [x] `sdk check` on recipe.json prints `"ok": true`
 - [x] Concurrent-instances proof (`sdk up --repeat 3`) passes — 3 instances live at once
-- [ ] Committed, pushed, PR opened
+- [x] Committed + pushed to `origin/autonoma-integration`
+- [ ] PR opened — `gh` CLI is not installed on this machine, so the PR could not be
+      opened from the command line. The branch is pushed; open the PR in one click at:
+      https://github.com/aLpsuui/pattaya-guide/pull/new/autonoma-integration
+      (base: `main`).
 
 ## Notes / decisions
 - **No tenant scope.** This is a single-tenant content site; there is no
