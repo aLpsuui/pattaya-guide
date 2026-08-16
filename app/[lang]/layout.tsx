@@ -79,7 +79,7 @@ const jsonLd = {
       areaServed: { '@type': 'City', name: 'Pattaya', addressCountry: 'TH' },
       sameAs: [
         'https://www.instagram.com/gotopattayacom',
-        'https://www.facebook.com/profile.php?id=61591161493028',
+        'https://www.facebook.com/people/Go-To-Pattaya/61591161493028/',
         'https://x.com/gotopattayacom',
         'https://www.linkedin.com/company/go-to-pattaya',
       ],

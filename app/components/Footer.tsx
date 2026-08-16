@@ -59,7 +59,7 @@ const cols = [
 // Empty href => not rendered (no dead links).
 const SOCIALS: { label: string; href: string; stroke?: boolean; svg: string }[] = [
   { label: 'Instagram', href: 'https://www.instagram.com/gotopattayacom', stroke: true, svg: '<rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" />' },
-  { label: 'Facebook', href: 'https://www.facebook.com/profile.php?id=61591161493028', svg: '<path d="M14 13.5h2.5l1-4H14v-2c0-1 .5-2 2-2h1.5V2.1S16.1 2 14.7 2C11.9 2 10 3.7 10 6.9V9.5H7v4h3V22h4v-8.5Z" />' },
+  { label: 'Facebook', href: 'https://www.facebook.com/people/Go-To-Pattaya/61591161493028/', svg: '<path d="M14 13.5h2.5l1-4H14v-2c0-1 .5-2 2-2h1.5V2.1S16.1 2 14.7 2C11.9 2 10 3.7 10 6.9V9.5H7v4h3V22h4v-8.5Z" />' },
   { label: 'X', href: 'https://x.com/gotopattayacom', svg: '<path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24H16.17l-5.21-6.82-5.97 6.82H1.68l7.73-8.84L1.25 2.25H8.08l4.71 6.23 5.45-6.23Zm-1.16 17.52h1.83L7.01 4.13H5.05L17.08 19.77Z" />' },
   { label: 'LinkedIn', href: 'https://www.linkedin.com/company/go-to-pattaya', svg: '<path d="M6.94 5a1.94 1.94 0 1 1-3.88 0 1.94 1.94 0 0 1 3.88 0zM3.5 8.5h3v12h-3v-12zm5 0h2.9v1.6h.04c.4-.76 1.4-1.6 2.9-1.6 3.1 0 3.67 2 3.67 4.7v7.3h-3v-6.5c0-1.55-.03-3.55-2.16-3.55-2.16 0-2.5 1.7-2.5 3.44v6.6h-3v-12z" />' },
 ]

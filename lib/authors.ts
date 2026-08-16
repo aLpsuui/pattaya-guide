@@ -26,7 +26,7 @@ export const AUTHORS: Author[] = [
       'Olcay Dikici is the founder of Go To Pattaya. He built the guide to cut through paid "top 10" lists with first-hand, regularly re-checked coverage of where to eat, unwind and go out in Pattaya. He oversees the site\'s editorial standards — every venue verified on the ground, updated weekly, with no paid placements.',
     sameAs: [
       'https://www.instagram.com/gotopattayacom',
-      'https://www.facebook.com/profile.php?id=61591161493028',
+      'https://www.facebook.com/people/Go-To-Pattaya/61591161493028/',
       'https://x.com/gotopattayacom',
       'https://www.linkedin.com/company/go-to-pattaya',
     ],
