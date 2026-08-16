@@ -11,6 +11,7 @@ import { hasLocale } from '@/lib/i18n/config'
 import { localeAlternates, clampDescription, pageTitle, ogDefaultImages, ruPlace } from '@/lib/seo'
 import { isUntranslatedRu } from '@/lib/i18n/cyrillic'
 import { cardImg } from '@/lib/img'
+import { areaSlugForNeighborhood } from '@/lib/areas'
 
 // Some `website` values are stored without a protocol ("www.ozohotels.com/…")
 // or protocol-relative ("//site.com"), which the browser resolves as a
@@ -254,6 +255,8 @@ export default async function VenuePage({ params }: { params: Promise<{ lang: st
   // so getRelatedBySlug resolves it to a category_id then queries siblings.
   // Fetched up-front so their venue_type labels join the translation batch.
   const relatedVenues = await getRelatedBySlug(v.categories?.slug || null, v.neighborhood, v.slug)
+  // Link the venue back to its area hub (bidirectional area <-> venue linking).
+  const areaSlug = areaSlugForNeighborhood(v.neighborhood)
 
   // The DB category slug for Things to Do is the legacy 'thinks-to-do'; its
   // public route is /things-to-do. Linking the raw slug costs a 308 hop on
@@ -448,7 +451,7 @@ export default async function VenuePage({ params }: { params: Promise<{ lang: st
               <span className="rate"><Icon id="pg-star" cls="is-rating" />{v.rating.toFixed(1)}
                 {v.review_count != null && <span className="count"> · {v.review_count.toLocaleString()} {t('reviews')}</span>}</span>
             )}
-            {v.neighborhood && <span className="det-yf__metaitem"><Icon id="pg-pin" /> {v.neighborhood}</span>}
+            {v.neighborhood && <span className="det-yf__metaitem"><Icon id="pg-pin" /> {areaSlug ? <Link href={`/areas/${areaSlug}`}>{v.neighborhood}</Link> : v.neighborhood}</span>}
             {v.hours && <span className="pill pill--success"><Icon id="pg-clock" /> {v.hours}</span>}
             {v.locally_verified && <span className="det-yf__verified"><Icon id="pg-local-verified" /> {t('Locally verified')}</span>}
           </div>

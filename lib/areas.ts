@@ -25,6 +25,18 @@ export const AREAS: Area[] = [
 
 export const areaBySlug = (slug: string) => AREAS.find((a) => a.slug === slug)
 
+// The area a venue's neighborhood belongs to (first area whose known name
+// fragments appear in the neighborhood string), or null. Used to link a venue
+// back to its area hub (audit P0-2: bidirectional area <-> venue linking).
+export function areaSlugForNeighborhood(neighborhood: string | null): string | null {
+  const n = (neighborhood || '').toLowerCase()
+  if (!n) return null
+  for (const a of AREAS) {
+    if (a.match.some((m) => n.includes(m.toLowerCase()))) return a.slug
+  }
+  return null
+}
+
 // Pick an area centre for a venue that has no coordinates, from its
 // neighborhood string (e.g. "Naklua · Bang Lamung").
 export function areaCenterFor(neighborhood: string | null): { lat: number; lng: number } {
