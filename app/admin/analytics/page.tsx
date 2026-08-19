@@ -2,6 +2,7 @@ import Shell from '@/app/admin/_components/Shell'
 import { IconChevR, IconUp, IconDown } from '@/app/admin/_components/icons'
 import AnalyticsTabs from '@/app/admin/_components/AnalyticsTabs'
 import { getAnalytics } from '@/lib/adminAnalytics'
+import { getLatestSeoReport } from '@/lib/seoReport'
 
 // GA4 Data API + Search Console (see lib/adminAnalytics.ts). When Google isn't
 // configured or a call fails, getAnalytics() returns an EMPTY dataset (zeros,
@@ -21,8 +22,10 @@ function areaPath(vals: number[], w: number, h: number, pad = 4) {
 }
 
 export default async function AnalyticsPage() {
-  const data = await getAnalytics()
-  const { live, kpis, visitors, topPages, sources, devices, search } = data
+  const [data, seoReport] = await Promise.all([getAnalytics(), getLatestSeoReport()])
+  const { live, kpis, visitors, topPages, topPagesByType, sources, devices, search } = data
+  const seoItems = (seoReport?.items ?? []).slice().sort((a, b) => (a.priority || 9) - (b.priority || 9))
+  const fmtDate = (s?: string | null) => (s ? new Date(s).toLocaleDateString('tr-TR', { day: '2-digit', month: 'short', year: 'numeric' }) : '-')
 
   const W = 760, H = 200
   const main = areaPath(visitors, W, H)
@@ -123,6 +126,29 @@ export default async function AnalyticsPage() {
               </section>
             </div>
 
+            {/* most viewed, split by content type */}
+            {topPagesByType.length > 0 && (
+              <section className="panel" style={{ marginBottom: 18 }}>
+                <div className="panel-head"><div><b>En çok görüntülenen — türe göre</b><div className="sub">Pageviews · son 28 gün · bloglar / mekanlar / kategoriler ayrı</div></div></div>
+                <div className="an-typegrid">
+                  {topPagesByType.map((g) => (
+                    <div className="an-typecol" key={g.type}>
+                      <div className="an-typecol__head"><b>{g.label}</b><span>{g.total.toLocaleString()} görüntülenme</span></div>
+                      <div className="an-pages">
+                        {g.pages.map((p) => (
+                          <div className="an-page" key={p.path}>
+                            <span className="an-page__path" title={p.path}>{p.path}</span>
+                            <span className="an-page__bar"><span style={{ width: `${p.pct}%` }} /></span>
+                            <span className="an-page__n">{p.views.toLocaleString()}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
             {/* devices */}
             <section className="panel" style={{ marginBottom: 18 }}>
               <div className="panel-head"><div><b>Devices</b><div className="sub">Share of sessions</div></div></div>
@@ -197,6 +223,57 @@ export default async function AnalyticsPage() {
                 <a className="an-open" href="https://search.google.com/search-console" target="_blank" rel="noopener">Aç →</a>
               </div>
               <p className="an-note">Search Console bağlı değil. GSC_SITE_URL eklenip service account GSC&apos;de Viewer yapılınca burası dolar.</p>
+            </section>
+          )
+        }
+        aiseo={
+          seoReport ? (
+            <>
+              <section className="panel" style={{ marginBottom: 18 }}>
+                <div className="panel-head">
+                  <div>
+                    <b>AI SEO analizi</b>
+                    <div className="sub">{fmtDate(seoReport.period_start)}–{fmtDate(seoReport.period_end)} · {seoReport.model} · üretildi {fmtDate(seoReport.created_at)}</div>
+                  </div>
+                </div>
+                <div className="an-recsum">
+                  <p>{seoReport.summary}</p>
+                  <div className="an-recmeta">
+                    <span><b>{(seoReport.meta?.total_impressions ?? 0).toLocaleString()}</b> gösterim</span>
+                    <span><b>{(seoReport.meta?.total_clicks ?? 0).toLocaleString()}</b> tık</span>
+                    <span><b>{seoItems.length}</b> öneri</span>
+                  </div>
+                </div>
+              </section>
+
+              <div className="an-recs">
+                {seoItems.map((it, i) => (
+                  <div className={`an-rec an-rec--p${it.priority || 3}`} key={i}>
+                    <div className="an-rec__top">
+                      <span className="an-rec__pri">P{it.priority || 3}</span>
+                      <span className={`an-rec__kind ${it.kind === 'gap' ? 'is-gap' : ''}`}>{it.kind === 'gap' ? 'Yeni içerik' : 'İyileştir'}</span>
+                      <span className="an-rec__target" title={it.target}>{it.target}</span>
+                    </div>
+                    {it.page_path
+                      ? <a className="an-rec__path" href={it.page_path} target="_blank" rel="noopener">{it.page_path} ↗</a>
+                      : <span className="an-rec__path an-rec__path--gap">— yeni sayfa önerisi —</span>}
+                    <div className="an-rec__issue">{it.issue}</div>
+                    <div className="an-rec__action">{it.action}</div>
+                    <div className="an-rec__metrics">
+                      <span>{(it.impressions ?? 0).toLocaleString()} gösterim</span>
+                      <span>{(it.clicks ?? 0).toLocaleString()} tık</span>
+                      <span>CTR {it.ctr ?? 0}%</span>
+                      <span>Poz. {it.position ?? '-'}</span>
+                    </div>
+                  </div>
+                ))}
+                {seoItems.length === 0 && <p className="an-note">Bu raporda öneri yok.</p>}
+              </div>
+            </>
+          ) : (
+            <section className="panel">
+              <div className="panel-head"><div><b>AI SEO analizi</b><div className="sub">Haftalık öneri motoru</div></div></div>
+              <p className="an-note">Henüz analiz üretilmedi. <code>node scripts/seo-analysis.mjs</code> çalıştırılınca (GSC bağlıyken) en çok aranan keyword&apos;lere göre geliştirilmesi gereken sayfalar burada önceliklendirilmiş olarak listelenir. Not: <code>seo_recommendations</code> tablosu için <code>supabase-seo-recommendations.sql</code> bir kez çalıştırılmalı.</p>
             </section>
           )
         }

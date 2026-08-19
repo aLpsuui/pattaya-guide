@@ -19,14 +19,36 @@ export type Search = {
   queries: GscRow[]
   pages: GscRow[]
 }
+export type PageStat = { path: string; views: number; pct: number }
+export type PageGroup = { type: PageType; label: string; total: number; pages: PageStat[] }
 export type AnalyticsData = {
   live: boolean
   kpis: Kpi[]
   visitors: number[]
-  topPages: { path: string; views: number; pct: number }[]
+  topPages: PageStat[]
+  topPagesByType: PageGroup[]
   sources: { label: string; pct: number; color: string }[]
   devices: { label: string; pct: number }[]
   search: Search | null
+}
+
+// Classify a GA4 pagePath (e.g. "/en/venues/oasis-spa") into a content type so
+// the dashboard can split "most viewed" into blogs vs venues vs categories etc.
+export type PageType = 'venue' | 'blog' | 'area' | 'category' | 'home' | 'other'
+const PAGE_TYPE_LABEL: Record<PageType, string> = {
+  venue: 'Mekanlar', blog: 'Bloglar', area: 'Alanlar', category: 'Kategoriler', home: 'Ana sayfa', other: 'Diğer',
+}
+// First path segments that are standalone pages, not category pillars.
+const NON_CATEGORY = new Set(['author', 'search', 'contact', 'plan-my-trip', 'plan', 'about', 'privacy', 'terms', 'sitemap', 'admin', 'api'])
+export function pageType(rawPath: string): PageType {
+  const path = rawPath.split(/[?#]/)[0].replace(/^\/(en|ru)(?=\/|$)/, '') // strip locale prefix
+  const segs = path.split('/').filter(Boolean)
+  if (segs.length === 0) return 'home'
+  if (segs[0] === 'venues') return 'venue'
+  if (segs[0] === 'blog') return 'blog'
+  if (segs[0] === 'areas') return 'area'
+  if (NON_CATEGORY.has(segs[0])) return 'other'
+  return 'category' // pillar (/eat-and-drinks) or subcategory (/eat-and-drinks/coffee)
 }
 
 const SOURCE_COLORS = ['#0178b4', '#7a5cff', '#1ba672', '#e8a33d', '#d0517e', '#38a3a5']
@@ -45,6 +67,7 @@ export const EMPTY: AnalyticsData = {
   ],
   visitors: [0],
   topPages: [],
+  topPagesByType: [],
   sources: [],
   devices: [],
   search: null,
@@ -130,7 +153,7 @@ async function fetchGA4(propertyId: string, token: string) {
       dimensions: [{ name: 'pagePath' }],
       metrics: [{ name: 'screenPageViews' }],
       orderBys: [{ metric: { metricName: 'screenPageViews' }, desc: true }],
-      limit: 7,
+      limit: 250,
     }),
     runReport(propertyId, token, {
       dateRanges: [{ startDate: '28daysAgo', endDate: 'yesterday' }],
@@ -164,11 +187,31 @@ async function fetchGA4(propertyId: string, token: string) {
   const visitorsSeries = visitors.length ? visitors : [0]
 
   const pageRows = pages.rows ?? []
-  const maxViews = Math.max(1, ...pageRows.map((r: { metricValues: { value: string }[] }) => Number(r.metricValues[0].value) || 0))
-  const topPages = pageRows.map((r: { dimensionValues: { value: string }[]; metricValues: { value: string }[] }) => {
-    const views = Number(r.metricValues[0].value) || 0
-    return { path: r.dimensionValues[0].value, views, pct: pct(views, maxViews) }
-  })
+  const allPages: { path: string; views: number }[] = pageRows.map((r: { dimensionValues: { value: string }[]; metricValues: { value: string }[] }) => ({
+    path: r.dimensionValues[0].value,
+    views: Number(r.metricValues[0].value) || 0,
+  }))
+  // Flat overall top 7 (kept for the compact "Top pages" card).
+  const maxViews = Math.max(1, ...allPages.map((p) => p.views))
+  const topPages: PageStat[] = allPages.slice(0, 7).map((p) => ({ ...p, pct: pct(p.views, maxViews) }))
+
+  // Split every viewed page by content type; each group keeps its own top 8,
+  // bar widths scaled within the group, plus the group's total pageviews.
+  const buckets = new Map<PageType, { path: string; views: number }[]>()
+  for (const p of allPages) {
+    const t = pageType(p.path)
+    if (!buckets.has(t)) buckets.set(t, [])
+    buckets.get(t)!.push(p)
+  }
+  const GROUP_ORDER: PageType[] = ['blog', 'venue', 'category', 'area', 'home', 'other']
+  const topPagesByType: PageGroup[] = GROUP_ORDER
+    .filter((t) => buckets.has(t))
+    .map((t) => {
+      const rows = buckets.get(t)!.sort((a, b) => b.views - a.views)
+      const total = rows.reduce((s, r) => s + r.views, 0)
+      const gMax = Math.max(1, ...rows.map((r) => r.views))
+      return { type: t, label: PAGE_TYPE_LABEL[t], total, pages: rows.slice(0, 8).map((r) => ({ ...r, pct: pct(r.views, gMax) })) }
+    })
 
   const srcRows = src.rows ?? []
   const srcTotal = srcRows.reduce((a: number, r: { metricValues: { value: string }[] }) => a + (Number(r.metricValues[0].value) || 0), 0)
@@ -185,7 +228,7 @@ async function fetchGA4(propertyId: string, token: string) {
     pct: pct(Number(r.metricValues[0].value) || 0, devTotal),
   }))
 
-  return { kpis, visitors: visitorsSeries, topPages, sources, devices }
+  return { kpis, visitors: visitorsSeries, topPages, topPagesByType, sources, devices }
 }
 
 // ---- Search Console API ----------------------------------------------------
@@ -253,6 +296,7 @@ async function fetchLive(): Promise<AnalyticsData | null> {
     kpis: ga?.kpis ?? EMPTY.kpis,
     visitors: ga?.visitors ?? EMPTY.visitors,
     topPages: ga?.topPages ?? [],
+    topPagesByType: ga?.topPagesByType ?? [],
     sources: ga?.sources ?? [],
     devices: ga?.devices ?? [],
     search: search ?? null,
