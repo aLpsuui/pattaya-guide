@@ -9,6 +9,8 @@ import { hasLocale } from '@/lib/i18n/config'
 import { getDictionary } from '@/lib/i18n/dictionaries'
 import { translateMany } from '@/lib/i18n/translateContent'
 import { groupsForCategory, groupKeyForType } from '@/lib/venueGroups'
+import { resolveSubcat, subcatBySlug, subcatsForCategory, groupForSubcat } from '@/lib/subcategories'
+import { areaSlugForNeighborhood, areaBySlug } from '@/lib/areas'
 import { SUBEXTRA } from '@/lib/categoryConfigs'
 
 // A dedicated subcategory view (e.g. /eat-and-drinks/cafes): filters the listing
@@ -19,7 +21,7 @@ const ASSETS = 'https://cdn.gotopattaya.com/Assets'
 
 interface Venue {
   id: string; slug: string | null; name: string; rating: number | null; review_count: number | null
-  venue_type: string | null; price_range: string | null; address: string | null; neighborhood: string | null; image_url: string | null
+  venue_type: string | null; subcategory: string | null; price_range: string | null; address: string | null; neighborhood: string | null; image_url: string | null
 }
 
 export interface PrimaryGroup {
@@ -60,29 +62,6 @@ const chipStyle = (on: boolean): CSSProperties => ({
 })
 const slugify = (t: string | null) => (t || 'other').toLowerCase().replace(/&/g, ' ').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'other'
 
-// Canonical Pattaya area buckets from a messy neighborhood string.
-function areaOf(nb: string | null): { slug: string; label: string } | null {
-  if (!nb) return null
-  const t = nb.toLowerCase()
-  const map: [string, string, string][] = [
-    ['central', 'central', 'Central Pattaya'],
-    ['naklua', 'naklua', 'Naklua'],
-    ['north', 'north', 'North Pattaya'],
-    ['jomtien', 'jomtien', 'Jomtien'],
-    ['pratumnak', 'pratumnak', 'Pratumnak Hill'],
-    ['phra tamnak', 'pratumnak', 'Pratumnak Hill'],
-    ['wong amat', 'wongamat', 'Wong Amat'],
-    ['walking', 'walkingstreet', 'Walking Street'],
-    ['south', 'southpattaya', 'South Pattaya'],
-    ['bang lamung', 'banglamung', 'Bang Lamung'],
-    ['sattahip', 'sattahip', 'Sattahip'],
-    ['chon buri', 'chonburi', 'Chon Buri'],
-    ['chonburi', 'chonburi', 'Chon Buri'],
-  ]
-  for (const [kw, slug, label] of map) if (t.includes(kw)) return { slug, label }
-  return { slug: slugify(nb), label: nb.trim() }
-}
-
 export default async function CategoryListing({ cfg, lang, sub }: { cfg: CatConfig; lang: string; sub?: SubView }) {
   const locale = hasLocale(lang) ? lang : 'en'
   const dict = await getDictionary(locale)
@@ -91,7 +70,7 @@ export default async function CategoryListing({ cfg, lang, sub }: { cfg: CatConf
   const vgroups = groupsForCategory(cfg.slug)
   const { data } = await supabase
     .from('venues')
-    .select('id, slug, name, rating, review_count, venue_type, price_range, address, neighborhood, image_url, categories!inner(slug)')
+    .select('id, slug, name, rating, review_count, venue_type, subcategory, price_range, address, neighborhood, image_url, categories!inner(slug)')
     .eq('is_active', true)
     .eq('categories.slug', cfg.slug)
     .order('rating', { ascending: false, nullsFirst: false })
@@ -131,21 +110,38 @@ export default async function CategoryListing({ cfg, lang, sub }: { cfg: CatConf
   const badge = t(cfg.badge || 'Locally verified · weekly')
 
   // ---- primary TYPE rail (single select) -------------------------------
-  // The clean groups come from lib/venueGroups (shared with the nav menu) so a
-  // submenu item and its filter button here are always the same bucket. Falls
-  // back to a page-local primaryGroups config, then to raw venue_type.
+  // Clean subcategory ("tag") slug for a venue: the stored column first, else
+  // normalized from the legacy free-text venue_type (lib/subcategories).
+  const subOf = (v: Venue): string | null => resolveSubcat(cfg.slug, v.subcategory, v.venue_type)
+  // Card tag + cuisine line show the clean subcategory label (falls back to the
+  // translated raw type for any category without a taxonomy yet).
+  const tagOf = (v: Venue): string => {
+    const sc = subcatBySlug(subOf(v))
+    return sc ? t(sc.label) : ((tt(v.venue_type) as string) || t('Place'))
+  }
+  // Top-level group of a venue (the venueGroups bucket = SEO landing level),
+  // derived from its clean subcategory, falling back to the legacy regex.
   const familyOf = (v: Venue): string => {
-    if (vgroups.length) return groupKeyForType(cfg.slug, v.venue_type) || 'other'
+    if (vgroups.length) return groupForSubcat(subOf(v)) || groupKeyForType(cfg.slug, v.venue_type) || 'other'
     if (cfg.primaryGroups) {
-      const t = (v.venue_type || '').toLowerCase()
-      for (const g of cfg.primaryGroups) if (g.match.some((m) => t.includes(m))) return g.slug
+      const tl = (v.venue_type || '').toLowerCase()
+      for (const g of cfg.primaryGroups) if (g.match.some((m) => tl.includes(m))) return g.slug
       return 'other'
     }
     return slugify(v.venue_type)
   }
 
+  // On a subcategory (group) page the rail filters by clean SUBCATEGORY tags
+  // inside that group (e.g. Adventure → ATV, Go-Kart, Skydiving), so you can see
+  // just the off-road or just the go-kart operators. On a pillar page it filters
+  // by the top-level groups.
   let primaries: { slug: string; label: string; icon?: string; n: number }[]
-  if (vgroups.length) {
+  if (sub) {
+    primaries = subcatsForCategory(cfg.slug)
+      .filter((sc) => sc.group === sub.key)
+      .map((sc) => ({ slug: sc.slug, label: t(sc.label), n: venues.filter((v) => subOf(v) === sc.slug).length }))
+      .filter((p) => p.n > 0)
+  } else if (vgroups.length) {
     primaries = vgroups
       .map((g) => ({ slug: g.key, label: t(g.label), icon: g.icon, n: venues.filter((v) => familyOf(v) === g.key).length }))
       .filter((p) => p.n > 0)
@@ -163,19 +159,21 @@ export default async function CategoryListing({ cfg, lang, sub }: { cfg: CatConf
     primaries = [...counts.entries()].sort((a, b) => b[1].n - a[1].n).slice(0, 10)
       .map(([slug, e]) => ({ slug, label: tt(e.label) as string, n: e.n }))
   }
-  // On a subcategory page the type is fixed - hide the type facet entirely.
-  if (sub) primaries = []
+  // Hide the rail only when it can't help (a group that has a single tag).
+  const hideTypeRail = !!sub && primaries.length <= 1
 
   // ---- AREA facet (multi select) ---------------------------------------
-  const areaCounts = new Map<string, { label: string; n: number }>()
+  // Map each venue to one of the canonical Pattaya areas (lib/areas), so the
+  // facet is a clean, fixed list (Central, Jomtien, Naklua…) instead of the raw
+  // neighborhood free-text ("~40 min from Pattaya", "by reservation", …).
+  const areaCounts = new Map<string, number>()
   for (const v of venues) {
-    const a = areaOf(v.neighborhood)
-    if (!a) continue
-    const e = areaCounts.get(a.slug) || { label: a.label, n: 0 }
-    e.n++; areaCounts.set(a.slug, e)
+    const slug = areaSlugForNeighborhood(v.neighborhood)
+    if (!slug) continue
+    areaCounts.set(slug, (areaCounts.get(slug) || 0) + 1)
   }
-  const areas = [...areaCounts.entries()].sort((a, b) => b[1].n - a[1].n).slice(0, 12)
-    .map(([slug, e]) => ({ slug, label: t(e.label), n: e.n }))
+  const areas = [...areaCounts.entries()].sort((a, b) => b[1] - a[1])
+    .map(([slug, n]) => ({ slug, label: t(areaBySlug(slug)?.name || slug), n }))
 
   const rated = venues.filter((v) => typeof v.rating === 'number')
   const avg = rated.length ? (rated.reduce((s, v) => s + (v.rating || 0), 0) / rated.length).toFixed(1) : '-'
@@ -185,8 +183,8 @@ export default async function CategoryListing({ cfg, lang, sub }: { cfg: CatConf
   // initial DOM light while filtering stays instant).
   const items: VItem[] = venues.map((v, i) => ({
     id: v.id, slug: v.slug, name: v.name, rating: v.rating, review_count: v.review_count,
-    venue_type: tt(v.venue_type), loc: v.address || v.neighborhood || null, image_url: v.image_url,
-    cat: familyOf(v), area: areaOf(v.neighborhood)?.slug || '', order: i,
+    venue_type: tagOf(v), loc: v.address || v.neighborhood || null, image_url: v.image_url,
+    cat: sub ? (subOf(v) || 'other') : familyOf(v), area: areaSlugForNeighborhood(v.neighborhood) || '', order: i,
   }))
 
   // ---- structured data: breadcrumb + listing ---------------------------
@@ -299,7 +297,7 @@ export default async function CategoryListing({ cfg, lang, sub }: { cfg: CatConf
               unitSingular={unitSingular}
               total={total}
               dict={dict}
-              hideTypeRail={!!sub}
+              hideTypeRail={hideTypeRail}
             />
           )}
         </div>

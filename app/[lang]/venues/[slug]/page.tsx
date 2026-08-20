@@ -12,6 +12,7 @@ import { localeAlternates, clampDescription, pageTitle, ogDefaultImages, ruPlace
 import { isUntranslatedRu } from '@/lib/i18n/cyrillic'
 import { cardImg } from '@/lib/img'
 import { areaSlugForNeighborhood } from '@/lib/areas'
+import { resolveSubcat, subcatBySlug, groupForSubcat } from '@/lib/subcategories'
 
 // Some `website` values are stored without a protocol ("www.ozohotels.com/…")
 // or protocol-relative ("//site.com"), which the browser resolves as a
@@ -61,6 +62,7 @@ interface Venue {
   slug: string
   name: string
   venue_type: string | null
+  subcategory: string | null
   price_range: string | null
   rating: number | null
   review_count: number | null
@@ -114,7 +116,7 @@ interface RelatedVenue {
 }
 
 const SELECT = `
-  id, slug, name, venue_type, price_range, rating, review_count, locally_verified,
+  id, slug, name, venue_type, subcategory, price_range, rating, review_count, locally_verified,
   tagline, description, about, address, neighborhood, nearby, hours, hours_note,
   phone, website, website_label, facebook_url, maps_query, price_from, price_from_label,
   menu_intro, menu_note, map_road_label, map_soi_label, map_pin_label,
@@ -300,6 +302,14 @@ export default async function VenuePage({ params }: { params: Promise<{ lang: st
   // Category + venue_type labels for on-page display (translated; JSON-LD keeps English).
   const categoryLabel = v.categories?.name_en ? (catMap.get(v.categories.name_en) ?? categoryName) : 'Pattaya'
   const venueTypeLabel = tt(v.venue_type)
+  // Clean subcategory ("tag") for the breadcrumb: its label + a deep-link into
+  // the group landing page with the tag pre-filtered (e.g.
+  // /things-to-do/adventure?type=atv-off-road), instead of the bare pillar.
+  const subSlug = v.categories?.slug ? resolveSubcat(v.categories.slug, v.subcategory, v.venue_type) : null
+  const subMeta = subcatBySlug(subSlug)
+  const subLabel = subMeta ? t(subMeta.label) : venueTypeLabel
+  const subGroup = groupForSubcat(subSlug)
+  const subCrumbHref = subGroup ? `${categorySlug}/${subGroup}?type=${subSlug}` : categorySlug
   // Visible freshness signal (matches JSON-LD dateModified): "Last verified · Month Year".
   const verifiedDate = v.updated_at
     ? new Intl.DateTimeFormat(locale === 'ru' ? 'ru-RU' : 'en-US', { year: 'numeric', month: 'long' }).format(new Date(v.updated_at))
@@ -433,7 +443,7 @@ export default async function VenuePage({ params }: { params: Promise<{ lang: st
         <Link href="/">{t('Home')}</Link>
         <Icon id="pg-chevron-right" />
         <Link href={categorySlug}>{categoryLabel}</Link>
-        {venueTypeLabel && (<><Icon id="pg-chevron-right" /><Link href={categorySlug}>{venueTypeLabel}</Link></>)}
+        {subLabel && (<><Icon id="pg-chevron-right" /><Link href={subCrumbHref}>{subLabel}</Link></>)}
         <Icon id="pg-chevron-right" />
         <span className="cur" aria-current="page">{v.name}</span>
       </nav>

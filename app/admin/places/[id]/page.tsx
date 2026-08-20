@@ -11,8 +11,8 @@ export const dynamic = 'force-dynamic'
 export default async function EditPlace({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const [{ data: place }, { data: cats }, { data: photos }] = await Promise.all([
-    db.from('venues').select('id,name,slug,category_id,neighborhood,tagline,address,price_range,image_url,seo_title,description,focus_keyword,canonical_url,noindex,status,is_active').eq('id', id).single(),
-    db.from('categories').select('id,name_en').order('name_en'),
+    db.from('venues').select('id,name,slug,category_id,subcategory,neighborhood,tagline,address,price_range,image_url,seo_title,description,focus_keyword,canonical_url,noindex,status,is_active').eq('id', id).single(),
+    db.from('categories').select('id,name_en,slug').order('name_en'),
     db.from('venue_photos').select('id,url,alt').eq('venue_id', id).order('sort_order', { ascending: true }),
   ])
   if (!place) notFound()

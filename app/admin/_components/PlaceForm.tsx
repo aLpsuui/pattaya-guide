@@ -4,12 +4,13 @@ import Link from 'next/link'
 import { savePlace } from '@/app/admin/_actions/places'
 import { AREAS, PRICE_RANGES, slugify } from '@/lib/admin/options'
 import { venueChecks, scoreOf } from '@/lib/admin/seo'
+import { subcatsForCategory } from '@/lib/subcategories'
 import { IconUpload, IconCheck, IconCross } from './icons'
 import VenueGallery, { type GalleryPhoto } from './VenueGallery'
 
-export type Category = { id: string; name_en: string }
+export type Category = { id: string; name_en: string; slug: string }
 export type Place = {
-  id: string; name: string; slug: string; category_id: string | null; neighborhood: string | null
+  id: string; name: string; slug: string; category_id: string | null; subcategory: string | null; neighborhood: string | null
   tagline: string | null; address: string | null; price_range: string | null; image_url: string | null
   seo_title: string | null; description: string | null; focus_keyword: string | null
   canonical_url: string | null; noindex: boolean | null; status: string | null; is_active: boolean | null
@@ -23,6 +24,9 @@ export default function PlaceForm({ categories, place, photos = [] }: { categori
   const statusRef = useRef<HTMLInputElement>(null)
 
   const [name, setName] = useState(place?.name ?? '')
+  const [catId, setCatId] = useState(place?.category_id ?? '')
+  const catSlug = categories.find((c) => c.id === catId)?.slug ?? ''
+  const subOptions = subcatsForCategory(catSlug)
   const [slug, setSlug] = useState(place?.slug ?? '')
   const [slugTouched, setSlugTouched] = useState(!!place)
   const [seoTitle, setSeoTitle] = useState(place?.seo_title ?? '')
@@ -72,10 +76,19 @@ export default function PlaceForm({ categories, place, photos = [] }: { categori
                 </div>
                 <div className="field">
                   <label>Category</label>
-                  <select className="select" name="category_id" defaultValue={place?.category_id ?? ''}>
+                  <select className="select" name="category_id" value={catId} onChange={(e) => setCatId(e.target.value)}>
                     <option value="">- Select -</option>
                     {categories.map((c) => <option key={c.id} value={c.id}>{c.name_en}</option>)}
                   </select>
+                </div>
+                <div className="field">
+                  <label>Subcategory / tag</label>
+                  <select className="select" name="subcategory" defaultValue={place?.subcategory ?? ''} disabled={!subOptions.length} key={catSlug}>
+                    <option value="">{subOptions.length ? '- Select -' : 'Pick a category first'}</option>
+                    {subOptions.map((s) => <option key={s.slug} value={s.slug}>{s.label}</option>)}
+                    {place?.subcategory && !subOptions.some((s) => s.slug === place.subcategory) && <option value={place.subcategory}>{place.subcategory}</option>}
+                  </select>
+                  <span className="hint">Drives the card tag, filters and breadcrumb. Clean, controlled list.</span>
                 </div>
                 <div className="field">
                   <label>Area / district</label>

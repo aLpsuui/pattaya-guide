@@ -36,6 +36,7 @@ export async function savePlace(_prev: State, fd: FormData): Promise<State> {
   const row: Record<string, unknown> = {
     name, slug,
     category_id: str(fd, 'category_id'),
+    subcategory: str(fd, 'subcategory'),
     neighborhood: str(fd, 'neighborhood'),
     tagline: str(fd, 'tagline'),
     address: str(fd, 'address'),
