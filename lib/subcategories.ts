@@ -14,7 +14,18 @@ export interface SubCat { slug: string; label: string; group: string }
 // Order within a category = display order in the admin dropdown + filter rail.
 export const SUBCATS: Record<string, SubCat[]> = {
   'eat-and-drinks': [
-    { slug: 'restaurant', label: 'Restaurant', group: 'restaurants' },
+    // Restaurants split by cuisine/type (LLM-classified into the stored column,
+    // since the free-text venue_type is just "Restaurants").
+    { slug: 'thai', label: 'Thai', group: 'restaurants' },
+    { slug: 'seafood', label: 'Seafood', group: 'restaurants' },
+    { slug: 'japanese', label: 'Japanese', group: 'restaurants' },
+    { slug: 'korean', label: 'Korean', group: 'restaurants' },
+    { slug: 'chinese', label: 'Chinese', group: 'restaurants' },
+    { slug: 'indian', label: 'Indian', group: 'restaurants' },
+    { slug: 'italian', label: 'Italian & Pizza', group: 'restaurants' },
+    { slug: 'steakhouse-grill', label: 'Steakhouse & Grill', group: 'restaurants' },
+    { slug: 'rooftop-beach-club', label: 'Rooftop & Beach Club', group: 'restaurants' },
+    { slug: 'international-restaurant', label: 'International', group: 'restaurants' },
     { slug: 'coffee-cafe', label: 'Coffee & Café', group: 'cafes' },
     { slug: 'specialty-coffee', label: 'Specialty Coffee', group: 'cafes' },
     { slug: 'bakery-brunch', label: 'Bakery & Brunch', group: 'cafes' },
@@ -49,6 +60,8 @@ export const SUBCATS: Record<string, SubCat[]> = {
     { slug: 'martial-arts', label: 'Martial Arts', group: 'martial-arts' },
     { slug: 'climbing', label: 'Climbing', group: 'martial-arts' },
     { slug: 'yoga-pilates', label: 'Yoga & Pilates', group: 'yoga' },
+    { slug: 'gym-24-7', label: '24/7 Gym', group: 'gyms' },
+    { slug: 'crossfit', label: 'CrossFit & Functional', group: 'gyms' },
     { slug: 'gym-fitness', label: 'Gym & Fitness', group: 'gyms' },
   ],
   'wellness-and-beauty': [
@@ -65,7 +78,9 @@ const RULES: Record<string, { re: RegExp; slug: string }[]> = {
     { re: /specialty|roaster|espresso/i, slug: 'specialty-coffee' },
     { re: /bakery|patisserie|brunch|dessert|bubble tea/i, slug: 'bakery-brunch' },
     { re: /caf[eé]|coffee/i, slug: 'coffee-cafe' },
-    { re: /.*/, slug: 'restaurant' },
+    // Restaurant cuisine is set from the stored (LLM-classified) column; a
+    // restaurant with no stored value falls back to the generic "International".
+    { re: /.*/, slug: 'international-restaurant' },
   ],
   'nightlife': [
     { re: /go-?go/i, slug: 'go-go-bar' },
@@ -97,6 +112,8 @@ const RULES: Record<string, { re: RegExp; slug: string }[]> = {
     { re: /climb/i, slug: 'climbing' },
     { re: /muay|boxing|kickbox|combat|\bmma\b|fighter/i, slug: 'muay-thai' },
     { re: /martial|taekwondo|karate|jiu|judo/i, slug: 'martial-arts' },
+    { re: /24\s*\/?\s*7|24\s*hour|round.the.clock/i, slug: 'gym-24-7' },
+    { re: /crossfit|functional|strength\s*&?\s*conditioning/i, slug: 'crossfit' },
     { re: /.*/, slug: 'gym-fitness' },
   ],
   'wellness-and-beauty': [
