@@ -18,7 +18,7 @@ import { getDictionary } from '@/lib/i18n/dictionaries'
 import { hasLocale } from '@/lib/i18n/config'
 import { isUntranslatedRu } from '@/lib/i18n/cyrillic'
 
-export const revalidate = 300
+export const revalidate = 3600
 
 // FAQ accordions + in-page smooth scroll for the bespoke .det-area guides
 // (the source page's inline script lived outside <main>, so it was dropped).

@@ -36,7 +36,10 @@ const safeUrl = (u: string | null): string | null => {
 
 // Re-generate from the database at most once every 60s (ISR), so edits to a
 // venue and its child rows go live without a full rebuild.
-export const revalidate = 60
+// Venue pages are near-static and get on-demand revalidation the moment an admin
+// saves (see app/admin/_actions/places.ts → revalidatePath), so a long ISR/CDN
+// window is safe and keeps them served FRESH from the edge (audit: cache lifetime).
+export const revalidate = 86400
 
 // Pre-render every active venue at build (SSG) so detail pages are served from
 // the edge cache (HIT) instead of dynamically rendered on each request. New

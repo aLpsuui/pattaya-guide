@@ -1,9 +1,10 @@
 import 'server-only'
 import { supabase } from '@/lib/supabase'
 import { SITE_URL } from '@/lib/site'
-import { AREAS } from '@/lib/areas'
+import { AREAS, areaSlugForNeighborhood } from '@/lib/areas'
 import { AUTHORS } from '@/lib/authors'
 import { CATEGORY_GROUPS } from '@/lib/venueGroups'
+import { groupForSubcat } from '@/lib/subcategories'
 
 // Public URL path per DB category slug (matches the route folders).
 const CAT_PATH: Record<string, string> = {
@@ -20,54 +21,101 @@ const CAT_PATH: Record<string, string> = {
 // exist only as hreflang alternates) sees the Russian pages as first-class.
 interface Spec { path: string; lastmod: string; changefreq: string; priority: number }
 
+// Pillar public path → DB category slug, for deriving each pillar's lastmod from
+// the freshest venue it contains.
+const PILLAR_SLUG: Record<string, string> = {
+  '/eat-and-drinks': 'eat-and-drinks',
+  '/things-to-do': 'thinks-to-do',
+  '/yoga-and-fitness': 'yoga-and-fitness',
+  '/wellness-and-beauty': 'wellness-and-beauty',
+  '/nightlife': 'nightlife',
+}
+// A stable date for the truly-static legal/util pages, so their lastmod is
+// meaningful (their real last edit) rather than a per-build timestamp.
+const STABLE = '2026-07-07T00:00:00.000Z'
+
 async function paths(): Promise<Spec[]> {
   const now = new Date().toISOString()
-  const specs: Spec[] = [
-    { path: '', lastmod: now, changefreq: 'daily', priority: 1 },
-    { path: '/eat-and-drinks', lastmod: now, changefreq: 'weekly', priority: 0.9 },
-    { path: '/things-to-do', lastmod: now, changefreq: 'weekly', priority: 0.9 },
-    { path: '/yoga-and-fitness', lastmod: now, changefreq: 'weekly', priority: 0.9 },
-    { path: '/wellness-and-beauty', lastmod: now, changefreq: 'weekly', priority: 0.9 },
-    { path: '/areas', lastmod: now, changefreq: 'weekly', priority: 0.9 },
-    { path: '/nightlife', lastmod: now, changefreq: 'weekly', priority: 0.9 },
-    { path: '/map', lastmod: now, changefreq: 'weekly', priority: 0.7 },
-    { path: '/blog', lastmod: now, changefreq: 'daily', priority: 0.8 },
-    { path: '/plan-my-trip', lastmod: now, changefreq: 'monthly', priority: 0.6 },
-    { path: '/about', lastmod: now, changefreq: 'monthly', priority: 0.5 },
-    { path: '/contact', lastmod: now, changefreq: 'yearly', priority: 0.3 },
-    { path: '/privacy', lastmod: now, changefreq: 'yearly', priority: 0.2 },
-    { path: '/terms', lastmod: now, changefreq: 'yearly', priority: 0.2 },
-  ]
-
-  for (const a of AREAS) specs.push({ path: `/areas/${a.slug}`, lastmod: now, changefreq: 'monthly', priority: 0.7 })
-
-  // Subcategory landing pages (e.g. /eat-and-drinks/cafes) — one per venueGroups bucket.
-  for (const [slug, path] of Object.entries(CAT_PATH)) {
-    for (const g of CATEGORY_GROUPS[slug] || []) {
-      specs.push({ path: `${path}/${g.key}`, lastmod: now, changefreq: 'weekly', priority: 0.8 })
-    }
+  const toISO = (v: string | null | undefined): string => {
+    if (!v) return now
+    const d = new Date(v)
+    return isNaN(d.getTime()) ? now : d.toISOString()
   }
+  const later = (a: string | undefined, b: string): string => (!a || b > a ? b : a) // ISO strings sort lexically
 
-  for (const a of AUTHORS) specs.push({ path: `/author/${a.slug}`, lastmod: now, changefreq: 'monthly', priority: 0.4 })
+  // Real content dates aggregated as we stream the venues/blogs, so every
+  // aggregate page (home, pillar, subcategory, area) carries the freshest date
+  // of the content it lists — a meaningful lastmod instead of build time.
+  const catMax = new Map<string, string>()    // category slug → newest venue date
+  const groupMax = new Map<string, string>()  // "catSlug/groupKey" → newest venue date
+  const areaMax = new Map<string, string>()   // area slug → newest venue date
+  let allMax = STABLE
+  let blogMax = STABLE
+  const venueSpecs: Spec[] = []
+  const blogSpecs: Spec[] = []
 
   try {
     const { data } = await supabase.from('blog_posts').select('slug, updated_at_post, published_at').eq('is_published', true)
     for (const p of (data || []) as { slug: string; updated_at_post: string | null; published_at: string | null }[]) {
-      specs.push({ path: `/blog/${p.slug}`, lastmod: (p.updated_at_post || p.published_at || now) as string, changefreq: 'weekly', priority: 0.7 })
+      const d = toISO(p.updated_at_post || p.published_at)
+      blogMax = later(blogMax, d); allMax = later(allMax, d)
+      blogSpecs.push({ path: `/blog/${p.slug}`, lastmod: d, changefreq: 'weekly', priority: 0.7 })
     }
   } catch { /* DB unreachable → keep static routes */ }
 
   try {
     const PAGE = 1000
     for (let from = 0; ; from += PAGE) {
-      const { data } = await supabase.from('venues').select('slug, updated_at').eq('is_active', true).order('slug', { ascending: true }).range(from, from + PAGE - 1)
-      const rows = (data || []) as { slug: string | null; updated_at: string | null }[]
-      for (const v of rows) if (v.slug) specs.push({ path: `/venues/${v.slug}`, lastmod: (v.updated_at || now) as string, changefreq: 'weekly', priority: 0.6 })
+      const { data } = await supabase.from('venues')
+        .select('slug, updated_at, created_at, neighborhood, subcategory, categories!inner(slug)')
+        .eq('is_active', true).order('slug', { ascending: true }).range(from, from + PAGE - 1)
+      const rows = (data || []) as unknown as { slug: string | null; updated_at: string | null; created_at: string | null; neighborhood: string | null; subcategory: string | null; categories: { slug: string } | null }[]
+      for (const v of rows) {
+        if (!v.slug) continue
+        const d = toISO(v.updated_at || v.created_at)
+        allMax = later(allMax, d)
+        const cat = v.categories?.slug
+        if (cat) {
+          catMax.set(cat, later(catMax.get(cat), d))
+          const g = groupForSubcat(v.subcategory)
+          if (g) groupMax.set(`${cat}/${g}`, later(groupMax.get(`${cat}/${g}`), d))
+        }
+        const area = areaSlugForNeighborhood(v.neighborhood)
+        if (area) areaMax.set(area, later(areaMax.get(area), d))
+        venueSpecs.push({ path: `/venues/${v.slug}`, lastmod: d, changefreq: 'weekly', priority: 0.6 })
+      }
       if (rows.length < PAGE) break
     }
   } catch { /* ignore */ }
 
-  return specs
+  const specs: Spec[] = [
+    { path: '', lastmod: allMax, changefreq: 'daily', priority: 1 },
+    { path: '/areas', lastmod: allMax, changefreq: 'weekly', priority: 0.9 },
+    { path: '/map', lastmod: allMax, changefreq: 'weekly', priority: 0.7 },
+    { path: '/blog', lastmod: blogMax, changefreq: 'daily', priority: 0.8 },
+    { path: '/plan-my-trip', lastmod: STABLE, changefreq: 'monthly', priority: 0.6 },
+    { path: '/about', lastmod: STABLE, changefreq: 'monthly', priority: 0.5 },
+    { path: '/contact', lastmod: STABLE, changefreq: 'yearly', priority: 0.3 },
+    { path: '/privacy', lastmod: STABLE, changefreq: 'yearly', priority: 0.2 },
+    { path: '/terms', lastmod: STABLE, changefreq: 'yearly', priority: 0.2 },
+  ]
+  // Pillar landing pages: lastmod = freshest venue in that category.
+  for (const [path, slug] of Object.entries(PILLAR_SLUG)) {
+    specs.push({ path, lastmod: catMax.get(slug) || allMax, changefreq: 'weekly', priority: 0.9 })
+  }
+  // Area hub pages: lastmod = freshest venue in that area.
+  for (const a of AREAS) specs.push({ path: `/areas/${a.slug}`, lastmod: areaMax.get(a.slug) || allMax, changefreq: 'monthly', priority: 0.7 })
+
+  // Subcategory landing pages (e.g. /eat-and-drinks/cafes): freshest venue in that group.
+  for (const [slug, path] of Object.entries(CAT_PATH)) {
+    for (const g of CATEGORY_GROUPS[slug] || []) {
+      specs.push({ path: `${path}/${g.key}`, lastmod: groupMax.get(`${slug}/${g.key}`) || catMax.get(slug) || allMax, changefreq: 'weekly', priority: 0.8 })
+    }
+  }
+  // Author pages: as fresh as the latest post.
+  for (const a of AUTHORS) specs.push({ path: `/author/${a.slug}`, lastmod: blogMax, changefreq: 'monthly', priority: 0.4 })
+
+  return [...specs, ...blogSpecs, ...venueSpecs]
 }
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')

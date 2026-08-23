@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 
 // Re-generate this page from the database at most once every 60s (ISR),
 // so newly published venues/blog posts appear without a full rebuild.
-export const revalidate = 60
+export const revalidate = 300
 
 interface Venue {
   id: string

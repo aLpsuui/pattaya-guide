@@ -48,6 +48,9 @@ export async function savePlace(_prev: State, fd: FormData): Promise<State> {
     noindex: fd.get('index') !== 'on',
     status,
     is_active: isActive,
+    // Stamp a real edit time so the sitemap's <lastmod> reflects genuine content
+    // freshness (the bulk-imported rows all share one date otherwise).
+    updated_at: new Date().toISOString(),
   }
   if (imageUrl) row.image_url = imageUrl
 
