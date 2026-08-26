@@ -18,13 +18,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: 'unauthorized' }, { status: 401 })
   }
   let paths: string[] = []
+  let pages: string[] = []
   try {
     const body = await req.json()
     paths = Array.isArray(body?.paths) ? body.paths : []
+    // Route PATTERNS (e.g. "/[lang]/venues/[slug]") — need type 'page' so a
+    // multi-segment dynamic route actually gets invalidated (all its instances).
+    pages = Array.isArray(body?.pages) ? body.pages : []
   } catch { /* invalid body → empty */ }
   const done: string[] = []
   for (const p of paths) {
     if (typeof p === 'string' && p.startsWith('/')) { revalidatePath(p); done.push(p) }
+  }
+  for (const p of pages) {
+    if (typeof p === 'string' && p.startsWith('/')) { revalidatePath(p, 'page'); done.push(`${p} (page)`) }
   }
   return NextResponse.json({ ok: true, revalidated: done })
 }
