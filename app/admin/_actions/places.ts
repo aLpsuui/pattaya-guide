@@ -63,10 +63,14 @@ export async function savePlace(_prev: State, fd: FormData): Promise<State> {
   await indexNowNotify([`/venues/${slug}`])
 
   // Refresh the admin list AND the public venue page + homepage so the edit
-  // shows live right away instead of waiting out the ISR window.
+  // shows live right away instead of waiting out the ISR window. The public
+  // route is /[lang]/venues/[slug], so a bare '/venues/…' path matches nothing —
+  // revalidate BOTH locale variants (and both home pages) explicitly.
   revalidatePath('/admin/places')
-  revalidatePath(`/venues/${slug}`)
-  revalidatePath('/')
+  revalidatePath(`/en/venues/${slug}`)
+  revalidatePath(`/ru/venues/${slug}`)
+  revalidatePath('/en')
+  revalidatePath('/ru')
   redirect('/admin/places')
 }
 
@@ -75,10 +79,15 @@ export async function deletePlace(fd: FormData) {
   if (id) {
     const { data } = await db.from('venues').select('slug').eq('id', id).maybeSingle()
     await db.from('venues').delete().eq('id', id)
-    if (data?.slug) { revalidatePath(`/venues/${data.slug}`); await indexNowNotify([`/venues/${data.slug}`]) }
+    if (data?.slug) {
+      revalidatePath(`/en/venues/${data.slug}`)
+      revalidatePath(`/ru/venues/${data.slug}`)
+      await indexNowNotify([`/venues/${data.slug}`])
+    }
   }
   revalidatePath('/admin/places')
-  revalidatePath('/')
+  revalidatePath('/en')
+  revalidatePath('/ru')
   redirect('/admin/places')
 }
 
