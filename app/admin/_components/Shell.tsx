@@ -3,14 +3,15 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import { logout } from '@/app/admin/_actions/auth'
 import {
-  IconPin, IconDoc, IconImage, IconDash, IconSearch, IconSun, IconMoon, IconBurger, IconLogout, IconMail, IconTree, IconChart, IconStar, IconGear,
+  IconPin, IconDoc, IconImage, IconDash, IconSearch, IconSun, IconMoon, IconBurger, IconLogout, IconMail, IconTree, IconChart, IconStar, IconGear, IconCheck,
 } from './icons'
 
-type Active = 'dashboard' | 'places' | 'categories' | 'blog' | 'media' | 'seo' | 'analytics' | 'messages' | 'deal' | 'settings'
+type Active = 'dashboard' | 'places' | 'categories' | 'blog' | 'media' | 'seo' | 'analytics' | 'messages' | 'bookings' | 'deal' | 'settings'
 
 const NAV: { key: Active; href: string; label: string; icon: ReactNode; group: string }[] = [
   { key: 'dashboard', href: '/admin', label: 'Dashboard', icon: <IconDash />, group: 'Overview' },
   { key: 'messages', href: '/admin/messages', label: 'Messages', icon: <IconMail />, group: 'Overview' },
+  { key: 'bookings', href: '/admin/bookings', label: 'Bookings', icon: <IconCheck />, group: 'Overview' },
   { key: 'places', href: '/admin/places', label: 'Places', icon: <IconPin />, group: 'Content' },
   { key: 'categories', href: '/admin/categories', label: 'Categories', icon: <IconTree />, group: 'Content' },
   { key: 'deal', href: '/admin/daily-deal', label: 'Daily Deal', icon: <IconStar />, group: 'Content' },

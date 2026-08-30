@@ -13,6 +13,7 @@ import { isUntranslatedRu } from '@/lib/i18n/cyrillic'
 import { cardImg } from '@/lib/img'
 import { areaSlugForNeighborhood } from '@/lib/areas'
 import { resolveSubcat, subcatBySlug, groupForSubcat } from '@/lib/subcategories'
+import BookingWidget, { type BookingTour } from '@/app/components/BookingWidget'
 
 // Some `website` values are stored without a protocol ("www.ozohotels.com/…")
 // or protocol-relative ("//site.com"), which the browser resolves as a
@@ -70,6 +71,7 @@ interface Venue {
   rating: number | null
   review_count: number | null
   locally_verified: boolean | null
+  booking_enabled: boolean | null
   tagline: string | null
   description: string | null
   about: string[] | null
@@ -119,7 +121,7 @@ interface RelatedVenue {
 }
 
 const SELECT = `
-  id, slug, name, venue_type, subcategory, price_range, rating, review_count, locally_verified,
+  id, slug, name, venue_type, subcategory, price_range, rating, review_count, locally_verified, booking_enabled,
   tagline, description, about, address, neighborhood, nearby, hours, hours_note,
   phone, website, website_label, facebook_url, maps_query, price_from, price_from_label,
   menu_intro, menu_note, map_road_label, map_soi_label, map_pin_label,
@@ -305,6 +307,23 @@ export default async function VenuePage({ params }: { params: Promise<{ lang: st
   // Category + venue_type labels for on-page display (translated; JSON-LD keeps English).
   const categoryLabel = v.categories?.name_en ? (catMap.get(v.categories.name_en) ?? categoryName) : 'Pattaya'
   const venueTypeLabel = tt(v.venue_type)
+
+  // Booking widget (commission-partner venues, booking_enabled): group the menu
+  // into tours using the translated labels; the client widget captures leads into
+  // the `bookings` table. venue_menu_items is already sorted by sort_order (above),
+  // so menuTx[i] lines up with each item.
+  const bookingTours: BookingTour[] = []
+  if (v.booking_enabled) {
+    const bySection = new Map<string, { name: string; price: string; duration?: string | null }[]>()
+    v.venue_menu_items.forEach((m, i) => {
+      const section = ((menuTx[i]?.[0] ?? m.section) || '').trim()
+      if (!section || !m.price) return
+      if (!bySection.has(section)) bySection.set(section, [])
+      bySection.get(section)!.push({ name: (menuTx[i]?.[1] ?? m.name) as string, price: m.price, duration: m.duration })
+    })
+    for (const [label, options] of bySection) bookingTours.push({ label, options })
+  }
+  const bookingWhatsapp = v.website && /wa\.me|whatsapp/i.test(v.website) ? safeUrl(v.website) : null
   // Clean subcategory ("tag") for the breadcrumb: its label + a deep-link into
   // the group landing page with the tag pre-filtered (e.g.
   // /things-to-do/adventure?type=atv-off-road), instead of the bare pillar.
@@ -684,6 +703,15 @@ export default async function VenuePage({ params }: { params: Promise<{ lang: st
                 <b>฿{v.price_from.toLocaleString()}</b>
                 <span className="per">{v.price_from_label || t('from')}</span>
               </div>
+            )}
+
+            {v.booking_enabled && bookingTours.length > 0 && (
+              <BookingWidget
+                venue={{ id: v.id, slug: v.slug, name: v.name, whatsapp: bookingWhatsapp }}
+                tours={bookingTours}
+                dict={dict}
+                locale={locale}
+              />
             )}
 
             <div className="det-yf__card-list">

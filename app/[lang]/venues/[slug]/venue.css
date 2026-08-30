@@ -163,6 +163,89 @@
 .det-yf__faq .acc .q:hover{color:var(--ocean)}
 .det-yf__faq .acc .a{display:grid;grid-template-rows:0fr;transition:grid-template-rows var(--dur) var(--ease-out)}
 .det-yf__faq .acc.open .a{grid-template-rows:1fr}
+
+/* ============================================================================
+   BOOKING WIDGET — sticky-card trigger + on-page modal (commission-partner venues)
+   ============================================================================ */
+.bk-trigger{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;
+  padding:14px 18px;margin-bottom:10px;border:0;border-radius:var(--radius-md,12px);cursor:pointer;
+  font-family:var(--font-display);font-weight:800;font-size:16px;color:#fff;
+  background:var(--grad-brand,linear-gradient(135deg,#0178b4,#034487));
+  box-shadow:0 6px 18px rgba(1,120,180,.32);transition:transform .12s,box-shadow .12s}
+.bk-trigger:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(1,120,180,.42)}
+.bk-trigger:active{transform:translateY(0)}
+
+.bk-scrim{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;
+  padding:20px;background:rgba(8,22,30,.55);backdrop-filter:blur(3px);animation:bkFade .18s ease}
+@keyframes bkFade{from{opacity:0}to{opacity:1}}
+.bk-modal{position:relative;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;
+  background:var(--bg-surface,#fff);color:var(--text-body,#16303c);border-radius:18px;
+  padding:22px 22px 18px;box-shadow:0 24px 60px rgba(8,22,30,.35);animation:bkRise .22s cubic-bezier(.2,.7,.2,1)}
+@keyframes bkRise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.bk-close{position:absolute;top:12px;right:14px;width:32px;height:32px;border:0;border-radius:50%;
+  background:var(--bg-sunken,#eef3f5);color:var(--text-muted,#5f7a8a);font-size:20px;line-height:1;cursor:pointer}
+.bk-close:hover{background:var(--line,#e2e8f0)}
+
+.bk-head{margin-bottom:14px}
+.bk-kicker{font-family:var(--font-mono,monospace);font-size:11.5px;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--blue-600,#0178b4)}
+.bk-head h3{margin:4px 0 0;font-family:var(--font-display);font-size:20px;font-weight:800;color:var(--text-strong,#0d2531)}
+
+.bk-tours{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.bk-tourbtn{padding:7px 12px;border:1.5px solid var(--line,#dbe6ea);border-radius:999px;background:var(--bg-surface,#fff);
+  color:var(--text-muted,#5f7a8a);font-size:12.5px;font-weight:600;cursor:pointer;line-height:1.2}
+.bk-tourbtn.on{background:var(--blue-600,#0178b4);border-color:transparent;color:#fff}
+
+.bk-options{display:flex;flex-direction:column;gap:2px;margin-bottom:14px;
+  border:1px solid var(--line,#e8f0f2);border-radius:12px;padding:4px}
+.bk-opt{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 10px;border-radius:9px}
+.bk-opt:hover{background:var(--bg-sunken,#f4f8fa)}
+.bk-opt__info{display:flex;flex-direction:column;min-width:0}
+.bk-opt__name{font-size:14px;font-weight:600;color:var(--text-body,#16303c)}
+.bk-opt__price{font-size:12.5px;color:var(--text-muted,#5f7a8a);font-variant-numeric:tabular-nums}
+.bk-stepper{display:inline-flex;align-items:center;gap:2px;flex:none}
+.bk-stepper button{width:30px;height:30px;border:1.5px solid var(--line,#dbe6ea);border-radius:8px;background:var(--bg-surface,#fff);
+  color:var(--blue-600,#0178b4);font-size:17px;line-height:1;cursor:pointer;font-weight:700}
+.bk-stepper button:disabled{opacity:.4;cursor:default}
+.bk-stepper span{min-width:26px;text-align:center;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+
+.bk-row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;align-items:end}
+.bk-total{display:flex;flex-direction:column;align-items:flex-end;justify-content:center}
+.bk-total span{font-size:12px;color:var(--text-muted,#5f7a8a)}
+.bk-total b{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--text-strong,#0d2531);font-variant-numeric:tabular-nums}
+
+/* Form fields (scoped so we don't depend on the contact page's CSS) */
+.bk-modal .cfield{display:flex;flex-direction:column;gap:5px;min-width:0}
+.bk-modal .cfield>span{font-size:12.5px;font-weight:600;color:var(--text-body,#16303c)}
+.bk-modal .cfield em{font-weight:400;color:var(--text-muted,#8aa2af);font-style:normal}
+.bk-modal .cfield input,.bk-modal .cfield textarea{width:100%;padding:10px 12px;border:1.5px solid var(--line,#dbe6ea);
+  border-radius:10px;background:var(--bg-surface,#fff);color:var(--text-body,#16303c);font:inherit;font-size:14px}
+.bk-modal .cfield input:focus,.bk-modal .cfield textarea:focus{outline:0;border-color:var(--blue-600,#0178b4);box-shadow:var(--focus-ring)}
+.bk-modal .cfield textarea{resize:vertical}
+.bk-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+
+.bk-submit{width:100%;padding:14px;border:0;border-radius:12px;cursor:pointer;margin-top:2px;
+  font-family:var(--font-display);font-weight:800;font-size:15.5px;color:#fff;
+  background:var(--grad-brand,linear-gradient(135deg,#0178b4,#034487));font-variant-numeric:tabular-nums}
+.bk-submit:disabled{background:var(--line,#c9d6dd);color:var(--text-muted,#7a8a95);cursor:default}
+.bk-err{margin:10px 0 0;color:#d0517e;font-size:13px}
+.bk-fine{margin:10px 0 0;text-align:center;font-size:11.5px;color:var(--text-muted,#8aa2af)}
+
+.bk-done{text-align:center;padding:14px 6px 6px}
+.bk-done__tick{width:56px;height:56px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;
+  background:var(--good-wash,#dff1e9);color:var(--good,#0e8a5f);font-size:28px;font-weight:800}
+.bk-done h3{margin:0 0 8px;font-family:var(--font-display);font-size:19px;font-weight:800;color:var(--text-strong,#0d2531)}
+.bk-done p{margin:0 auto 16px;max-width:34ch;font-size:14px;line-height:1.55;color:var(--text-muted,#5f7a8a)}
+.bk-wa{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border-radius:12px;
+  background:#25d366;color:#063; font-weight:800;text-decoration:none;font-size:15px}
+.bk-textbtn{display:block;width:100%;margin-top:10px;padding:8px;border:0;background:none;cursor:pointer;
+  color:var(--text-muted,#5f7a8a);font-size:13px;text-decoration:underline}
+
+@media(max-width:560px){
+  .bk-scrim{padding:0;align-items:flex-end}
+  .bk-modal{max-width:none;max-height:92vh;border-radius:20px 20px 0 0;animation:bkSheet .24s cubic-bezier(.2,.7,.2,1)}
+  @keyframes bkSheet{from{transform:translateY(100%)}to{transform:none}}
+}
 .det-yf__faq .acc .a-in{overflow:hidden;min-height:0;padding:0 var(--s4);
   font-size:var(--text-sm);color:var(--text-muted);line-height:var(--leading-normal)}
 .det-yf__faq .acc.open .a-in{padding:0 var(--s4) var(--s4)}
