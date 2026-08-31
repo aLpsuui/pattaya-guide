@@ -541,6 +541,18 @@
 .pg-admin .bk-statusform{display:flex;gap:4px;margin-top:7px}
 .pg-admin .bk-statusform select{font-size:12px;padding:4px 6px;border-radius:7px;border:1px solid var(--border);background:var(--bg-surface);color:var(--text-body)}
 .pg-admin .bk-when{margin-top:7px;font-size:11px;color:var(--text-faint);white-space:nowrap}
+/* Bookings — live indicator + toast */
+.pg-admin .bk-live{display:flex;align-items:center;gap:8px}
+.pg-admin .bk-live__badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text-muted);padding:5px 10px;border-radius:999px;background:var(--bg-sunken);border:1px solid var(--border-soft)}
+.pg-admin .bk-live__dot{width:8px;height:8px;border-radius:50%;background:var(--good,#0e8a5f)}
+.pg-admin .bk-live__dot.beat{animation:bkPulse .8s ease}
+@keyframes bkPulse{0%{box-shadow:0 0 0 0 rgba(14,138,95,.5)}100%{box-shadow:0 0 0 8px rgba(14,138,95,0)}}
+.pg-admin .bk-live__alerts{font-size:12px;padding:5px 10px;border-radius:999px;border:1px solid var(--border);background:var(--bg-surface);color:var(--text-muted);cursor:pointer}
+.pg-admin .bk-live__alerts:hover{border-color:var(--blue-500,#0178b4);color:var(--text-body)}
+.pg-admin .bk-toast{position:fixed;right:20px;bottom:20px;z-index:2000;padding:13px 18px;border-radius:12px;cursor:pointer;
+  background:var(--blue-600,#0178b4);color:#fff;font-size:14px;font-weight:700;box-shadow:0 12px 30px rgba(1,120,180,.4);animation:bkToast .3s cubic-bezier(.2,.7,.2,1)}
+@keyframes bkToast{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.pg-admin .bk-live__dot.beat,.pg-admin .bk-toast{animation:none}}
 
 /* AI SEO haftalık öneriler */
 .pg-admin .an-recsum{padding:14px 20px 16px;display:flex;flex-direction:column;gap:12px}

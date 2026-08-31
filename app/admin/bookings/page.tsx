@@ -3,6 +3,7 @@ import Shell from '@/app/admin/_components/Shell'
 import { deleteBooking, setBookingStatus } from '@/app/admin/_actions/bookings'
 import RowDelete from '@/app/admin/_components/RowDelete'
 import { IconChevR, IconCheck } from '@/app/admin/_components/icons'
+import BookingsLive from '@/app/admin/_components/BookingsLive'
 
 export const dynamic = 'force-dynamic'
 
@@ -56,15 +57,18 @@ export default async function BookingsPage({ searchParams }: { searchParams: Pro
           <h2>Booking requests</h2>
           <p>{rows.length} {venueFilter ? 'for this venue' : 'total'} · <b>{fresh}</b> new{!venueFilter && venues.length > 0 ? ` · ${venues.length} venue${venues.length === 1 ? '' : 's'}` : ''}</p>
         </div>
-        {venues.length > 1 && (
-          <form className="ph-r" method="get" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <select name="venue" defaultValue={venueFilter || ''} style={{ fontSize: 13, padding: '7px 10px', borderRadius: 8, border: '1px solid var(--border)', background: 'var(--bg-surface)', color: 'var(--text-body)', maxWidth: 240 }}>
-              <option value="">All venues ({(allRows || []).length})</option>
-              {venues.map((v) => <option key={v.slug} value={v.slug}>{v.name} ({v.n})</option>)}
-            </select>
-            <button className="btn btn--secondary" type="submit" style={{ padding: '7px 14px', fontSize: 13 }}>Filter</button>
-          </form>
-        )}
+        <div className="ph-r" style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+          <BookingsLive count={(allRows || []).length} />
+          {venues.length > 1 && (
+            <form method="get" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <select name="venue" defaultValue={venueFilter || ''} style={{ fontSize: 13, padding: '7px 10px', borderRadius: 8, border: '1px solid var(--border)', background: 'var(--bg-surface)', color: 'var(--text-body)', maxWidth: 240 }}>
+                <option value="">All venues ({(allRows || []).length})</option>
+                {venues.map((v) => <option key={v.slug} value={v.slug}>{v.name} ({v.n})</option>)}
+              </select>
+              <button className="btn btn--secondary" type="submit" style={{ padding: '7px 14px', fontSize: 13 }}>Filter</button>
+            </form>
+          )}
+        </div>
       </div>
 
       {needsSetup ? (
